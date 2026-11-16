@@ -1,7 +1,12 @@
-import {data,refresh,findMatch,liveStatus,startPolling} from './repository.mjs';
+import {data,refresh,findMatch,startPolling} from './repository.mjs';
 import {storeProblem,STORAGE_KEY,reloadStore,reconcile} from './personal-store.mjs';
 import {main,esc,toast} from './ui.mjs';
-import {renderHome,renderTeams,renderSources} from './pages.mjs';
+import {renderTeams,renderSources} from './pages.mjs';
+import {renderHome} from './dashboard.mjs';
+import {renderStatus} from './status-page.mjs';
+import {renderCompare} from './compare-page.mjs';
+import {bindTheme,bindDrawer,bindPalette,paintSync,startSyncIndicator} from './shell.mjs';
+import {enhanceTables,bindTableTools} from './table-tools.mjs';
 import {renderTeam} from './team-page.mjs';
 import {renderSimulator,renderRecords,selectMatch,selectSavedOdds,settleRecord} from './simulator.mjs';
 import {renderAdmin} from './admin.mjs';
@@ -13,15 +18,15 @@ import {renderMatches,renderMatch,toggleFollow} from './matches-page.mjs';
 document.querySelector('[data-league-team-label]').textContent=league.name+'球队';
 document.querySelectorAll('[data-league]').forEach(link=>{const active=link.dataset.league===league.id;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','true');});
 
-let disposePage=()=>{},updatePage=()=>{},stopPolling=()=>{};
+let disposePage=()=>{},updatePage=()=>{},stopPolling=()=>{},stopIndicator=()=>{};
 const route=()=>location.hash.replace(/^#\/?/,'').split('/');
+const routeKey=()=>`${league.id}:${route().join('/')}`;
+bindTheme();bindPalette();bindTableTools(()=>`${league.name}-${route()[0]||'总览'}`);
+const closeDrawer=bindDrawer();
 
 function updateStatus() {
  if(!data)return;
- const status=liveStatus();
- const area=document.querySelector('#live-status');
- area.className=`sync-banner ${status.stale||status.failed?'delayed':''}`;
- area.textContent=`${status.text} · 最近成功 ${status.stamp}`;
+ paintSync();
  document.querySelector('#update-label').textContent=`球队资料 ${new Date(data.updatedAt).toLocaleString('zh-CN')}`;
 }
 
@@ -32,19 +37,21 @@ function recordsChanged() {
 export function updateView() {
  if(!data)return;
  try {if(reconcile(data.matches)){recordsChanged();toast('已按确认完赛结果更新模拟记录。');}}catch(error){toast(error.message);}
- updateStatus();updatePage();
+ updateStatus();updatePage();enhanceTables(main,routeKey());
 }
 
 function render() {
  disposePage();disposePage=()=>{};updatePage=()=>{};
- const [current,id]=route(),page=current||'home';
+ const [current,id,second]=route(),page=current||'home';closeDrawer();
  const active=['team','analysis'].includes(page)?'teams':page==='match'?'matches':page;
  document.querySelectorAll('[data-nav]').forEach(nav=>{nav.classList.toggle('active',nav.dataset.nav===active);if(nav.dataset.nav===active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');});
- document.querySelector('#breadcrumb').textContent=({home:'足球资料库 / 赛事总览',teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'Football Know / 管理后台'})[page]||'足球资料库';
+ document.querySelector('#breadcrumb').textContent=({home:`${league.name} / 总览`,status:'系统 / 同步监控',compare:`${league.name} / 球队对比`,teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'Football Know / 管理后台'})[page]||'足球资料库';
  if(page==='admin'){disposePage=renderAdmin();updateStatus();return;}
+ if(page==='status'){disposePage=renderStatus();updateStatus();return;}
  if(!data)return;
  if(page==='home')updatePage=renderHome();
  else if(page==='rankings')updatePage=renderRankings();
+ else if(page==='compare')updatePage=renderCompare(id,second);
  else if(page==='matches')updatePage=renderMatches();
  else if(page==='following')updatePage=renderMatches(true);
  else if(page==='match')disposePage=renderMatch(id);
@@ -57,7 +64,7 @@ function render() {
  else main.innerHTML='<div class="empty">页面不存在。<a href="#/">回到联赛总览</a></div>';
  if(storeProblem)main.insertAdjacentHTML('afterbegin',`<div class="error-box">${esc(storeProblem)}</div>`);
  if(data.warnings?.length)main.insertAdjacentHTML('afterbegin','<p class="notice">部分历史资料来源暂未更新，正在显示最近成功记录。<a href="#/sources">查看来源</a></p>');
- updateStatus();
+ updateStatus();enhanceTables(main,routeKey());
 }
 
 document.addEventListener('click',event=>{
@@ -73,12 +80,22 @@ document.addEventListener('click',event=>{
 });
 window.addEventListener('hashchange',()=>{render();window.scrollTo({top:0});});
 window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY){reloadStore();recordsChanged();toast('另一页面修改了个人记录；当前输入已保留。');}});
-window.addEventListener('pagehide',()=>{stopPolling();disposePage();});
+// Tables that arrive after a page is drawn (lineups, source checks, sync jobs) get the same sorting and export.
+const Observer=globalThis.MutationObserver||globalThis.window?.MutationObserver;
+let tableObserver=null,tablePass=0;
+if(Observer) {
+ tableObserver=new Observer(()=>{
+  if(tablePass)return;
+  tablePass=setTimeout(()=>{tableObserver.disconnect();enhanceTables(main,routeKey());tableObserver.takeRecords();tableObserver.observe(main,{childList:true,subtree:true});tablePass=0;},60);
+ });
+ tableObserver.observe(main,{childList:true,subtree:true});
+}
+window.addEventListener('pagehide',()=>{stopPolling();stopIndicator();disposePage();tableObserver?.disconnect();clearTimeout(tablePass);});
 
 async function start() {
- try {await refresh(true);reconcile(data.matches);render();stopPolling=startPolling(updateView);}
+ try {await refresh(true);reconcile(data.matches);render();stopPolling=startPolling(updateView);stopIndicator=startSyncIndicator(()=>stopPolling.now?.());}
  catch(error) {
-   if(route()[0]==='admin'){render();return;}
+   if(['admin','status'].includes(route()[0])){render();return;}
    main.innerHTML=`<div class="error-box"><h2>暂时无法载入球队资料</h2><p>${esc(error.message)}。已有个人记录仍保存在本浏览器。</p><button class="button" id="reload">重新载入</button> <a class="button secondary" href="#/admin">管理后台</a></div>`;
    main.querySelector('#reload').addEventListener('click',()=>location.reload());
  }

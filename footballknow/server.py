@@ -1,6 +1,7 @@
 """Football Know API; private state is never mounted as static content."""
 import os
 import http.client
+from datetime import datetime, timezone
 import socket
 import ssl
 from contextlib import asynccontextmanager
@@ -38,6 +39,12 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+DEFAULT_ORIGINS = 'https://footballknow.art,https://www.footballknow.art'
+
+
+def allowed_origins() -> set[str]:
+    """Sites allowed to send changes; FOOTBALL_ALLOWED_ORIGINS lists a customer's own domains."""
+    return {item.strip().rstrip('/') for item in os.environ.get('FOOTBALL_ALLOWED_ORIGINS', DEFAULT_ORIGINS).split(',') if item.strip()}
 
 
 @app.middleware('http')
@@ -48,7 +55,7 @@ async def request_boundary(request: Request, call_next):
             parsed = urlsplit(origin)
         except ValueError:
             return JSONResponse({'detail':'请求来源格式不正确。'},status_code=403)
-        approved = origin in {'https://footballknow.art','https://www.footballknow.art'}
+        approved = origin in allowed_origins()
         if os.environ.get('FOOTBALL_PRODUCTION') != '1':
             approved |= parsed.hostname in {'127.0.0.1','localhost','testserver'} and parsed.scheme in {'http','https'}
         if not approved:
@@ -57,8 +64,11 @@ async def request_boundary(request: Request, call_next):
         if not length.isdigit() or int(length) > 64000:
             return JSONResponse({'detail':'请求内容过大。'},status_code=413)
     response = await call_next(request)
-    if request.url.path.startswith('/api/') or request.url.path.endswith('.json'):
+    if request.url.path.startswith('/api/'):
         response.headers['Cache-Control'] = 'no-store'
+    elif request.url.path.endswith('.json'):
+        # Snapshots are re-read every minute; revalidation answers unchanged files with 304.
+        response.headers['Cache-Control'] = 'no-cache'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     return response
 
@@ -157,6 +167,21 @@ def run_analysis(team_id: int, league: LeagueId = 'epl', account: auth.Administr
 def sync_status():
     path = PUBLIC / 'sync-status.json'
     return read_json(path) if path.exists() else {'running':False,'jobs':{},'message':'后台同步服务尚未启动。'}
+
+
+@app.get('/api/health')
+def health(response: Response):
+    """Machine-readable liveness for uptime monitors: 200 while the synchronizer heartbeat is fresh."""
+    status = sync_status()
+    try:
+        age = (datetime.now(timezone.utc) - datetime.fromisoformat(status['heartbeat'])).total_seconds()
+    except (KeyError, TypeError, ValueError):
+        age = None
+    healthy = bool(status.get('running')) and age is not None and age < 120
+    if not healthy:
+        response.status_code = 503
+    return {'status': 'ok' if healthy else 'degraded', 'heartbeatAgeSeconds': None if age is None else round(age),
+            'syncSeconds': status.get('syncSeconds'), 'summary': status.get('summary')}
 
 
 @app.get('/api/match')

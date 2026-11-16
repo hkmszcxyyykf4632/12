@@ -147,3 +147,16 @@ def test_source_error_pages_cannot_replace_historical_data():
     with pytest.raises(ValueError):validate_feed('fixtures','[]')
     header='Date,HomeTeam,AwayTeam,FTHG,FTAG,FTR\n'
     assert validate_feed('2026-E0',header)==header
+
+
+def test_health_reports_synchronizer_heartbeat_and_snapshots_revalidate(client,tmp_path,monkeypatch):
+    public=tmp_path/'public';public.mkdir()
+    monkeypatch.setattr(server,'PUBLIC',public)
+    assert client.get('/api/health').status_code==503
+    (public/'sync-status.json').write_text(json.dumps({'running':True,'heartbeat':datetime.now(timezone.utc).isoformat(),'syncSeconds':60,'summary':{'total':25,'ok':25,'failed':0,'pending':0}}),encoding='utf-8')
+    response=client.get('/api/health')
+    assert response.status_code==200 and response.json()['status']=='ok' and response.json()['syncSeconds']==60
+    assert response.headers['cache-control']=='no-store'
+    assert client.get('/standings.json').headers['cache-control']=='no-cache'
+    monkeypatch.setenv('FOOTBALL_ALLOWED_ORIGINS','https://client.example')
+    assert server.allowed_origins()=={'https://client.example'}

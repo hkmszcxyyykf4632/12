@@ -17,6 +17,7 @@ ROOT = Path('/opt/footballknow')
 STATE = Path('/var/lib/footballknow')
 UNIT_ROOT = Path('/etc/systemd/system')
 UNITS = ['footballknow-web.service', 'footballknow-worker.service']
+CADDYFILE = Path('/etc/caddy/Caddyfile')
 
 
 def run(*args, check=True):
@@ -42,7 +43,7 @@ def load_archive(path, digest, revision):
             allowed = (len(parts) == 1 and (relative.endswith('.py') or relative in {'requirements.txt', 'analysis-rules.txt'}))
             allowed |= parts[0] == 'football' and relative.endswith('.py')
             allowed |= parts[0] == 'public' and Path(relative).suffix in {'.html', '.css', '.js', '.mjs', '.json', '.svg', '.png', '.webp', '.ico'}
-            allowed |= relative in {f'deploy/{name}' for name in UNITS} | {'deploy/update.py'}
+            allowed |= relative in {f'deploy/{name}' for name in UNITS} | {'deploy/update.py', 'deploy/Caddyfile'}
             if allowed:
                 if member.size > 20000000:
                     raise ValueError('Unexpected file size')
@@ -87,12 +88,17 @@ def main():
     parser.add_argument('--archive', type=Path, required=True)
     parser.add_argument('--sha256', required=True)
     parser.add_argument('--revision', required=True)
+    parser.add_argument('--caddy-base-sha256', help='Update Caddy only when its current configuration matches this reviewed checksum')
     args = parser.parse_args()
     assert os.geteuid() == 0 and re.fullmatch(r'[0-9a-f]{40}', args.revision)
     assert re.fullmatch(r'[0-9a-f]{64}', args.sha256)
     assert ROOT.resolve() == Path('/opt/footballknow') and (ROOT / 'server.py').is_file()
     assert (STATE / 'admin.sqlite3').is_file()
     content = load_archive(args.archive, args.sha256, args.revision)
+    if args.caddy_base_sha256:
+        assert re.fullmatch(r'[0-9a-f]{64}', args.caddy_base_sha256)
+        assert hashlib.sha256(CADDYFILE.read_bytes()).hexdigest() == args.caddy_base_sha256, 'Caddy configuration changed; review before replacing'
+        assert 'deploy/Caddyfile' in content
     # Avoid replacing fresher production snapshots with older repository samples.
     for relative, raw in list(content.items()):
         target = ROOT / relative
@@ -123,6 +129,8 @@ def main():
                 existed.append(relative)
         for unit in UNITS:
             shutil.copy2(UNIT_ROOT / unit, backup / unit)
+        if args.caddy_base_sha256:
+            shutil.copy2(CADDYFILE, backup / 'Caddyfile')
         (backup / 'manifest.json').write_text(json.dumps({'revision': args.revision, 'existed': existed, 'files': list(content)}, indent=2))
         owner = (ROOT / 'public').stat()
         applied = True
@@ -147,6 +155,13 @@ def main():
             os.chown(path, owner.st_uid, owner.st_gid)
         for unit in UNITS:
             shutil.copy2(ROOT / 'deploy' / unit, UNIT_ROOT / unit)
+        if args.caddy_base_sha256:
+            run('caddy', 'validate', '--config', str(ROOT / 'deploy/Caddyfile'), '--adapter', 'caddyfile')
+            temporary_caddy = CADDYFILE.with_name('Caddyfile.footballknow-release')
+            shutil.copyfile(ROOT / 'deploy/Caddyfile', temporary_caddy)
+            temporary_caddy.chmod(0o644)
+            os.replace(temporary_caddy, CADDYFILE)
+            run('systemctl', 'reload', 'caddy')
         run('systemctl', 'daemon-reload')
         run('systemctl', 'restart', 'footballknow-web')
         for attempt in range(20):
@@ -172,6 +187,9 @@ def main():
                     target.unlink()
             for unit in UNITS:
                 shutil.copy2(backup / unit, UNIT_ROOT / unit)
+            if args.caddy_base_sha256:
+                shutil.copy2(backup / 'Caddyfile', CADDYFILE)
+                run('systemctl', 'reload', 'caddy', check=False)
             run('systemctl', 'daemon-reload', check=False)
             run('systemctl', 'restart', 'footballknow-web', check=False)
         raise

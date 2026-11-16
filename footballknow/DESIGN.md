@@ -1,25 +1,27 @@
 # Football Know design system
 
-The operational archive follows a bilingual matchday programme: a compact fixture lead, parallel names and comparison tables, distinct section headings, and source notes. The existing evergreen identity remains consistent across the twenty clubs and research tools.
+A football data terminal sold to organisations: dense, calm, and explicit about how fresh every figure is. The one signature element is the 60-second sync ring in the top bar; everything else stays quiet.
 
-## Requested design direction
+## Tokens
 
-The user explicitly requested design-taste-frontend. Recorded draw: borrowed-category, seed 351190849, keeping palette and type. This is an existing application, so the component-refinement exception applies. The borrowed category is a matchday programme. The marketing-only poster/photo hero and decorative motion are not imposed on dense records. The direction artifact remains in .taste-skill/direction.json.
+All colours are CSS custom properties in `public/styles.css`, defined once for light and once for `:root[data-theme=dark]`.
 
-## Tokens and layout
+- Brand pine `#0f5c45` (dark theme `#48c79b`), page `#f2f5f3`, surface `#fff`, ink `#12201b`, muted `#5b6964`, lines `#dce4e0`.
+- Amber marks live play and delayed data; red marks failures and losses. Colour never carries meaning alone: every state also has a word.
+- The sidebar, the lead fixture and scoreboards share one dark pitch tone `#0c1f19` in both themes.
+- System Chinese sans for text. Scores, odds and figures use the condensed `--num` stack (DIN Alternate, Bahnschrift) with tabular numerals. No web fonts: the site policy allows only same-origin resources.
+- Radius 10 px for panels, 8 px for controls, 14 px for the two scoreboard blocks. Borders separate surfaces; shadows are reserved for overlays.
 
-- Evergreen #164d3d, deep navigation #103c30; paper #f6f7f3, white surfaces, ink #202b27, muted #65726b.
-- Shared 4 px spacing scale; page padding 44 px desktop and 18 px mobile; section rhythm 48 px desktop and 36 px narrow.
-- Body 16 px, tables 14 px, secondary 13 px, page heading 36 px desktop / 28 px narrow; Chinese system sans with Bahnschrift numeric identity when available.
-- Tabular numerical values; internal scrolling for wide tables. Club initials are navigation marks, not official crests.
-- Desktop left navigation becomes a horizontal mobile strip. Fixture rows reflow into a three-column score line; admin panels and comparison sections stack.
+## Layout
+
+- 232 px grouped sidebar, sticky 58 px top bar (search, sync ring, theme), content up to 1480 px.
+- Below 900 px the sidebar becomes a drawer; below 620 px tables scroll inside their frame and the page itself never scrolls sideways.
+- The overview leads with the match in play or the next kickoff, then one strip of season figures, then fixtures and tables.
 
 ## Interaction
 
-Players precede the recent-results table, with direct jumps to transfers and managerial changes. Mandarin and Hong Kong names remain visible together, original names retained, and unverified drafts labelled at the row. Data refresh updates targeted regions while preserving search, forms, backup confirmation and local records.
-
-Administrator login, AI settings, editable methodology, source job status and password change share the existing field and button system. AI text is rendered as text, not executable HTML. Native blocking dialogs are not used. Focus indicators, labelled controls, reduced motion and inline confirmation remain.
-
-## Verification
-
-The prior version had real desktop/mobile captures. The current upgrade has passed DOM interaction and server checks, but no new rendered desktop/mobile screenshots: read/click control of the same required in-app browser is absent. Do not label old captures as current visual proof. Remaining visual checks: 390 px player/transfer tables, fixture reflow, login/settings/rules forms, keyboard focus and long AI content.
+- Every table sorts by clicking a column heading and exports to CSV; the sort survives the 60-second refresh.
+- Refreshes update regions in place and keep search text, filters, open forms and focus.
+- Search opens with Ctrl K or `/`; arrow keys and Enter work throughout.
+- AI text is rendered as text, never HTML. No blocking dialogs. Reduced motion is respected.
+- Club initials are navigation marks, not official crests.

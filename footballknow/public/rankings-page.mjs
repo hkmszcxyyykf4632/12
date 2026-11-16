@@ -26,7 +26,7 @@ export function renderRankings() {
   if(!main.querySelector('#rank-content'))return;
   const snapshot=board==='players'||['yellowCards','redCards'].includes(teamMetric)&&board==='clubs'?rankings:standings;
   const age=Date.now()-Date.parse(snapshot?.updatedAt);
-  main.querySelector('#rank-status').textContent=`${snapshot?`最近成功检查 ${timestamp(snapshot.updatedAt)}`:'尚未取得本赛季榜单'}${rankingsFailed?' · 最近检查未成功，保留已有资料':age>(snapshot?.intervalSeconds||60)*3000?' · 等待更新':''}。${board==='players'||board==='clubs'&&['yellowCards','redCards'].includes(teamMetric)?'来源注明夜间更新；本站每5分钟检查。':'积分榜每分钟检查。'}`;
+  main.querySelector('#rank-status').textContent=`${snapshot?`最近成功检查 ${timestamp(snapshot.updatedAt)}`:'尚未取得本赛季榜单'}${rankingsFailed?' · 最近检查未成功，保留已有资料':age>(snapshot?.intervalSeconds||60)*3000?' · 等待更新':''}。${board==='players'||board==='clubs'&&['yellowCards','redCards'].includes(teamMetric)?'本站每 60 秒检查；来源自身注明夜间更新。':'积分榜每 60 秒检查。'}`;
   let html='';
   if(board==='table'){
    const rows=scope==='all'?standings?.entries:standings?.breakdowns?.tables?.[scope];
