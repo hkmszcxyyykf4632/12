@@ -1,0 +1,27 @@
+[Unit]
+Description=Football Know continuous public-data synchronizer
+After=network-online.target footballknow-web.service
+Wants=network-online.target
+
+[Service]
+User=footballknow
+Group=footballknow
+WorkingDirectory=/opt/footballknow
+Environment=FOOTBALL_STATE_DIR=/var/lib/footballknow
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/opt/footballknow/.venv/bin/python worker.py
+Restart=always
+RestartSec=10
+TimeoutStopSec=620
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/footballknow/public
+ReadWritePaths=/var/lib/footballknow
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

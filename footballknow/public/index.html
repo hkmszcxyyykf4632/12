@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#164d3d">
+  <meta name="description" content="Football Know 足球资料库：英超、西甲与欧冠球队、球员资料、近二十场比赛、赔率和虚拟投注练习。">
+  <title>Football Know · 足球资料库</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <aside class="sidebar">
+    <a class="brand" href="#/"><img src="./icon.svg" alt="" width="38" height="38"><span>FOOTBALL<br><strong>KNOW</strong></span></a>
+    <p class="brand-caption">把每一场，读清楚。</p>
+    <nav class="league-switch" aria-label="选择赛事"><a href="./#/teams" data-league="epl">英超</a><a href="./?league=laliga#/teams" data-league="laliga">西甲</a><a href="./?league=ucl#/teams" data-league="ucl">欧冠</a></nav>
+    <nav aria-label="主导航">
+      <a href="#/" data-nav="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10 12 3l9 7v11H3zM9 21v-8h6v8"/></svg>赛事总览</a>
+      <a href="#/teams" data-nav="teams"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3-5 4 3 5 2-1v10h8V11l2 1 3-5-5-4c-1 3-7 3-8 0Z"/></svg><span data-league-team-label>英超球队</span></a>
+      <a href="#/matches" data-nav="matches"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18m-14 4h3m4 0h3"/></svg>比赛中心</a>
+      <a href="#/rankings" data-nav="rankings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V11h4v10m2 0V3h4v18m2 0V8h4v13M2 21h20"/></svg>数据榜单</a>
+      <a href="#/following" data-nav="following"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/></svg>我的关注</a>
+      <a href="#/simulator" data-nav="simulator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h2m4 0h2m-8 5h2m4 0h2"/></svg>模拟投注</a>
+      <a href="#/records" data-nav="records"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM8 7h8M8 12h8M8 17h5"/></svg>我的记录</a>
+      <a href="#/sources" data-nav="sources"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg>数据说明</a>
+      <a href="#/admin" data-nav="admin"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3"/></svg>管理后台</a>
+    </nav>
+    <div class="sidebar-bottom"><span class="live-dot"></span> 个人足球研究室<p>模拟账户 · 本机保存</p></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span id="breadcrumb">足球资料库</span><span class="topbar-note">观察 · 记录 · 复盘</span></header>
+    <div id="live-status" class="sync-banner">正在检查比赛更新时间…</div>
+    <main id="main" tabindex="-1"><div class="loading">正在载入球队与比赛资料…</div></main>
+    <footer><span>FOOTBALL KNOW</span><span id="update-label">正在读取数据日期</span><a href="#/sources">来源与覆盖范围</a></footer>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

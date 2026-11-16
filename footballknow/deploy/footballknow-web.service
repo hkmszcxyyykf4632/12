@@ -1,0 +1,26 @@
+[Unit]
+Description=Football Know website and administrator API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=footballknow
+Group=footballknow
+WorkingDirectory=/opt/footballknow
+Environment=FOOTBALL_STATE_DIR=/var/lib/footballknow
+Environment=FOOTBALL_PRODUCTION=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/footballknow/.venv/bin/python -m uvicorn server:app --host 127.0.0.1 --port 8765 --workers 1
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/footballknow
+ReadWritePaths=/opt/footballknow/public/match-details /opt/footballknow/public/laliga/match-details /opt/footballknow/public/ucl/match-details
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
