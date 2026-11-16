@@ -8,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 from .files import PUBLIC, STATE, publish, read_json
+from .match_facts import build_facts
 from .leagues import league_config, league_path
 from .rankings import COMPETITIONS, EPL_NAMES, normalize, player_code
 from .ucl import fetch_json
@@ -244,6 +245,10 @@ def refresh_details(league, limit=80):
                 'intervalSeconds': 300, 'targetMatches': len(chosen), 'available': sum(e['status'] == 'available' for e in entries.values()),
                 'entries': entries}
     publish(league_path(PUBLIC, league) / 'match-index.json', snapshot)
+    competition = league_config(league).competition
+    season_done = [m for m in matches if m.get('finished') and m['season'] == catalogue['season'] and m['competition'] == competition]
+    pairs = [(m, d) for m in chosen.values() if m.get('finished') and (d := detail_for_match(m, catalogue, league, False))]
+    publish(league_path(PUBLIC, league) / 'match-facts.json', build_facts(league, catalogue, competition, pairs, len(season_done)))
     return snapshot
 
 

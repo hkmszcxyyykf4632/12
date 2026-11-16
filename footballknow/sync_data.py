@@ -86,7 +86,11 @@ def main():
         if p.get('removed') or p.get('team') not in by_id:
             continue
         players.append({k: p.get(k) for k in ['id', 'code', 'team', 'first_name', 'second_name', 'web_name', 'known_name', 'team_join_date',
-            'birth_date', 'squad_number', 'minutes', 'goals_scored', 'assists', 'clean_sheets', 'status', 'news']}
+            'birth_date', 'squad_number', 'minutes', 'goals_scored', 'assists', 'clean_sheets', 'status', 'news',
+            # Season totals and availability the public feed already carries; absent keys stay None.
+            'starts', 'yellow_cards', 'red_cards', 'saves', 'goals_conceded', 'own_goals', 'penalties_saved', 'penalties_missed',
+            'expected_goals', 'expected_assists', 'expected_goal_involvements', 'expected_goals_conceded',
+            'chance_of_playing_next_round', 'news_added']}
             | {'position': p['element_type'], 'country': regions.get(p.get('region'), '')})
     jobs = {'fixtures': FPL + 'fixtures/'}
     for y in [year, year - 1]:

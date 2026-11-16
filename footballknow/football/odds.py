@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
 from .files import PUBLIC, STATE, fetch_text, publish, read_json
+from .odds_history import append_history
 from .leagues import league_path, league_config
 
 PROVIDERS = {
@@ -185,4 +186,10 @@ def refresh_odds(league):
                 'providers': sorted({q['provider'] for values in quotes.values() for q in values if q.get('kind') != 'aggregate'}),
                 'meaning': '90分钟胜平负；历史赔率经Football-Data收录，赛前快照经ESPN收录；报价不是官网直连接口。'}
     publish(folder / 'odds.json', snapshot)
+    history_path = folder / 'odds-history.json'
+    earlier = read_json(history_path) if history_path.exists() else {}
+    recent = (datetime.now(timezone.utc) - timedelta(days=21)).date().isoformat()
+    tracked = {m['id'] for m in upcoming} | {m['id'] for m in matches if m['id'] in earlier.get('matches', {}) and m['date'] >= recent}
+    publish(history_path, {'version': 1, 'league': league, 'season': catalogue['season'], 'updatedAt': stamp,
+                           'matches': append_history(earlier.get('matches') if earlier.get('season') == catalogue['season'] else {}, quotes, stamp, tracked)})
     return snapshot

@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {JSDOM} from 'jsdom';
 
 const root = new URL('../public/', import.meta.url);
-const snapshots = Object.fromEntries(await Promise.all(['data','live','names','history','standings','rankings','odds','odds-sources'].map(async name => [name,JSON.parse(await readFile(new URL(`${name}.json`,root),'utf8'))])));
+const snapshots = Object.fromEntries(await Promise.all(['data','live','names','history','standings','rankings','odds','odds-sources','match-facts'].map(async name => [name,JSON.parse(await readFile(new URL(`${name}.json`,root),'utf8'))])));
 const tick = () => new Promise(resolve => setTimeout(resolve,20));
 
 test('club search, manual odds, locked simulation, two-step settlement and backup restoration', async () => {
@@ -18,7 +18,7 @@ test('club search, manual odds, locked simulation, two-step settlement and backu
   globalThis.fetch = async (path,options={}) => {
     const key = String(path).replace(/^\.\//,'').replace('.json','');
     let body=snapshots[key];
-    if(String(path).startsWith('/api/match?'))body={status:'available',duration:90,lineups:{home:{name:'Arsenal',formation:'4-3-3',players:[{espnId:'test',name:'<img src=x onerror=alert(1)>',position:'DM',starter:true,played:true,minutes:90,minutesEstimated:true}]}},statistics:[],events:[],updatedAt:new Date().toISOString()};
+    if(String(path).startsWith('/api/match?')) {const mid=new URL(String(path),'http://localhost').searchParams.get('match_id');const m=[...snapshots.live.matches,...snapshots.data.matches].find(m=>m.id===mid);body={matchId:mid,league:'epl',home:m.home,away:m.away,status:'available',duration:90,lineups:{home:{name:m.home,formation:'4-3-3',players:[{espnId:'test',name:'<img src=x onerror=alert(1)>',position:'DM',starter:true,played:true,minutes:90,minutesEstimated:true}]}},statistics:[],events:[],updatedAt:new Date().toISOString()};}
     else if(path==='/api/auth/me')body={authenticated:loggedIn,username:loggedIn?'admin01':null};
     else if(path==='/api/auth/login'){loggedIn=true;body={authenticated:true,username:'admin01'};}
     else if(path==='/api/auth/logout'){loggedIn=false;body={ok:true};}
@@ -87,6 +87,12 @@ test('club search, manual odds, locked simulation, two-step settlement and backu
     assert.equal(w.document.querySelectorAll('[data-player]:not(.hidden)').length,1,'polling retains player filters');
     assert.ok(w.document.querySelector('#transfers-section'));
     assert.ok(w.document.querySelector('#managers-section'));
+    await route('#/player/1');
+    const comparison=w.document.querySelector('#compare-player');
+    comparison.value=w.document.querySelector('#compare-options option').value;
+    comparison.dispatchEvent(new w.Event('input',{bubbles:true}));
+    assert.match(w.location.hash,/^#\/player\/1\/\d+$/);
+    assert.ok(w.document.querySelector('#player-compare svg'),'an exact pasted choice renders the comparison');
     await route('#/simulator');
     field('home','测试主队');field('away','测试客队');field('match-date','2020-01-02');
     field('odds-H','2.10');field('odds-D','3.20');field('odds-A','4.00');

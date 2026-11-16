@@ -4,6 +4,7 @@ import {localized,fixtureStrip} from './football-components.mjs';
 import {historySections,bindHistory} from './team-history.mjs';
 import {league} from './league.mjs';
 import {followButton} from './matches-page.mjs';
+import {seasonBlock,availabilityBlock,calendarBlock} from './team-extras.mjs';
 
 const POSITIONS={1:'门将',2:'后卫',3:'中场',4:'前锋'};
 const STATUS={unreported:'未标注伤停',a:'可出场',d:'出场待定',i:'伤缺',s:'停赛',u:'暂不可用',n:'暂不可用'};
@@ -13,7 +14,7 @@ function playerRows(team) {
   return players.map(p=>{
     const name=localized(p);
     const search=[name?.cantonese,name?.mandarin,p.first_name,p.second_name,p.web_name].join(' ').toLowerCase();
-    return `<tr data-player="${esc(search)}" data-position="${p.position}"><td class="player-name">${name?esc(name.cantonese):'<span class="subtle">译名待收录</span>'}<small>${esc(p.known_name||p.web_name)}</small></td><td class="player-name">${name?esc(name.mandarin):'—'}<small>${name?.status==='draft'?'<span class="attention">暂用音译 · 两版均待核</span>':name?sourceLink(name.mandarinSource,'普通话')+' · '+sourceLink(name.cantoneseSource,'香港译名'):esc(p.first_name+' '+p.second_name)}</small></td><td>${POSITIONS[p.position]||'—'}</td><td>${dateText(p.birth_date)}</td><td>${p.minutes??'—'}</td><td>${p.goals_scored??'—'} / ${p.assists??'—'}</td><td><span class="status ${p.status==='a'?'':'attention'}" title="${esc(p.news||'')}">${STATUS[p.status]||'未知'}</span>${p.news?`<details class="player-news"><summary>说明</summary><p>${esc(p.news)}</p></details>`:''}</td></tr>`;
+    return `<tr data-player="${esc(search)}" data-position="${p.position}"><td class="player-name"><a href="#/player/${p.id}">${name?esc(name.cantonese):'<span class="subtle">译名待收录</span>'}</a><small>${esc(p.known_name||p.web_name)}</small></td><td class="player-name">${name?esc(name.mandarin):'—'}<small>${name?.status==='draft'?'<span class="attention">暂用音译 · 两版均待核</span>':name?sourceLink(name.mandarinSource,'普通话')+' · '+sourceLink(name.cantoneseSource,'香港译名'):esc(p.first_name+' '+p.second_name)}</small></td><td>${POSITIONS[p.position]||'—'}</td><td>${dateText(p.birth_date)}</td><td>${p.minutes??'—'}</td><td>${p.goals_scored??'—'} / ${p.assists??'—'}</td><td><span class="status ${p.status==='a'?'':'attention'}" title="${esc(p.news||'')}">${STATUS[p.status]||'未知'}</span>${p.news?`<details class="player-news"><summary>说明</summary><p>${esc(p.news)}</p></details>`:''}</td></tr>`;
   }).join('');
 }
 
@@ -31,10 +32,13 @@ export function renderTeam(id) {
   if(!team){main.innerHTML='<div class="empty">球队不存在。<a href="#/teams">返回球队列表</a></div>';return ()=>{};}
   const players=data.players.filter(p=>p.team===team.id);
   main.innerHTML=`<a class="back-link" href="#/teams">← 全部${league.name}球队</a><div class="page-heading"><div class="team-title">${monogram(team)}<div><h1>${esc(team.cn)}</h1><p class="lede">${esc(team.name)} · ${esc(data.season)} ${league.name}</p></div></div><span class="tag">${players.length} 位收录球员</span></div>
-    <div class="toolbar">${followButton(team)}<a class="button quiet compact" href="#/rankings">查看${league.name}排名 →</a><a class="button quiet compact" href="#/matches">比赛中心 →</a></div><dl class="team-summary" id="team-summary">${summaryBlock(team)}</dl><div id="team-fixture">${fixtureStrip(team)}</div>
-    <nav class="tabs" aria-label="球队资料跳转"><button class="active" data-jump="players">球员资料</button><button data-jump="matches">近二十场</button><button data-jump="transfers">转会记录</button><button data-jump="managers">领队更换</button></nav>
+    <div class="toolbar">${followButton(team)}<button class="button secondary compact" type="button" data-share>分享链接</button><a class="button quiet compact" href="#/rankings">查看${league.name}排名 →</a><a class="button quiet compact" href="#/matches">比赛中心 →</a></div><dl class="team-summary" id="team-summary">${summaryBlock(team)}</dl><div id="team-fixture">${fixtureStrip(team)}</div>
+    <nav class="tabs" aria-label="球队资料跳转"><button class="active" data-jump="players">球员资料</button><button data-jump="season">赛季数据</button><button data-jump="availability">伤停</button><button data-jump="calendar">赛程日历</button><button data-jump="matches">近二十场</button><button data-jump="transfers">转会记录</button><button data-jump="managers">领队更换</button></nav>
     <section id="players-section"><div class="section-head"><div><h2>球员资料</h2></div><span class="small subtle">粤语 · 普通话 · 原名</span></div><div class="toolbar"><div class="search"><input id="player-search" type="search" placeholder="搜索中文、粤语译名或英文名" aria-label="搜索球员"></div><select class="filter-select" id="position-filter" aria-label="筛选球员位置"><option value="">全部位置</option>${Object.entries(POSITIONS).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></div>
     <div class="table-wrap"><table class="squad-table"><thead><tr><th>粤语 / 香港译名</th><th>普通话 / 大陆译名</th><th>位置（${league.roster}）</th><th>出生日期</th><th>分钟</th><th>进球 / 助攻</th><th>状态</th></tr></thead><tbody id="player-rows">${playerRows(team)}</tbody></table></div><div id="player-empty" class="empty hidden">没有符合筛选条件的球员。</div><p class="note" id="names-coverage"></p><p class="note">分钟、进球与助攻为本赛季${league.name}数据；位置按 ${league.roster} 分类，未提供的数值留空，名单可能不包含全部注册球员。</p></section>
+    <section id="season-section"><div class="section-head"><h2>赛季攻防数据</h2><p>${esc(data.season)} ${league.name}</p></div><div id="team-season">${seasonBlock(team)}</div></section>
+    <section id="availability-section"><div class="section-head"><h2>伤停与停赛</h2></div><div id="team-availability">${availabilityBlock(team)}</div></section>
+    <section id="calendar-section"><div class="section-head"><h2>赛程日历</h2><p>本赛季全部${league.name}比赛</p></div><div id="team-calendar">${calendarBlock(team)}</div></section>
     <section id="matches-section"><div class="section-head"><div><h2>最近二十场${league.historyLabel}</h2></div><p>最新在上 · 跨赛季</p></div><div class="toolbar"><p class="note">点击赔率，记录一次模拟判断</p><select class="filter-select" id="competition-filter" aria-label="筛选比赛赛事"><option value="all">${league.historyFilter}</option><option value="pl">仅${league.name}</option></select></div><div id="matches-table">${matchTable(recent(team),team)}</div><p class="note">比分和赔率按主队、客队排列。不足二十场时显示实际数量。${league.id==='ucl'?'已收录正式赛事按90分钟含补时统计；加时、点球与总比分分开，缺少可核对比分的场次不参与统计。':'当前范围不包含杯赛。'}缺少赔率可手动录入。</p></section>${historySections(team)}`;
   function filterPlayers() {
     const query=main.querySelector('#player-search').value.trim().toLowerCase();
@@ -54,6 +58,7 @@ export function renderTeam(id) {
   return ()=>{
     main.querySelector('#team-fixture').innerHTML=fixtureStrip(team);
     main.querySelector('#team-summary').innerHTML=summaryBlock(team);
+    main.querySelector('#team-season').innerHTML=seasonBlock(team);main.querySelector('#team-availability').innerHTML=availabilityBlock(team);main.querySelector('#team-calendar').innerHTML=calendarBlock(team);
     updateMatches();
     if(rosterVersion!==data.updatedAt||namesVersion!==names?.updatedAt){main.querySelector('#player-rows').innerHTML=playerRows(team);filterPlayers();rosterVersion=data.updatedAt;namesVersion=names?.updatedAt;}
   };

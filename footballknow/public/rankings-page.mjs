@@ -3,6 +3,7 @@ import {main,esc,pageHeading,monogram,sourceLink,toast} from './ui.mjs';
 import {localized,timestamp} from './football-components.mjs';
 import {league} from './league.mjs';
 import {metricRows} from './rankings-core.mjs';
+import {advancedControls,bindAdvanced,advancedHtml,advancedStatus,leagueRules} from './advanced-board.mjs';
 
 const clubCell=r=>`<a class="club-inline" href="#/team/${r.teamId}">${monogram(r,'tiny')}<span>${esc(r.cn)}</span></a>`;
 const formCell=r=>`<span class="form-run" aria-label="最近五场，最新在左">${(r.form||[]).map(v=>`<span class="result ${{W:'win',D:'draw',L:'loss'}[v]}">${{W:'胜',D:'平',L:'负'}[v]}</span>`).join('')}</span>`;
@@ -13,9 +14,10 @@ export function standingsPreview() {
 export function renderRankings() {
  let board='table',scope='all',metric='scorers',teamMetric='goalsFor',search='';
  main.innerHTML=`${pageHeading(`${league.name} · 数据中心`,'积分走势、球员贡献与球队表现，一处查清。',`<span class="tag">${esc(data.season)}</span>`)}
- <div class="tabs board-tabs" role="group" aria-label="数据榜分类"><button data-board="table" class="active" aria-pressed="true">积分榜</button><button data-board="players" aria-pressed="false">球员榜</button><button data-board="clubs" aria-pressed="false">球队榜</button></div>
+ <div class="tabs board-tabs" role="group" aria-label="数据榜分类"><button data-board="table" class="active" aria-pressed="true">积分榜</button><button data-board="players" aria-pressed="false">球员榜</button><button data-board="advanced" aria-pressed="false">高阶球员榜</button><button data-board="clubs" aria-pressed="false">球队榜</button></div>
  <div class="toolbar rank-toolbar"><div id="rank-controls"></div><button class="button secondary compact" id="rank-refresh">检查更新</button></div><div id="rank-status" class="note" role="status"></div><div id="rank-content"></div>`;
  const controls=()=>{
+  if(board==='advanced'){main.querySelector('#rank-controls').innerHTML=advancedControls();bindAdvanced(main,update);return;}
   main.querySelector('#rank-controls').innerHTML=board==='table'?`<label>统计范围 <select id="rank-scope">${Object.entries({all:'总榜',home:'主场',away:'客场',form:'近五场'}).map(([v,label])=>`<option value="${v}" ${v===scope?'selected':''}>${label}</option>`).join('')}</select></label>`:board==='players'?`<label>球员榜单 <select id="player-metric"><option value="scorers" ${metric==='scorers'?'selected':''}>射手榜</option><option value="assists" ${metric==='assists'?'selected':''}>助攻榜</option></select></label><label class="rank-search">搜索球员 / 球队 <input type="search" id="rank-search" value="${esc(search)}" placeholder="中文、粤语或原名"></label>`:`<label>球队指标 <select id="team-metric">${Object.entries({goalsFor:'进球数',goalsAgainst:'失球数（从少到多）',goalDifference:'净胜球',goalsPerGame:'场均进球',cleanSheets:'零封场次',yellowCards:'黄牌数',redCards:'红牌数'}).map(([v,label])=>`<option value="${v}" ${v===teamMetric?'selected':''}>${label}</option>`).join('')}</select></label>`;
   main.querySelector('#rank-scope')?.addEventListener('change',e=>{scope=e.target.value;update();});
   main.querySelector('#player-metric')?.addEventListener('change',e=>{metric=e.target.value;update();});
@@ -24,6 +26,7 @@ export function renderRankings() {
  };
  function update() {
   if(!main.querySelector('#rank-content'))return;
+  if(board==='advanced'){main.querySelector('#rank-status').textContent=advancedStatus();main.querySelector('#rank-content').innerHTML=advancedHtml();return;}
   const snapshot=board==='players'||['yellowCards','redCards'].includes(teamMetric)&&board==='clubs'?rankings:standings;
   const age=Date.now()-Date.parse(snapshot?.updatedAt);
   main.querySelector('#rank-status').textContent=`${snapshot?`最近成功检查 ${timestamp(snapshot.updatedAt)}`:'尚未取得本赛季榜单'}${rankingsFailed?' · 最近检查未成功，保留已有资料':age>(snapshot?.intervalSeconds||60)*3000?' · 等待更新':''}。${board==='players'||board==='clubs'&&['yellowCards','redCards'].includes(teamMetric)?'本站每 60 秒检查；来源自身注明夜间更新。':'积分榜每 60 秒检查。'}`;
@@ -41,7 +44,7 @@ export function renderRankings() {
    const label={goalsFor:'进球',goalsAgainst:'失球',goalDifference:'净胜球',goalsPerGame:'场均进球',cleanSheets:'零封',yellowCards:'黄牌',redCards:'红牌'}[teamMetric];
    html=rows.length?`<div class="table-wrap"><table><thead><tr><th>排名</th><th>球队</th><th>场次</th><th>${label}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.rank}</td><td>${clubCell(r)}</td><td>${r.played}</td><td class="points-cell">${teamMetric==='goalsPerGame'?r.value.toFixed(2):r.value}</td></tr>`).join('')}</tbody></table></div><p class="note">按所选指标排序，相同数值并列；场均进球按各队已赛场次计算。零封仅显示赛果已完整核对的球队。${sourceLink(['yellowCards','redCards'].includes(teamMetric)?rankings?.sources?.[1]:standings?.source,'统计来源')}</p>`:'<div class="empty">这项统计尚未完整核对，请切换其他指标。</div>';
   }
-  main.querySelector('#rank-content').innerHTML=html;
+  main.querySelector('#rank-content').innerHTML=html+(board==='table'?leagueRules():'');
  }
  main.querySelectorAll('[data-board]').forEach(b=>b.addEventListener('click',()=>{board=b.dataset.board;main.querySelectorAll('[data-board]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b));});controls();update();}));
  main.querySelector('#rank-refresh').addEventListener('click',async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='正在检查…';try{await refresh(true);update();}catch{toast('暂时无法更新，请稍后重试。');}finally{b.disabled=false;b.textContent='检查更新';}});

@@ -7,6 +7,9 @@ import {renderStatus} from './status-page.mjs';
 import {renderCompare} from './compare-page.mjs';
 import {bindTheme,bindDrawer,bindPalette,paintSync,startSyncIndicator} from './shell.mjs';
 import {enhanceTables,bindTableTools} from './table-tools.mjs';
+import {renderPlayer} from './player-page.mjs';
+import {renderQuality} from './quality-page.mjs';
+import {checkAlerts,mountAlertPanel} from './notifications.mjs';
 import {renderTeam} from './team-page.mjs';
 import {renderSimulator,renderRecords,selectMatch,selectSavedOdds,settleRecord} from './simulator.mjs';
 import {renderAdmin} from './admin.mjs';
@@ -38,22 +41,25 @@ export function updateView() {
  if(!data)return;
  try {if(reconcile(data.matches)){recordsChanged();toast('已按确认完赛结果更新模拟记录。');}}catch(error){toast(error.message);}
  updateStatus();updatePage();enhanceTables(main,routeKey());
+ try {checkAlerts();}catch {/* Alerts are optional and must never block a refresh. */}
 }
 
 function render() {
  disposePage();disposePage=()=>{};updatePage=()=>{};
  const [current,id,second]=route(),page=current||'home';closeDrawer();
- const active=['team','analysis'].includes(page)?'teams':page==='match'?'matches':page;
+ const active=['team','analysis','player'].includes(page)?'teams':page==='match'?'matches':page;
  document.querySelectorAll('[data-nav]').forEach(nav=>{nav.classList.toggle('active',nav.dataset.nav===active);if(nav.dataset.nav===active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');});
- document.querySelector('#breadcrumb').textContent=({home:`${league.name} / 总览`,status:'系统 / 同步监控',compare:`${league.name} / 球队对比`,teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'Football Know / 管理后台'})[page]||'足球资料库';
+ document.querySelector('#breadcrumb').textContent=({home:`${league.name} / 总览`,status:'系统 / 同步监控',quality:'系统 / 数据质量',player:`${league.name} / 球员档案`,compare:`${league.name} / 球队对比`,teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'Football Know / 管理后台'})[page]||'足球资料库';
  if(page==='admin'){disposePage=renderAdmin();updateStatus();return;}
  if(page==='status'){disposePage=renderStatus();updateStatus();return;}
  if(!data)return;
  if(page==='home')updatePage=renderHome();
  else if(page==='rankings')updatePage=renderRankings();
  else if(page==='compare')updatePage=renderCompare(id,second);
+ else if(page==='player')updatePage=renderPlayer(id,second);
+ else if(page==='quality')updatePage=renderQuality();
  else if(page==='matches')updatePage=renderMatches();
- else if(page==='following')updatePage=renderMatches(true);
+ else if(page==='following'){updatePage=renderMatches(true);mountAlertPanel(main);}
  else if(page==='match')disposePage=renderMatch(id);
  else if(page==='teams')renderTeams();
  else if(page==='team')updatePage=renderTeam(id);
@@ -67,9 +73,18 @@ function render() {
  updateStatus();enhanceTables(main,routeKey());
 }
 
+async function sharePage() {
+ const url=location.href,title=document.querySelector('#main h1')?.textContent||'Football Know';
+ try {
+  if(navigator.share){await navigator.share({title,url});return;}
+  await navigator.clipboard.writeText(url);toast('链接已复制，可以直接粘贴分享。');
+ } catch(error) {if(error?.name!=='AbortError')toast(`无法自动复制，请手动复制地址栏链接：${url}`);}
+}
+
 document.addEventListener('click',event=>{
  if(event.target.closest('.skip-link')){event.preventDefault();main.focus();return;}
  const button=event.target.closest('button');if(!button)return;
+ if(button.hasAttribute('data-share')){sharePage();return;}
  if(button.hasAttribute('data-refresh-records')){render();return;}
  if(!data)return;
  if(button.hasAttribute('data-follow')){toggleFollow(Number(button.dataset.follow));return;}

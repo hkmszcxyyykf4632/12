@@ -6,6 +6,8 @@ export let data=null, live=null, names=null, history=null;
 export let liveFailed=false;
 export let standings=null,rankings=null,rankingsFailed=false;
 export let odds=null;
+// Optional snapshots: the site works without them and shows their sections once the synchronizer has produced them.
+export let facts=null,changes=null,oddsHistory=null;
 let archive=null, busy=false;
 // One cadence for everything: the server checks every source each minute and the page re-reads every snapshot each minute.
 export const SYNC_MS=60000;
@@ -33,7 +35,7 @@ export async function refresh(force=false) {
         archive=next;
       } catch(error) {if(!archive)throw error;}
     }
-    const snapshotKeys=full?['live','names','history','standings','rankings','odds']:['live','standings','rankings','odds'];
+    const snapshotKeys=['live','names','history','standings','rankings','odds','match-facts','changes','odds-history'];
     const snapshots=await Promise.allSettled(snapshotKeys.map(readSnapshot));
     const result=snapshots[0];
     if(result.status==='fulfilled'&&validLive(result.value,archive)) {live=result.value;liveFailed=false;}
@@ -55,6 +57,12 @@ export async function refresh(force=false) {
     if(quoteResult.status==='fulfilled'&&quoteResult.value.version===1&&quoteResult.value.league===league.id&&quoteResult.value.season===archive.season&&quoteResult.value.matches)odds=quoteResult.value;
     if(odds?.season!==archive.season)odds=null;
     if(odds)data.matches=data.matches.map(m=>{const rows=odds.matches[m.id]?.filter(q=>q.market==='90-minute-1x2'&&['H','D','A'].every(k=>Number.isFinite(q[k])&&q[k]>1&&q[k]<=10000));return rows?.length?{...m,odds:rows}:m;});
+    const optional=key=>{const item=snapshots[snapshotKeys.indexOf(key)];return item.status==='fulfilled'&&item.value?.version===1?item.value:null;};
+    const nextFacts=optional('match-facts'),nextChanges=optional('changes'),nextMoves=optional('odds-history');
+    if(nextFacts?.league===league.id&&nextFacts.season===archive.season&&Array.isArray(nextFacts.players))facts=nextFacts;
+    if(facts?.season!==archive.season)facts=null;
+    if(Array.isArray(nextChanges?.entries))changes=nextChanges;
+    if(nextMoves?.league===league.id&&nextMoves.season===archive.season&&nextMoves.matches)oddsHistory=nextMoves;
     syncState.lastSuccess=Date.now();
     return true;
   } finally {busy=false;syncState.busy=false;}

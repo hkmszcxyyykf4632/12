@@ -48,7 +48,7 @@ export function startSyncIndicator(syncNow) {
 }
 
 const PAGES=[['总览','#/'],['比赛中心','#/matches'],['数据榜单','#/rankings'],['球队列表','#/teams'],['球队对比','#/compare'],['我的关注','#/following'],
-  ['模拟投注','#/simulator'],['我的记录','#/records'],['同步监控','#/status'],['数据说明','#/sources'],['管理后台','#/admin']];
+  ['模拟投注','#/simulator'],['我的记录','#/records'],['同步监控','#/status'],['数据质量','#/quality'],['数据说明','#/sources'],['管理后台','#/admin']];
 
 /** Everything the palette can open, rebuilt when it is shown so it reflects the latest snapshot. */
 export function searchIndex() {
@@ -59,7 +59,7 @@ export function searchIndex() {
     const name=localized(p),club=data.teams.find(t=>t.id===p.team);
     const original=p.known_name||[p.first_name,p.second_name].filter(Boolean).join(' ')||p.web_name;
     rows.push({kind:'球员',label:name?.mandarin||p.web_name,detail:[name?.cantonese&&name.cantonese!==name.mandarin?`粤 ${name.cantonese}`:'',original,club?.cn].filter(Boolean).join(' · '),
-      href:`#/team/${p.team}`,keys:[name?.mandarin,name?.cantonese,p.web_name,original].join(' ')});
+      href:`#/player/${p.id}`,keys:[name?.mandarin,name?.cantonese,p.web_name,original].join(' ')});
   }
   const now=Date.now();
   data.matches.filter(m=>m.competition===league.name&&m.season===data.season&&(m.started&&!m.finished||m.kickoff&&Date.parse(m.kickoff)>now))

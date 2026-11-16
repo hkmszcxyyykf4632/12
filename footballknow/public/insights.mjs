@@ -67,3 +67,142 @@ export function statusSummary(status,now=Date.now()) {
   return {...summary,alive,level:!alive?'down':summary.failed?'warn':'ok',
     text:!alive?'同步服务未运行，或心跳已超过两分钟':summary.failed?`${summary.ok} 项正常，${summary.failed} 项失败并自动重试`:summary.pending?`${summary.ok} 项正常，${summary.pending} 项等待首次同步`:`全部 ${summary.total} 项同步正常`};
 }
+
+// ---- Season, player and data-quality calculations ----
+
+/** Home, away and overall record of one club in one competition season, from confirmed results only. */
+export function teamSeason(matches,name,competition,season) {
+  const blank=()=>({played:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0,cleanSheets:0,failedToScore:0});
+  const record={all:blank(),home:blank(),away:blank()};
+  for(const m of matches) {
+    if(!m.finished||m.competition!==competition||m.season!==season||!Number.isInteger(m.homeGoals)||!Number.isInteger(m.awayGoals))continue;
+    const side=m.home===name?'home':m.away===name?'away':null;
+    if(!side)continue;
+    const scored=side==='home'?m.homeGoals:m.awayGoals,conceded=side==='home'?m.awayGoals:m.homeGoals;
+    for(const row of [record.all,record[side]]) {
+      row.played++;row.goalsFor+=scored;row.goalsAgainst+=conceded;
+      row[scored>conceded?'wins':scored<conceded?'losses':'draws']++;
+      row.cleanSheets+=Number(conceded===0);row.failedToScore+=Number(scored===0);
+    }
+  }
+  return record;
+}
+
+export function ageOn(birth,now=Date.now()) {
+  const born=new Date(birth),today=new Date(now);
+  if(!birth||Number.isNaN(born.getTime()))return null;
+  const age=today.getFullYear()-born.getFullYear()-Number(today.getMonth()<born.getMonth()||today.getMonth()===born.getMonth()&&today.getDate()<born.getDate());
+  return age>=14&&age<=60?age:null;
+}
+
+/** Ranked rows for one numeric field; equal values share a rank and rows without the figure are left out. */
+export function boardRows(rows,value,{limit=50,ascending=false}={}) {
+  const scored=rows.map(row=>({row,value:Number(value(row))})).filter(item=>Number.isFinite(item.value)&&item.value>0)
+    .sort((a,b)=>ascending?a.value-b.value:b.value-a.value).slice(0,limit);
+  let rank=0;
+  return scored.map((item,index)=>{if(index===0||item.value!==scored[index-1].value)rank=index+1;return {...item,rank};});
+}
+
+/** Kelly index per bookmaker: its price times the average margin-free probability of all listed bookmakers. */
+export function kellyRows(quotes) {
+  const groups=new Map();
+  for(const quote of quotes||[]) {
+    const p=impliedProbabilities(quote);
+    if(!p||quote.kind==='aggregate'||quote.market&&quote.market!=='90-minute-1x2')continue;
+    const phase=quote.phase||'',group=groups.get(phase)||new Map(),prior=group.get(quote.provider);
+    if(!prior||String(quote.fetchedAt||'')>=String(prior.quote.fetchedAt||''))group.set(quote.provider,{quote,p});
+    groups.set(phase,group);
+  }
+  return [...groups].flatMap(([phase,group])=>{
+    const priced=[...group.values()];if(priced.length<2)return [];
+    const mean=key=>priced.reduce((sum,item)=>sum+item.p[key],0)/priced.length;
+    const average={H:mean('H'),D:mean('D'),A:mean('A')};
+    return priced.map(({quote})=>({provider:quote.provider+(phase?` · ${phase}`:''),H:quote.H*average.H,D:quote.D*average.D,A:quote.A*average.A}));
+  });
+}
+
+/** Opening and latest price per provider from the recorded movement. */
+export function priceMovement(rows) {
+  const providers=new Map();
+  for(const row of rows||[]) {
+    const key=JSON.stringify([row.provider,row.phase||'采集快照',row.via||'']);
+    const label=[row.provider,row.phase,row.via].filter(Boolean).join(' · ');
+    const entry=providers.get(key)||{provider:label,opening:row,latest:row,points:[]};
+    entry.latest=row;entry.points.push(row);providers.set(key,entry);
+  }
+  return [...providers.values()];
+}
+
+export function matchDetailMatches(detail,match,league) {
+  if(!detail||detail.matchId!==match.id||detail.league!==league)return false;
+  if(detail.status!=='available'&&!detail.home&&!detail.away)return true;
+  return ['home','away'].every(side=>detail[side]===match[side]&&(!detail.lineups?.[side]||detail.lineups[side].name===match[side]));
+}
+
+/** Announcements for followed clubs between two refreshes: kick-off, goal, full time. */
+export function matchAlerts(before,after,clubs,label=name=>name) {
+  const old=new Map((before||[]).map(m=>[m.id,m])),alerts=[];
+  for(const m of after||[]) {
+    const prior=old.get(m.id);
+    if(!prior||!clubs.includes(m.home)&&!clubs.includes(m.away))continue;
+    const pair=`${label(m.home)} ${m.homeGoals??0} : ${m.awayGoals??0} ${label(m.away)}`;
+    if(!prior.started&&m.started&&!m.finished)alerts.push({kind:'start',matchId:m.id,title:'比赛开始',text:`${label(m.home)} vs ${label(m.away)}`});
+    else if(prior.started&&!prior.finished&&!m.finished&&(prior.homeGoals!==m.homeGoals||prior.awayGoals!==m.awayGoals)) {
+      const scorer=(m.homeGoals??0)>(prior.homeGoals??0)?m.home:(m.awayGoals??0)>(prior.awayGoals??0)?m.away:null;
+      alerts.push({kind:'goal',matchId:m.id,title:scorer?`${label(scorer)}进球`:'比分更正',text:pair});
+    }
+    if(!prior.finished&&m.finished&&prior.started)alerts.push({kind:'final',matchId:m.id,title:'比赛结束',text:pair});
+  }
+  return alerts;
+}
+
+/** Field coverage and records that look wrong, so gaps are stated instead of hidden. */
+export function qualityReport({data,names,facts,competition,now=Date.now()}) {
+  const players=data.players,season=data.matches.filter(m=>m.competition===competition&&m.season===data.season);
+  const done=season.filter(m=>m.finished);
+  const share=(label,filled,total,note='')=>({label,filled,total,note});
+  const fields=[
+    share('球员中文译名（已核对来源）',players.filter(p=>names?.names?.[String(p.code)]).length,players.length),
+    share('球员出生日期',players.filter(p=>p.birth_date).length,players.length),
+    share('球员国籍',players.filter(p=>p.country).length,players.length),
+    share('球员球衣号码',players.filter(p=>p.squad_number!=null&&p.squad_number!=='').length,players.length),
+    share('球员本赛季出场分钟',players.filter(p=>p.minutes!=null).length,players.length),
+    share('已完赛比赛的比分',done.filter(m=>Number.isInteger(m.homeGoals)&&Number.isInteger(m.awayGoals)).length,done.length),
+    share('未开赛比赛的开球时间',season.filter(m=>!m.finished&&m.kickoff).length,season.filter(m=>!m.finished).length),
+    share('已完赛比赛的赔率',done.filter(m=>m.odds?.length).length,done.length),
+    share('已完赛比赛的阵容与技术统计',facts?Math.min(facts.coveredMatches,done.length):0,done.length,facts?'':'汇总尚未生成'),
+    share('可核对的半场比分',facts?done.filter(m=>facts.matches?.[m.id]?.halfTime).length:0,done.length,'仅在事件进球数与终场比分一致时给出'),
+  ];
+  const anomalies=[],seen=new Map();
+  for(const m of season) {
+    const pair=`${m.date} ${m.home} vs ${m.away}`;
+    if(m.finished&&(!Number.isInteger(m.homeGoals)||!Number.isInteger(m.awayGoals)))anomalies.push({matchId:m.id,text:`${pair}：已完赛但缺少比分`});
+    else if(m.finished&&(m.homeGoals>12||m.awayGoals>12))anomalies.push({matchId:m.id,text:`${pair}：比分 ${m.homeGoals}:${m.awayGoals} 超出常见范围，需要核对`});
+    if(m.finished&&Number.isInteger(m.homeGoals)&&m.result&&m.result!==(m.homeGoals>m.awayGoals?'H':m.homeGoals<m.awayGoals?'A':'D'))anomalies.push({matchId:m.id,text:`${pair}：胜平负标记与比分不一致`});
+    if(m.started&&!m.finished&&m.kickoff&&now-Date.parse(m.kickoff)>4*3600000)anomalies.push({matchId:m.id,text:`${pair}：开球超过 4 小时仍显示进行中`});
+    if(!m.started&&!m.finished&&m.kickoff&&now-Date.parse(m.kickoff)>3*3600000)anomalies.push({matchId:m.id,text:`${pair}：已过开球时间 3 小时仍未开始，可能延期`});
+    if(m.home===m.away)anomalies.push({matchId:m.id,text:`${pair}：主客队相同`});
+    const key=`${m.date}|${m.home}|${m.away}`;
+    if(seen.has(key))anomalies.push({matchId:m.id,text:`${pair}：同一天同对阵出现两次`});
+    seen.set(key,true);
+  }
+  return {fields,anomalies};
+}
+
+/** Corner points of a radar polygon; shares are 0..1 and the first axis points up. */
+export function radarPoints(shares,radius,cx=radius,cy=radius) {
+  return shares.map((share,index)=>{
+    const angle=-Math.PI/2+index*2*Math.PI/shares.length,r=radius*Math.max(0,Math.min(1,share));
+    return `${(cx+r*Math.cos(angle)).toFixed(1)},${(cy+r*Math.sin(angle)).toFixed(1)}`;
+  }).join(' ');
+}
+
+const EVENT_TEXT={goal:(a,b)=>`${a}破门${b?`，${b}助攻`:''}`,'penalty---scored':a=>`${a}主罚点球命中`,'own-goal':a=>`${a}打入乌龙球`,
+  'yellow-card':a=>`${a}被出示黄牌`,'red-card':a=>`${a}被红牌罚下`,'yellow-red-card':a=>`${a}第二张黄牌，被罚下`,
+  substitution:(a,b)=>b?`${a}上场，换下${b}`:`${a}换人上场`,'penalty---missed':a=>`${a}点球未进`};
+
+/** One line describing a match event in the site's own words, from the structured event only. */
+export function eventSentence(event,name=p=>p.name) {
+  const people=(event.players||[]).map(name);
+  return (EVENT_TEXT[event.type]||(()=>event.label||''))(people[0]||'球员',people[1]||'');
+}

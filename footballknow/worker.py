@@ -18,7 +18,9 @@ from datetime import datetime, timedelta, timezone
 
 from pydantic import BaseModel
 
-from football.files import PUBLIC, ROOT, publish
+from football.changelog import diff_live, merge_log
+from football.files import PUBLIC, ROOT, publish, read_json
+from football.leagues import league_path
 
 LOG = logging.getLogger('football.sync')
 STOP = threading.Event()
@@ -98,7 +100,34 @@ def retry_delay(interval: int, consecutive_failures: int) -> int:
     return max(interval, min(BACKOFF_CEILING, interval * 2 ** (consecutive_failures - 1)))
 
 
-def run_job(script: str) -> str:
+LIVE_JOBS = {'live': 'epl', 'laliga-live': 'laliga', 'ucl-live': 'ucl'}
+
+
+def read_live(league: str) -> dict:
+    try:
+        return read_json(league_path(PUBLIC, league) / 'live.json')
+    except (OSError, ValueError):
+        return {}
+
+
+def run_job(script: str, league: str | None = None) -> str:
+    """Run one refresh; for score jobs, append what changed to the public change record."""
+    before = read_live(league) if league else None
+    message = run_script(script)
+    if league:
+        stamp = datetime.now(timezone.utc).isoformat()
+        entries = diff_live(before, read_live(league), league, stamp)
+        if entries:
+            path = league_path(PUBLIC, league) / 'changes.json'
+            try:
+                previous = read_json(path) if path.exists() else {}
+            except (OSError, ValueError):
+                previous = {}
+            publish(path, merge_log(previous, entries, stamp))
+    return message
+
+
+def run_script(script: str) -> str:
     result = subprocess.run([sys.executable, *shlex.split(script)], cwd=ROOT,
                             capture_output=True, text=True, encoding='utf-8', timeout=600,
                             check=False)
@@ -161,7 +190,7 @@ def main() -> None:
                     job.status.running = True
                     job.status.lastAttempt = stamp.isoformat()
                     job.started = clock
-                    job.future = executor.submit(run_job, job.script)
+                    job.future = executor.submit(run_job, job.script, LIVE_JOBS.get(name))
                     changed = True
             if changed or clock - published >= 5:
                 publish(PUBLIC / 'sync-status.json', snapshot(jobs, True, started_at))
