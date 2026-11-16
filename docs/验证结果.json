@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-11-16",
+  "pythonTests": {"passed": 45, "failed": 0},
+  "nodeTests": {"passed": 17, "failed": 0},
+  "browser": {
+    "engine": "user Chrome",
+    "standingsRows": {"epl": 20, "laliga": 20, "ucl": 36},
+    "cantoneseSearch": "passed",
+    "completedMatchFilter": "passed",
+    "eplSampleStarters": [11, 11],
+    "laligaHomeTable": "passed",
+    "mobileViewportWidth": 390,
+    "horizontalPageOverflow": false,
+    "expandedAnalysisLineupEvidence": "passed"
+  },
+  "apiSamples": {
+    "epl": {"lineupPlayers": [11, 11], "nextMatchCoverage": [[19, 20], [19, 20]]},
+    "laliga": {"lineupPlayers": [11, 11], "nextMatchCoverage": [[20, 20], [19, 20]]},
+    "ucl": {"lineupPlayers": [11, 11], "nextMatchCoverage": [[19, 20], [20, 20]]}
+  },
+  "tencentPreflight": {"servicesActive": 3, "anonymousAuthEndpointHealthy": true, "freeDiskGiB": 106.8},
+  "publicCredentialScan": "passed",
+  "expandedRelease": {
+    "status": "deployed",
+    "revision": "823d2233171898ed3acc80e00c128c4fd1cfc405",
+    "publishedAt": "2026-11-16T14:08:23.684500+00:00",
+    "archiveSha256": "7984f38fbe1a8612039a0ac8714bda6746c7dc6f169f2d521fd0e266c63b80dd",
+    "installedFiles": 1125,
+    "backup": "/var/backups/footballknow/expanded-823d22331718-20261116T140818",
+    "servicesActive": 3,
+    "publicStandingsRows": {"epl": 20, "laliga": 20, "ucl": 36},
+    "productionBrowser": {"standingsRows": {"epl": 20, "laliga": 20, "ucl": 36}, "mobileWidth": 390, "mobileDocumentWidth": 380, "expandedHistoricalLineups": "passed"},
+    "publicMatchSamplesStarters": {"epl": [11, 11], "laliga": [11, 11], "ucl": [11, 11]},
+    "syncJobs": {"registered": 25, "successful": 22, "pending": 0, "failed": ["epl-leaders", "laliga-leaders", "ucl-leaders"]},
+    "upstreamIssue": "ESPN stats HTML returned empty content or HTTP 403 from Tencent; last successful snapshots retained; retry every 300 seconds",
+    "deepseekSample": {"teamId": 86, "league": "ucl", "generatedAt": "2026-11-16T14:09:55.919051+00:00", "model": "deepseek-flash", "rulesVersion": "c1afcc98b2fa", "summaryParagraphs": 3, "lineupCoverage": [[20,20],[20,20]]}
+  },
+  "githubUpload": {"status": "verified", "repository": "https://github.com/hkmszcxyyykf4632/12", "initialCommit": "823d2233171898ed3acc80e00c128c4fd1cfc405"}
+}
