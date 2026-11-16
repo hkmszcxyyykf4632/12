@@ -35,5 +35,25 @@
     "upstreamIssue": "ESPN stats HTML returned empty content or HTTP 403 from Tencent; last successful snapshots retained; retry every 300 seconds",
     "deepseekSample": {"teamId": 86, "league": "ucl", "generatedAt": "2026-11-16T14:09:55.919051+00:00", "model": "deepseek-flash", "rulesVersion": "c1afcc98b2fa", "summaryParagraphs": 3, "lineupCoverage": [[20,20],[20,20]]}
   },
-  "githubUpload": {"status": "verified", "repository": "https://github.com/hkmszcxyyykf4632/12", "initialCommit": "823d2233171898ed3acc80e00c128c4fd1cfc405"}
+  "githubUpload": {"status": "verified", "repository": "https://github.com/hkmszcxyyykf4632/12", "initialCommit": "823d2233171898ed3acc80e00c128c4fd1cfc405"},
+  "enterpriseRelease": {
+    "status": "deployed",
+    "revision": "0abe0372e56cd65e4151e2d0bcd4f8e7cba7d766",
+    "publishedAt": "2026-11-16T15:18:15.175613+00:00",
+    "archiveSha256": "0bc8d54927ebf9eaf8c74afd7562f1a6e40002ec9bba6fe850a61422789f14a7",
+    "installedFiles": 1121,
+    "backup": "/var/backups/footballknow/expanded-0abe0372e56c-20261116T151810",
+    "servicesActive": 3,
+    "pythonTests": {"passed": 53, "failed": 0},
+    "nodeTests": {"passed": 22, "failed": 0},
+    "browser": {"surface": "in-app browser", "themes": "passed", "cantoneseSearch": "passed", "teamComparison": "passed", "standingsSort": "passed", "downloadedCsvRows": 21, "mobileViewportWidth": 390, "mobileDocumentWidth": 375, "mobileDrawer": "passed", "productionLeagueOverviews": ["epl", "laliga", "ucl"], "productionConsoleErrors": 0},
+    "publicStandingsRows": {"epl": 20, "laliga": 20, "ucl": 36},
+    "healthHttpStatus": 200,
+    "allNormalIntervalsSeconds": 60,
+    "jsonCacheControl": "no-cache",
+    "jsonConditionalHttpStatus": 304,
+    "apiCacheControl": "no-store",
+    "syncObservation": {"at": "2026-11-16T15:22:35.637393+00:00", "total": 25, "ok": 15, "failed": 3, "pending": 7, "failedJobs": ["epl-leaders", "laliga-leaders", "ucl-leaders"], "notes": "First-run history, names and UCL catalogue still running. EPL live completed successive 60-second cycles. Initial La Liga catalogue failure recovered automatically. This is a short observation, not a 24-hour endurance result."},
+    "publicCredentialScan": "passed"
+  }
 }
