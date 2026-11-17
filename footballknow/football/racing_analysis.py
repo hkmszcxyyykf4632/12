@@ -1,6 +1,7 @@
 """Separate, immutable pre-race forecasts and result-based post-race reviews."""
 import hashlib
 import json
+import re
 import sqlite3
 import threading
 from contextlib import contextmanager
@@ -24,6 +25,7 @@ RULES = '''你是香港赛马资料分析员。只使用输入内带日期的马
 赛前方法：比较所有出赛马匹，不忽略冷门和初出马。以同场地同途程、近期状态、班次负磅、档位和资料完整度为依据，选择一个首选horseId和最多三个不同horseId的关注名单，首选须在名单内。不给伪精确胜率或必胜措辞。给出最主要支持点及改变判断的条件。结果仅代表输入时点；说明关键缺项，不能用未经验证的成功率增强结论。
 赛后方法：首先核对官方名次、退出、时间、头马距离、沿途走位及赛后独赢赔率。区分结果与推测；表现未达预期不能自动归咎于骑师或操纵。说明冠军和主要对手表现、原首选实际名次、哪项赛前证据得到支持或失效。没有赛前预测时明确无原始预测可比较。赛后独赢赔率不可当作赛前已知赔率，不编造开盘、临场变化或潜在伤病。赛后首选和名单固定为空，禁止把获胜者倒写成预测。
 评估：首选胜出命中率=赛前固定首选实际第一名次数/已有完整赛果且首选实际出赛的预测次数；死热第一名算命中，首选退出作废另列，未完赛不计。前三命中另计，不混成胜出率。所有有效赛前预测都纳入。无样本只能写等待验证。
+成稿要求：summary和details都是直接给读者看的成稿，不写JSON字段名、程序变量、核对步骤或草稿更正。没有原始预测时仅说「本站未保存本场赛前预测」；不出现priorPrediction等内部名称。马号、马名、名次和距离必须先与本场entries核实，无法确认就省略，不输出「32号？实为11号」之类边写边改的文字。两三段摘要直接讲结果、主要依据和关键条件，不逐项叙述内部检查过程。
 严格输出JSON：{"summary":["短结论第一段","短结论第二段"],"pick":"赛前首选horseId或赛后null","shortlist":["horseId"],"details":[{"title":"依据","text":"可复核的事实与条件"}]}。summary两至三段，每段不超过220字；details一至五项，每项标题40字内正文800字内。'''
 
 
@@ -73,6 +75,9 @@ def validate_content(value, race, phase):
     report.summary = [' '.join(p.split()) for p in report.summary]
     if any(not p or len(p) > 220 for p in report.summary):
         raise ValueError('分析摘要过长，请重新生成。')
+    visible_text = '\n'.join(report.summary + [d.title + '\n' + d.text for d in report.details])
+    if re.search(r'(?:priorPrediction|historicalEvaluation|profileCoverage|horseId|raceId|snapshotHash)|[?？]\s*(?:实为|應為|应为)', visible_text):
+        raise ValueError('分析包含内部字段或草稿更正，请改成已核实的中文成稿。')
     active = {e['id'] for e in race['entries'] if not e.get('withdrawn')}
     if phase == 'pre':
         if report.pick not in active or report.pick not in report.shortlist or len(set(report.shortlist)) != len(report.shortlist) or any(p not in active for p in report.shortlist):
@@ -86,10 +91,11 @@ def model_report(context, race, phase):
     value = request_json(RULES, context, 4500)
     try:
         return validate_content(value, race, phase)
-    except ValueError:
+    except ValueError as error:
         correction = {**context, 'previousResponse': value,
+                      'validationIssue': str(error)[:2000],
                       'formatCorrection': '上次输出未通过检查。请保留事实依据，修正格式：关注名单最多三匹、必须含首选、不得有退出马或重复项；赛后 pick=null 且 shortlist=[]；摘要每段220字内；详情每项800字内。重新输出完整JSON。'}
-        repair_rules = RULES + '\n这一次只修正 previousResponse 的输出格式。必须逐项确认 shortlist 长度不超过3且包含首选；只保留两三段摘要，每段220字内；赛后 pick=null、shortlist=[]。事实和马匹身份仍只依据原始资料，输出通过规范的完整JSON。'
+        repair_rules = RULES + '\n按validationIssue修正previousResponse。必须逐项确认 shortlist 长度不超过3且包含首选；只保留两三段摘要，每段220字内；赛后 pick=null、shortlist=[]。公开文字去掉内部字段和草稿更正，马号与名次从原始资料核实。事实和马匹身份仍只依据原始资料，输出通过规范的完整JSON。'
         return validate_content(request_json(repair_rules, correction, 4500), race, phase)
 
 

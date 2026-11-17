@@ -115,3 +115,14 @@ def test_one_bounded_format_correction_then_revalidate(monkeypatch):
     monkeypatch.setattr(analysis, 'request_json', lambda *args: bad)
     with pytest.raises(ValueError):
         analysis.model_report({'phase': 'pre'}, value, 'pre')
+
+
+def test_public_analysis_rejects_internal_fields_and_unfinished_corrections():
+    for draft in ['没有预测（priorPrediction为空）。', '32号?实为11号前置。']:
+        bad = content('post')
+        bad['summary'][1] = draft
+        with pytest.raises(ValueError, match='成稿'):
+            analysis.validate_content(bad, race(), 'post')
+    clean = content('post')
+    clean['summary'][1] = '本站未保存本场赛前预测。'
+    assert analysis.validate_content(clean, race(), 'post')['summary'][1] == clean['summary'][1]
