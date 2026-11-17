@@ -1,4 +1,5 @@
-import {data,names,playerValues} from './repository.mjs';
+import {bindHandicapTrend} from './handicap-trend.mjs';
+import {data,names,playerValues,markets} from './repository.mjs';
 import {valuationHtml} from './player-values.mjs';
 import {main,esc,cn,dateText,monogram,recent,resultFor,formRun,matchTable,sourceLink} from './ui.mjs';
 import {localized,fixtureStrip} from './football-components.mjs';
@@ -41,8 +42,9 @@ export function renderTeam(id) {
     <div class="table-wrap"><table class="squad-table"><thead><tr><th>粤语 / 香港译名</th><th>普通话 / 大陆译名</th><th>位置（${league.roster}）</th><th>出生日期</th><th>估算身价</th><th>分钟</th><th>进球 / 助攻</th><th>状态</th></tr></thead><tbody id="player-rows">${playerRows(team)}</tbody></table></div><div id="player-empty" class="empty hidden">没有符合筛选条件的球员。</div><p class="note" id="names-coverage"></p><p class="note">分钟、进球与助攻为本赛季${league.name}数据；位置按 ${league.roster} 分类，未提供的数值留空，名单可能不包含全部注册球员。</p></section>
     <section id="season-section"><div class="section-head"><h2>赛季攻防数据</h2><p>${esc(data.season)} ${league.name}</p></div><div id="team-season">${seasonBlock(team)}</div></section>
     <section id="availability-section"><div class="section-head"><h2>伤停与停赛</h2></div><div id="team-availability">${availabilityBlock(team)}</div></section>
-    <section id="calendar-section"><div class="section-head"><h2>赛程日历</h2><p>本赛季全部${league.name}比赛</p></div><div class="toolbar"><label class="small">主客场 <select class="filter-select" id="team-venue" aria-label="筛选球队主客场"><option value="all">全部</option><option value="home">主场</option><option value="away">客场</option></select></label><span class="small subtle">同时筛选赛程与最近二十场</span></div><div id="team-calendar">${calendarBlock(team)}</div></section>
+    <section id="team-handicap-trend"></section><section id="calendar-section"><div class="section-head"><h2>赛程日历</h2><p>本赛季全部${league.name}比赛</p></div><div class="toolbar"><label class="small">主客场 <select class="filter-select" id="team-venue" aria-label="筛选球队主客场"><option value="all">全部</option><option value="home">主场</option><option value="away">客场</option></select></label><span class="small subtle">同时筛选赛程与最近二十场</span></div><div id="team-calendar">${calendarBlock(team)}</div></section>
     <section id="matches-section"><div class="section-head"><div><h2>最近二十场${league.historyLabel}</h2></div><p>最新在上 · 跨赛季</p></div><div class="toolbar"><p class="note">点击赔率，记录一次模拟判断</p><select class="filter-select" id="competition-filter" aria-label="筛选比赛赛事"><option value="all">${league.historyFilter}</option><option value="pl">仅${league.name}</option></select></div><div id="matches-table">${matchTable(recent(team),team)}</div><p class="note">比分和赔率按主队、客队排列。不足二十场时显示实际数量。${league.id==='ucl'?'已收录正式赛事按90分钟含补时统计；加时、点球与总比分分开，缺少可核对比分的场次不参与统计。':'当前范围不包含杯赛。'}缺少赔率可手动录入。</p></section>${historySections(team)}`;
+  const updateHandicap=bindHandicapTrend(main.querySelector('#team-handicap-trend'),()=>({matches:data.matches,teamName:team.name,snapshot:markets,season:data.season,competition:league.name}),cn);
   function filterPlayers() {
     const query=main.querySelector('#player-search').value.trim().toLowerCase();
     const position=main.querySelector('#position-filter').value;
@@ -64,7 +66,7 @@ export function renderTeam(id) {
     main.querySelector('#team-fixture').innerHTML=fixtureStrip(team);
     main.querySelector('#team-summary').innerHTML=summaryBlock(team);
     main.querySelector('#team-season').innerHTML=seasonBlock(team);main.querySelector('#team-availability').innerHTML=availabilityBlock(team);main.querySelector('#team-calendar').innerHTML=calendarBlock(team,venue());
-    updateMatches();main.querySelector('#team-research').innerHTML=clubResearch(team);
+    updateHandicap();updateMatches();main.querySelector('#team-research').innerHTML=clubResearch(team);
     if(rosterVersion!==data.updatedAt||namesVersion!==names?.updatedAt||valueVersion!==playerValues?.updatedAt){main.querySelector('#player-rows').innerHTML=playerRows(team);filterPlayers();hydratePlayerPortraits(main,league.id);rosterVersion=data.updatedAt;namesVersion=names?.updatedAt;valueVersion=playerValues?.updatedAt;}
   };
 }

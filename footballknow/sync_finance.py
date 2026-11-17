@@ -11,11 +11,17 @@ if __name__ == '__main__':
     elif args.kind == 'evaluation':
         from football.stock_analysis import evaluate_all
         result = evaluate_all()
+        from football.reviews import refresh_watched_reviews
+        result.update(refresh_watched_reviews())
     elif args.kind in ['companies', 'history']:
         result = refresh_collection(args.kind)
     else:
         result = (refresh_quotes if args.kind == 'quotes' else refresh_assets)()
+        from football.market_reference import refresh_policy_rates, refresh_stock_rankings
+        if args.kind == 'quotes':
+            refresh_stock_rankings()
         if args.kind == 'assets':
+            refresh_policy_rates()
             from football.global_markets import refresh_global_markets
             global_result = refresh_global_markets()
             if global_result['failedSymbols']:

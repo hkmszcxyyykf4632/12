@@ -1,3 +1,4 @@
+import {racingLiveBlock} from './racing-live.mjs';
 import {replayUrl} from './racing-replay.mjs';
 import {main,esc,pageHeading} from './ui.mjs';
 import {portrait} from './portraits.mjs';
@@ -9,7 +10,7 @@ const raceClock=r=>r.status==='cancelled'?'已取消':r.offTime?clock(r.offTime)
 const statusText=r=>r.resultOfficial?'正式赛果':r.status==='provisional'?'初步赛果':r.status==='cancelled'?'赛事取消':'待开跑';
 export function renderRacingHub(){
   const controller=new AbortController();let disposed=false;
-  main.innerHTML=pageHeading('香港赛马','赛马日、即时赛果、独赢位置连赢赔率与骑练出赛分组。')+racingNav('racing')+'<div id="meeting-cards" class="loading">正在读取赛马日…</div>';
+  main.innerHTML=pageHeading('香港赛马','赛马日、即时赛果、独赢位置连赢赔率与骑练出赛分组。')+racingNav('racing')+racingLiveBlock()+'<div id="meeting-cards" class="loading">正在读取赛马日…</div>';
   async function refresh(){try{const data=await racingJson('meetings.json',controller.signal);if(disposed)return;
     const meetings=new Map();for(const race of data.races||[]){const key=meetingKey(race);if(!meetings.has(key))meetings.set(key,{id:key,date:race.date,course:race.courseName,races:[]});meetings.get(key).races.push(race);}
     const today=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Hong_Kong',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
@@ -23,7 +24,7 @@ export function renderRacingDay(id,initial='results'){
   const controller=new AbortController();let mode=['trainer','jockey','runners'].includes(initial)?initial:'results',races=[],schedule={},people={},missing=0,query='',busy=false;
   if(!/^\d{4}-\d{2}-\d{2}-(ST|HV)$/.test(id)){main.innerHTML='<div class="empty">赛马日编号不正确。</div>';return()=>{};}
   const day=id.slice(0,10),course=id.endsWith('ST')?'沙田':'跑马地';
-  main.innerHTML=pageHeading(`${day} · ${course}`,'赛马日资料按香港时间显示。')+racingNav('racing')+'<div id="racing-day" class="loading">读取出赛马匹和赛果…</div>';
+  main.innerHTML=pageHeading(`${day} · ${course}`,'赛马日资料按香港时间显示。')+racingNav('racing')+racingLiveBlock()+'<div id="racing-day" class="loading">读取出赛马匹和赛果…</div>';
   function paint(){const target=main.querySelector('#racing-day');if(!target)return;target.className='';
     const official=races.filter(r=>r.resultOfficial).length,entries=races.flatMap(r=>r.entries||[]).filter(h=>!h.withdrawn);
     target.innerHTML=`<div class="racing-day-heading"><div><span class="eyebrow">RACE DAY · ${course}</span><h2>${day}</h2></div><label>选择赛马日<select id="day-select">${[...new Map((schedule.races||[]).map(r=>[meetingKey(r),r])).values()].sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<option value="${meetingKey(r)}" ${meetingKey(r)===id?'selected':''}>${r.date} ${r.courseName}</option>`).join('')}</select></label><button class="button secondary" id="day-refresh">检查更新</button></div><div class="racing-kpis"><div><span>已收录场次</span><strong>${races.length}</strong></div><div><span>正式赛果</span><strong>${official} / ${races.length}</strong></div><div><span>出赛马匹</span><strong>${entries.length}</strong></div><div><span>资料检查（香港时间）</span><strong class="kpi-time">${stamp(schedule.liveCheckedAt||schedule.updatedAt)}</strong></div></div><div class="race-number-nav">${races.map(r=>`<a href="#/race/${r.id}" class="${r.resultOfficial?'completed':''}"><b>${r.raceNo}</b><small>${raceClock(r)}</small></a>`).join('')}</div><div class="tabs">${[['results','即时赛果'],['runners','按场次出赛'],['trainer','练马师分组'],['jockey','骑师分组']].map(([k,n])=>`<button data-day-mode="${k}" class="${mode===k?'active':''}">${n}</button>`).join('')}</div><div id="day-content"></div><p class="note">${missing?`${missing} 场资料暂未读到；` : ''}初步赛果与正式赛果分开标示。骑练头马与前三统计只计算正式赛果，退出马匹不计。</p>`;

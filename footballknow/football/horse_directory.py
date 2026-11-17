@@ -67,6 +67,7 @@ def build_directory():
         rating = h.get('rating') if item['id'] in membership else number(profile.get('現時評分'))
         horses.append({**h, 'trainer': trainer, 'owner': profile.get('馬主') or None,
                        'rating': rating, 'classGroup': rating_class(rating), 'photo': detail.get('photo'),
+                       'pedigree': detail.get('pedigree', {}),
                        'profileUpdatedAt': detail.get('updatedAt'), 'recordCount': len(detail.get('records', [])),
                        'recent': [r['position'] for r in detail.get('records', []) if not r.get('withdrawn')][:6]})
     if not horses:

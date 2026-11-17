@@ -37,6 +37,7 @@ FX_ROWS = [
 INSTRUMENTS = [dict(symbol=s, name=n, category='indices', group=g, country=c, unit='点', expectedType='index') for s,n,g,c in INDEX_ROWS]
 INSTRUMENTS += [dict(symbol=s, name=n, category='commodities', group=g, unit='美元/'+u, expectedType='futures', expectedCurrency='USD') for s,n,g,u in COMMODITY_ROWS]
 INSTRUMENTS += [dict(symbol='FX_IDC:'+(c+'USD' if direct else 'USD'+c), name=n, category='forex', group='主要货币', country=country, currencyCode=c, direct=direct, expectedType='forex', expectedCurrency='USD' if direct else c) for c,n,country,direct in FX_ROWS]
+INSTRUMENTS.append(dict(symbol='TVC:DXY', name='美元指数', category='dollarIndex', group='美元', country='美国', unit='点', expectedType='index'))
 DEFINITIONS = {row['symbol']: row for row in INSTRUMENTS}
 
 

@@ -51,6 +51,8 @@ def test_all_stock_details_respect_pause_and_global_fetch_limit(tmp_path, monkey
 
 
 def test_forecast_accepts_line_wrapping_and_retains_cached_price_dates(tmp_path, monkeypatch):
+    from football import reviews
+    monkeypatch.setattr(reviews, 'watched_codes', lambda: ['00004'])
     monkeypatch.setattr(stock_analysis, 'STATE', tmp_path)
     monkeypatch.setattr(stock_analysis, 'stock', lambda code: {'code': code})
     monkeypatch.setattr(stock_analysis.ai, 'settings', lambda: SimpleNamespace(apiKey=SecretStr('test-key'), model='test'))

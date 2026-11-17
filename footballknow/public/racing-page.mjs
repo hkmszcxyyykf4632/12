@@ -1,3 +1,4 @@
+import {racingLiveBlock} from './racing-live.mjs';
 import {api} from './api.mjs';
 import {main,esc,pageHeading} from './ui.mjs';
 import {poolsHtml,dividendsHtml} from './racing-pools.mjs';
@@ -20,6 +21,7 @@ function evaluationHtml(state,race){
   if(report){html+='<div class="research-summary">'+(report.pick?'<p class="racing-pick">首选：'+esc(name(report.pick))+'</p><p>关注：'+report.shortlist.map(id=>esc(name(id))).join(' · ')+'</p>':'')+report.summary.map(p=>'<p>'+esc(p)+'</p>').join('')+'<p class="note">DeepSeek · '+esc(report.model)+' · '+stamp(report.issuedAt)+'</p><details><summary>更多详细资料</summary>'+report.details.map(d=>'<h3>'+esc(d.title)+'</h3><p>'+esc(d.text)+'</p>').join('')+'</details></div>';}
   else html+='<div class="empty">'+(phase==='pre'?'尚未发布本场预测，管理员可使用已配置的 DeepSeek 生成。':'管理员可生成赛后评价，结合实际赛果复盘。')+'</div>';
   if(phase==='post')html+='<details class="racing-original"><summary>原始赛前预测与验证</summary>'+(prior?'<p>发布：'+stamp(prior.issuedAt)+' · 首选 '+esc(name(prior.pick))+'</p>'+prior.summary.map(p=>'<p>'+esc(p)+'</p>').join('')+'<p>验证：'+(state.outcome?.status==='evaluated'?'实际名次 '+val(state.outcome.position)+'；'+(state.outcome.win?'首选胜出命中':'首选胜出未命中'):esc(state.outcome?.reason||'等待完整赛果'))+'</p>':'<p>本场没有赛前发布的预测，不计入命中率。</p>')+'</details>';
+  if(phase==='post'&&prior){html+='<div class="table-wrap"><table><thead><tr><th>原关注马</th><th>原标记</th><th>实际名次</th><th>结果</th></tr></thead><tbody>'+[...new Set([prior.pick,...prior.shortlist])].filter(Boolean).map(id=>{const h=race.entries.find(e=>e.id===id);return '<tr><td>'+esc(name(id))+'</td><td>'+(id===prior.pick?'首选':'关注')+'</td><td>'+val(h?.place)+'</td><td>'+(h?.withdrawn?'退出作废':h?.place===1?'胜出':h?.place>0?'未胜出':'等待正式赛果')+'</td></tr>';}).join('')+'</tbody></table></div>';}
   return html+'<p class="note">赛前预测在开跑前固定保存。正式赛果发布后计算首选胜出和前三名结果；退出作废。所有有效预测均纳入，不包含赛后补写的判断。</p>';
 }
 
@@ -43,6 +45,7 @@ export function renderRace(id){
         '<section><div class="section-head"><h2>'+(finished?'赛果详情':'出赛马匹')+'</h2>'+source(race.source,finished?'马会赛果与重播':'马会排位表')+'</div>'+table(finished?['名次','马号 / 马匹','骑师 / 练马师','档位','负磅 / 体重','头马距离','沿途走位','完成时间','赛后独赢赔率']:['马号 / 马匹','近六仗','档位','骑师 / 练马师','负磅 / 体重','评分','装备','父系 / 母系'],race.entries.map(h=>finished?[val(h.position),val(h.number)+' · '+horseLink(h),person(h.jockey)+'<small>'+person(h.trainer)+'</small>',val(h.draw),val(h.weight)+' / '+val(h.bodyWeight),val(h.margin),val(h.running),val(h.finishTime),val(h.winOdds)]:[val(h.number)+' · '+horseLink(h)+(h.withdrawn?'<span class="attention">退出</span>':''),val(h.recent),val(h.draw),person(h.jockey)+'<small>'+person(h.trainer)+'</small>',val(h.weight)+' / '+val(h.bodyWeight),val(h.rating),val(h.equipment),val(h.sire)+'<small>'+val(h.dam)+'</small>']))+'</section>'+
         '<section><div class="section-head"><h2>'+(finished?'赛后评价':'赛前预测')+'</h2><button class="button" id="race-generate">生成'+(finished?'赛后评价':'赛前预测')+'</button></div><p id="race-ai-message" role="status"></p><div id="race-analysis" class="loading">读取分析记录…</div></section><p class="note">来源：香港赛马会 · 最近采集 '+stamp(race.updatedAt)+'。负磅及排位体重单位为磅。'+(finished?'独赢赔率为赛果页公布的赛后资料。':'排位、骑师及场地状况可能更改。')+'</p>';
       main.insertAdjacentHTML('afterbegin',racingNav('racing'));
+      if(!finished)main.querySelector('.racing-race-head').insertAdjacentHTML('afterend',racingLiveBlock());
       if(finished){main.querySelector('.racing-race-head').insertAdjacentHTML('afterend',replayBlock(race));bindReplay(main,race);}
       main.querySelector('#race-generate').closest('section').insertAdjacentHTML('beforebegin',poolsHtml(race));
       main.querySelector('.page-heading').insertAdjacentHTML('afterend',`<a class="back-link" href="#/racing-day/${esc(race.id.replace(/-\d+$/,''))}">← 本赛马日 · 分组出赛与赛果</a>`);

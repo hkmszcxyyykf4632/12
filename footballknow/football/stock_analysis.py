@@ -14,6 +14,7 @@ from . import ai
 from .files import STATE
 from .finance import FOLDER, HK, load, now, refresh_history, stock
 from .text_ai import request_json
+from .professional_prompts import professional_rules, VERSION as PROTOCOL_VERSION
 
 LOCK = threading.Lock()
 VERSION = 'hsi-forward-close-v1'
@@ -153,6 +154,8 @@ def price_metrics(bars):
 
 
 def generate(code):
+    from .reviews import require_watched
+    require_watched(code)
     if not stock(code):
         raise LookupError('Unknown constituent')
     if not LOCK.acquire(blocking=False):
@@ -189,7 +192,7 @@ def generate(code):
             finance = context['company']['financials']
             dates = sorted({p['REPORT_DATE'][:10] for p in finance.get('periods', [])}, reverse=True)[:2]
             finance['statements'] = {k: [r for r in rows if r['date'] in dates] for k, rows in finance.get('statements', {}).items()}
-        content = ForecastContent.model_validate(request_json(RULES, context, 5000))
+        content = ForecastContent.model_validate(request_json(professional_rules('stocks', RULES), context, 5000))
         content.summary = [' '.join(p.split()) for p in content.summary]
         if any(len(p) > 240 or not p for p in content.summary):
             raise ValueError('模型摘要格式不正确，请稍后重试。')
@@ -197,6 +200,7 @@ def generate(code):
         day = datetime.fromisoformat(issued_at).astimezone(HK).date().isoformat()
         snapshot_hash = hashlib.sha256(json.dumps(context, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
         saved_content = content.model_dump()
+        saved_content['protocolVersion'] = PROTOCOL_VERSION
         saved_content['priceData'] = context['priceFreshness']
         with connect() as connection:
             connection.execute('INSERT OR IGNORE INTO forecasts(code,day,version,issued_at,model,snapshot_hash,content) VALUES (?,?,?,?,?,?,?)',

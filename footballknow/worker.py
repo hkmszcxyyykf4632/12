@@ -101,7 +101,7 @@ def interval_overrides(environ: dict[str, str] | None = None) -> dict[str, int]:
 def job_table(environ: dict[str, str] | None = None) -> dict[str, Job]:
     base, overrides = sync_seconds(environ), interval_overrides(environ)
     defaults = {**{f'{league}-profiles': 86400 for league in LEAGUES},
-                'finance-companies': 86400, 'finance-catalogue': 86400, 'finance-history': 3600, 'finance-evaluation': 3600,
+                'finance-companies': 86400, 'finance-catalogue': 86400, 'finance-history': 3600, 'finance-evaluation': 120,
                 'racing-meetings': 300, 'racing-catalogue': 86400, 'racing-horses': 600,
                 'racing-directory': 86400, 'racing-people': 1800, 'racing-live': 60,
                 'portal-news': 300, **{f'{league}-photos': 3600 for league in LEAGUES}}

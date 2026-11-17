@@ -59,7 +59,7 @@ def detail(code, kind):
     path = FOLDER / kind / (code + '.json')
     cached = load(path)
     ttl = 86400 if kind == 'companies' else 3600
-    if age(cached.get('checkedAt') or cached.get('updatedAt')) <= ttl:
+    if age(cached.get('checkedAt') or cached.get('updatedAt')) <= ttl and (kind != 'companies' or cached.get('leadership') or 'leadership' in cached.get('failedSections', [])):
         return cached
     if not read_control()['enabled']:
         return {**item, **cached, 'paused': True, 'message': '同步已暂停，正在显示已保存的资料。'}

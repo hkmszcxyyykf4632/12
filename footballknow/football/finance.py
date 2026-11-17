@@ -28,7 +28,17 @@ def now():
 
 def load(path, default=None):
     try:
-        return read_json(path)
+        value = read_json(path)
+        finance = value.get('financials') if isinstance(value, dict) else None
+        if isinstance(finance, dict) and finance.get('statements') and not finance.get('amountCurrency'):
+            # Eastmoney HK PC statement amounts are converted to CNY, unlike report-header currency.
+            for rows in finance['statements'].values():
+                for row in rows:
+                    row['reportCurrency'] = row.get('currency')
+                    row['currency'] = '人民币'
+            finance['amountCurrency'] = 'CNY'
+            finance['currencyBasis'] = '东方财富统一折算人民币；报告原币种另存。'
+        return value
     except (OSError, ValueError):
         return {} if default is None else default
 
@@ -293,21 +303,29 @@ def refresh_company(code):
         dates = ','.join("'" + date + "'" for date in by_date)
         if not dates:
             raise ValueError('Financial periods unavailable')
-        financials = {'updatedAt': now(), 'periods': periods, 'statements': {}}
+        financials = {'updatedAt': now(), 'periods': periods, 'statements': {}, 'amountCurrency': 'CNY',
+                      'currencyBasis': '东方财富统一折算人民币；报告原币种另存。'}
         for kind, report in [('balance', 'RPT_HKF10_FN_BALANCE_PC'), ('income', 'RPT_HKF10_FN_INCOME_PC'), ('cashflow', 'RPT_HKF10_FN_CASHFLOW_PC')]:
             items = em_report(code, report, extra_filter='(REPORT_DATE in (' + dates + '))')
             financials['statements'][kind] = [
                 {'code': row.get('STD_ITEM_CODE'), 'name': row.get('STD_ITEM_NAME'), 'amount': number(row.get('AMOUNT')),
                  'date': row['REPORT_DATE'][:10], 'startDate': row.get('START_DATE'),
-                 'currency': by_date.get(row['REPORT_DATE'][:10], {}).get('CURRENCY'),
+                 'currency': '人民币', 'reportCurrency': by_date.get(row['REPORT_DATE'][:10], {}).get('CURRENCY'),
                  'reportType': by_date.get(row['REPORT_DATE'][:10], {}).get('REPORT_TYPE')}
                 for row in items if row.get('REPORT_DATE', '')[:10] in by_date]
         result['financials'] = financials
     except (OSError, ValueError, KeyError, IndexError, TypeError):
         result['failedSections'].append('financials')
+    try:
+        from .company_leaders import refresh_leaders
+        result['leadership'] = refresh_leaders(code, result.get('profile', {}).get('chairman'))
+    except (OSError, ValueError, KeyError, TypeError):
+        result['failedSections'].append('leadership')
     if not any(result.get(key) for key in ['profile', 'holders', 'financials']):
         raise OSError('Company information unavailable')
     publish(path, result)
+    from .capital_structure import update_capital_index
+    update_capital_index(result)
     return result
 
 

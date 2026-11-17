@@ -15,7 +15,8 @@ def test_live_data_is_frequent_and_profile_work_is_bounded():
     assert jobs['racing-meetings'].status.intervalSeconds == 300
     assert jobs['racing-horses'].status.intervalSeconds == 600
     assert jobs['finance-catalogue'].status.intervalSeconds == 86400
-    assert {job.status.intervalSeconds for job in jobs.values()} == {60, 300, 600, 1800, 3600, 86400}
+    assert jobs['finance-evaluation'].status.intervalSeconds == 120
+    assert {job.status.intervalSeconds for job in jobs.values()} == {60, 120, 300, 600, 1800, 3600, 86400}
     assert {job.status.group for job in jobs.values()} == {'scores', 'catalogue', 'history', 'names', 'rankings', 'lineups', 'odds', 'news', 'profiles', 'finance', 'racing'}
 
 

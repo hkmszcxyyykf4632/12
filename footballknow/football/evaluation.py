@@ -81,9 +81,10 @@ class Forecast(BaseModel):
     pick: Literal['H', 'D', 'A']
     model: str
     rulesVersion: str
+    analysis: dict | None = None
 
 
-def record_forecast(report: MatchAnalysis, pick: str, model: str, rules_version: str, generated_at: str, league: str = 'epl') -> bool:
+def record_forecast(report: MatchAnalysis, pick: str, model: str, rules_version: str, generated_at: str, league: str = 'epl', analysis: dict | None = None) -> bool:
     fixture = report.match
     if fixture is None or not fixture.kickoff:
         return False
@@ -100,7 +101,7 @@ def record_forecast(report: MatchAnalysis, pick: str, model: str, rules_version:
     path = folder / f'{key}.json'
     forecast = Forecast(league=league, fixtureId=fixture.id, season=fixture.season, home=fixture.home, away=fixture.away,
                         kickoff=fixture.kickoff, generatedAt=generated_at, snapshotAt=report.dataUpdatedAt,
-                        pick=pick, model=model, rulesVersion=rules_version)
+                        pick=pick, model=model, rulesVersion=rules_version, analysis=analysis)
     try:
         with path.open('x', encoding='utf-8') as destination:
             path.chmod(0o600)

@@ -21,6 +21,7 @@ from .history import HistorySnapshot
 from .leagues import league_config, league_path
 from .evaluation import evaluation_status, record_forecast
 from .match_details import lineup_context
+from .professional_prompts import professional_rules
 
 GENERATION_LOCK: Final = threading.Lock()
 DEEPSEEK_URL: Final = 'https://api.deepseek.com'
@@ -174,7 +175,7 @@ def generate_analysis(team_id: int, league: str = 'epl') -> AIResult:
     if not GENERATION_LOCK.acquire(blocking=False):
         raise ValueError('已有分析正在生成，请稍后再试。')
     try:
-        rules = analysis_rules()
+        rules = professional_rules('football', analysis_rules())
         if league in {'laliga', 'seriea', 'bundesliga'}:
             rules = rules.replace('英超', competition.competition).replace('英冠', competition.lower).replace('FPL', 'ESPN')
             if league == 'bundesliga':
@@ -258,7 +259,7 @@ def generate_analysis(team_id: int, league: str = 'epl') -> AIResult:
                           rulesVersion=hashlib.sha256(rules.encode()).hexdigest()[:12],
                           text='\n\n'.join(content.summary), pick=content.pick, summary=content.summary, details=content.details)
         publish(league_path(STATE, league) / 'analyses' / f'{team_id}.json', answer.model_dump(mode='json'))
-        record_forecast(report, content.pick, answer.model, answer.rulesVersion, answer.generatedAt, league)
+        record_forecast(report, content.pick, answer.model, answer.rulesVersion, answer.generatedAt, league, answer.model_dump(mode='json'))
         return answer
     finally:
         GENERATION_LOCK.release()

@@ -22,6 +22,7 @@ from football.leagues import LeagueId
 from football.match_details import get_detail, next_lineup_evidence
 from football.sync_control import SyncControlInput, read_control, set_control
 from football import stock_analysis, stock_service, racing, racing_analysis
+from football import horse_research
 
 
 class LoginInput(BaseModel):
@@ -181,6 +182,72 @@ def update_sync_control(value: SyncControlInput, account: auth.Administrator = D
     return set_control(value.enabled, account.username)
 
 
+class StockWatchlistInput(BaseModel):
+    codes: list[str] = Field(max_length=200)
+
+
+@app.put('/api/stocks/watchlist')
+def set_stock_watchlist(value: StockWatchlistInput, account: auth.Administrator = Depends(administrator)):
+    from football.reviews import save_watchlist
+    try:
+        return save_watchlist(value.codes)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from None
+
+
+def review_response(callback):
+    try:
+        return callback()
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+    except (ValueError, ValidationError) as error:
+        raise HTTPException(status_code=400, detail=str(error)[:240]) from None
+    except (OSError, http.client.HTTPException):
+        raise HTTPException(status_code=502, detail='复盘服务暂时无法连接，请稍后重试。') from None
+
+
+@app.get('/api/reviews/football')
+def get_football_review(match_id: str, league: LeagueId = 'epl'):
+    from football.reviews import football_review
+    return review_response(lambda: football_review(match_id, league))
+
+
+@app.post('/api/reviews/football')
+def create_football_review(match_id: str, league: LeagueId = 'epl', account: auth.Administrator = Depends(administrator)):
+    from football.reviews import football_review
+    return review_response(lambda: football_review(match_id, league, True))
+
+
+@app.get('/api/stocks/{code}/review')
+def get_stock_review(code: str):
+    from football.reviews import stock_review
+    return review_response(lambda: stock_review(code))
+
+
+@app.post('/api/stocks/{code}/review')
+def create_stock_review(code: str, account: auth.Administrator = Depends(administrator)):
+    from football.reviews import stock_review
+    return review_response(lambda: stock_review(code, True))
+
+
+@app.get('/api/assets/{ident}/analysis')
+def get_asset_analysis(ident: str):
+    from football.reviews import asset_review
+    return review_response(lambda: asset_review(ident))
+
+
+@app.post('/api/assets/{ident}/analysis')
+def create_asset_analysis(ident: str, account: auth.Administrator = Depends(administrator)):
+    from football.reviews import asset_review
+    return review_response(lambda: asset_review(ident, True))
+
+
+@app.get('/api/analysis/protocols/info')
+def get_protocol_info():
+    from football.professional_prompts import protocol_metadata
+    return protocol_metadata()
+
+
 @app.get('/api/stocks/quotes')
 def get_stock_quotes(codes: str):
     try:
@@ -262,6 +329,14 @@ def match_detail(match_id: str, league: LeagueId = 'epl'):
 def get_horse(ident: str):
     try:
         return racing.horse_detail(ident)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/racing/horses/{ident}/research')
+def get_horse_research(ident: str):
+    try:
+        return horse_research.get_research(ident)
     except LookupError as error:
         raise HTTPException(status_code=404, detail=str(error)) from None
 
