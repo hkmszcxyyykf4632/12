@@ -138,7 +138,7 @@ def main():
         for relative, raw in content.items():
             target = ROOT / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            if relative.startswith('public/'):
+            if relative.startswith(('public/', 'football/')):
                 for parent in [target.parent, *target.parent.parents]:
                     if parent == ROOT:
                         break
