@@ -10,10 +10,11 @@ export async function readLeagueSnapshot(league,name){
 export async function competitionFeeds(){
   await Promise.allSettled(Object.values(LEAGUES).map(async league=>{
     try{
-      const [data,live]=await Promise.all([readLeagueSnapshot(league.id,'data'),readLeagueSnapshot(league.id,'live')]);
+      const [data,live,quoteData]=await Promise.all([readLeagueSnapshot(league.id,'data'),readLeagueSnapshot(league.id,'live'),readLeagueSnapshot(league.id,'market-odds').catch(()=>null)]);
       const competition=data.competition||(league.id==='epl'?'英超':null);
       if(competition!==league.name||data.teams?.length!==league.teamCount||!validLive(live,data))throw Error('赛事资料不完整');
-      cache.set(league.id,{league:league.id,data,live,failed:false});
+      const validQuotes=quoteData?.version===1&&quoteData.league===league.id&&quoteData.season===data.season;
+      cache.set(league.id,{league:league.id,data,live,markets:validQuotes?quoteData:cache.get(league.id)?.markets,failed:false});
     }catch{cache.set(league.id,{...cache.get(league.id),league:league.id,failed:true});}
   }));
   return [...cache.values()];
@@ -30,7 +31,8 @@ export function combinedFixtures(feeds,{league='all',state='upcoming',date='',no
       if(date&&date!==day)continue;
       if(!date&&Number.isFinite(kickoff)&&(kickoff<now-7*86400000||kickoff>now+7*86400000))continue;
       if(state==='live'&&(!m.started||m.finished)||state==='upcoming'&&(m.finished||!m.started&&(!Number.isFinite(kickoff)||kickoff<now))||state==='finished'&&!m.finished)continue;
-      rows.push({...m,league:feed.league,homeLabel:names[m.home]||m.home,awayLabel:names[m.away]||m.away,day,
+      const archived=feed.data.matches?.find(a=>a.season===m.season&&a.competition===m.competition&&a.home===m.home&&a.away===m.away);
+      rows.push({...m,aliases:[...(m.aliases||[]),archived?.id].filter(Boolean),league:feed.league,homeLabel:names[m.home]||m.home,awayLabel:names[m.away]||m.away,day,
         updatedAt:feed.live.updatedAt,delayed:feed.failed||now-Date.parse(feed.live.updatedAt)>180000});
     }
   }

@@ -1,4 +1,5 @@
 import {data,history} from './repository.mjs';
+import {valuationHtml} from './player-values.mjs';
 import {main,esc,dateText,monogram,sourceLink,cn} from './ui.mjs';
 import {localized} from './football-components.mjs';
 import {playerPortrait} from './portraits.mjs';
@@ -50,10 +51,10 @@ export function renderPlayer(id,otherId) {
     if(!main.querySelector('#player-stats'))return;
     const s=playerStats(p);
     main.querySelector('#player-profile').innerHTML=[['位置',POSITIONS[p.position]||'—'],['球衣号码',p.squad_number??'—'],['出生日期',`${dateText(p.birth_date)}${s.age!=null?`<small> ${s.age} 岁</small>`:''}`],['国籍',esc(p.country||'—')],
-      ['加入球队',dateText(p.team_join_date)],['出场状态',`<span class="${p.status==='a'||p.status==='unreported'?'':'attention'}">${STATUS[p.status]||'未知'}</span>${p.chance_of_playing_next_round!=null&&p.status!=='a'?`<small> 下轮出场概率 ${p.chance_of_playing_next_round}%</small>`:''}`]]
+      ['估算身价',valuationHtml(p)],['加入球队',dateText(p.team_join_date)],['出场状态',`<span class="${p.status==='a'||p.status==='unreported'?'':'attention'}">${STATUS[p.status]||'未知'}</span>${p.chance_of_playing_next_round!=null&&p.status!=='a'?`<small> 下轮出场概率 ${p.chance_of_playing_next_round}%</small>`:''}`]]
       .map(([term,value])=>`<div><dt>${term}</dt><dd>${value}</dd></div>`).join('');
     main.querySelector('#player-stats').innerHTML=METRICS.map(([key,term,digits])=>`<div><dt>${term}</dt><dd>${show(s[key],digits)}</dd></div>`).join('');
-    main.querySelector('#player-basis').innerHTML=`${p.news?`${esc(p.news)}。`:''}“—”表示来源没有提供这项数据，不等于 0。${league.id==='epl'?'分钟、进球、助攻、纪律与预期数据取自英超公开数据，出场次数与替补进球由比赛名单汇总。':'全部由已收录的比赛名单汇总，未收录的比赛不计入。'}身价、伤病史与生涯各赛季数据没有可公开转载的来源，本站不提供。`;
+    main.querySelector('#player-basis').innerHTML=`${p.news?`${esc(p.news)}。`:''}“—”表示来源没有提供这项数据，不等于 0。${league.id==='epl'?'分钟、进球、助攻、纪律与预期数据取自英超公开数据，出场次数与替补进球由比赛名单汇总。':'全部由已收录的比赛名单汇总，未收录的比赛不计入。'}身价为 FotMob 公开估值，币种为欧元，资料日期为采集时间；与实际转会成交价分开。`;
     main.querySelector('#player-compare').innerHTML=other?radar(p,other):'<div class="empty">选择一名球员，逐项比较本赛季数据。</div>';
     main.querySelector('#player-transfers').innerHTML=transfers(p);
   };

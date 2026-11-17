@@ -5,7 +5,7 @@ import {validTable,validLeaders} from './rankings-core.mjs';
 export let data=null, live=null, names=null, history=null;
 export let liveFailed=false;
 export let standings=null,rankings=null,rankingsFailed=false;
-export let odds=null,markets=null,profiles=null;
+export let odds=null,markets=null,profiles=null,playerValues=null;
 // Optional snapshots: the site works without them and shows their sections once the synchronizer has produced them.
 export let facts=null,changes=null,oddsHistory=null;
 let archive=null, busy=false;
@@ -35,7 +35,7 @@ export async function refresh(force=false) {
         archive=next;
       } catch(error) {if(!archive)throw error;}
     }
-    const snapshotKeys=['live','names','history','standings','rankings','odds','match-facts','changes','odds-history','market-odds','profiles'];
+    const snapshotKeys=['live','names','history','standings','rankings','odds','match-facts','changes','odds-history','market-odds','profiles','player-values'];
     const snapshots=await Promise.allSettled([...snapshotKeys.map(readSnapshot),fetch('/api/status',{cache:'no-store',signal:AbortSignal.timeout(8000)}).then(r=>r.json())]);
     const syncStatus=snapshots.at(-1);if(syncStatus.status==='fulfilled')syncState.paused=syncStatus.value.paused===true;
     const result=snapshots[0];
@@ -68,6 +68,9 @@ export async function refresh(force=false) {
     if(nextMarkets?.league===league.id&&nextMarkets.season===archive.season&&nextMarkets.matches)markets=nextMarkets;
     if(markets?.season!==archive.season)markets=null;
     if(nextProfiles?.league===league.id&&nextProfiles.teams)profiles=nextProfiles;
+    const nextValues=optional('player-values');
+    if(nextValues?.league===league.id&&nextValues.season===archive.season&&nextValues.values)playerValues=nextValues;
+    if(playerValues?.season!==archive.season)playerValues=null;
     syncState.lastSuccess=Date.now();
     return true;
   } finally {busy=false;syncState.busy=false;}

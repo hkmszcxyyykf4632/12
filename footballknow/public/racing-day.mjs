@@ -1,3 +1,4 @@
+import {replayUrl} from './racing-replay.mjs';
 import {main,esc,pageHeading} from './ui.mjs';
 import {portrait} from './portraits.mjs';
 import {table,val,stamp,clock,horseLink,placeBadge,racingNav,racingJson,groupRunners} from './racing-ui.mjs';
@@ -38,7 +39,7 @@ export function renderRacingDay(id,initial='results'){
       body.querySelector('#day-group-search').oninput=e=>{query=e.target.value;drawGroups();};drawGroups();
     }else{
       body.innerHTML=races.map(r=>{if(r.status==='cancelled')return `<section class="race-day-block"><div class="race-day-title"><span class="race-round">${r.raceNo}</span><h3>赛事取消</h3><span class="race-status">马会已公布</span></div><p>本场取消，独赢、位置及连赢退款；不计入骑练赛果统计。</p>${dividendsHtml(r)}</section>`;const finished=r.resultOfficial||r.status==='provisional';const rows=[...r.entries].sort((a,b)=>mode==='results'&&finished?(a.place??99)-(b.place??99):Number(a.number)-Number(b.number));
-        return `<section class="race-day-block"><div class="race-day-title"><span class="race-round">${r.raceNo}</span><div><h3><a href="#/race/${r.id}">${esc(r.name)}</a></h3><span>${raceClock(r)} · ${val(r.distance)} 米 · ${esc(r.class)} · ${esc(r.going)}</span></div><span class="race-status">${statusText(r)}</span><a href="#/race/${r.id}">完整资料与赔率 →</a></div>${table([mode==='results'?'名次':'状态','马号 / 马匹','档位','骑师','练马师','独赢','位置'],rows.map(h=>[placeBadge(h),`${esc(h.number)} · ${horseLink(h)}`,val(h.draw),esc(h.jockey?.name||''),esc(h.trainer?.name||''),quoteFor(r,'WIN',h.number)?quoteMarkup(quoteFor(r,'WIN',h.number)):val(h.winOdds),quoteFor(r,'PLA',h.number)?quoteMarkup(quoteFor(r,'PLA',h.number)):finished?'未收录':'待公布']))}${mode==='results'&&finished?dividendsHtml(r):''}</section>`;}).join('');
+        return `<section class="race-day-block"><div class="race-day-title"><span class="race-round">${r.raceNo}</span><div><h3><a href="#/race/${r.id}">${esc(r.name)}</a></h3><span>${raceClock(r)} · ${val(r.distance)} 米 · ${esc(r.class)} · ${esc(r.going)}</span></div><span class="race-status">${statusText(r)}</span><a href="#/race/${r.id}">完整资料与赔率 →</a>${replayUrl(r)?`<a class="button secondary compact" href="${replayUrl(r).replaceAll('&','&amp;')}" target="_blank" rel="noopener noreferrer">赛事回放 ↗</a>`:''}</div>${table([mode==='results'?'名次':'状态','马号 / 马匹','档位','骑师','练马师','独赢','位置'],rows.map(h=>[placeBadge(h),`${esc(h.number)} · ${horseLink(h)}`,val(h.draw),esc(h.jockey?.name||''),esc(h.trainer?.name||''),quoteFor(r,'WIN',h.number)?quoteMarkup(quoteFor(r,'WIN',h.number)):val(h.winOdds),quoteFor(r,'PLA',h.number)?quoteMarkup(quoteFor(r,'PLA',h.number)):finished?'未收录':'待公布']))}${mode==='results'&&finished?dividendsHtml(r):''}</section>`;}).join('');
     }
   }
   async function refresh(){if(busy)return;busy=true;try{

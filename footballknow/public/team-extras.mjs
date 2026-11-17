@@ -1,5 +1,6 @@
-import {data,facts} from './repository.mjs';
-import {esc,cn,timeText} from './ui.mjs';
+import {data,facts,markets} from './repository.mjs';
+import {filterVenue,settlementSummary} from './settlement.mjs';
+import {esc,cn,timeText,settlementCells} from './ui.mjs';
 import {localized} from './football-components.mjs';
 import {league} from './league.mjs';
 import {teamSeason} from './insights.mjs';
@@ -28,11 +29,13 @@ export function availabilityBlock(team) {
   return `<div class="table-wrap"><table><thead><tr><th>球员</th><th>状态</th><th>下轮出场概率</th><th>来源说明</th></tr></thead><tbody>${out.map(p=>`<tr><td><a class="player-name" href="#/player/${p.id}">${esc(localized(p)?.mandarin||p.web_name)}<small>${esc(p.web_name)}</small></a></td><td><span class="status attention">${STATUS[p.status]}</span></td><td>${p.chance_of_playing_next_round!=null?`${p.chance_of_playing_next_round}%`:'—'}</td><td class="job-message">${esc(p.news||'—')}</td></tr>`).join('')}</tbody></table></div><p class="note">状态与说明取自英超公开数据的球员可用性标注，俱乐部正式公告可能更新。</p>`;
 }
 
-export function calendarBlock(team) {
+export function calendarBlock(team,venue='all') {
   const rows=data.matches.filter(m=>m.season===data.season&&m.competition===league.name&&[m.home,m.away].includes(team.name)).sort((a,b)=>(a.kickoff||a.date).localeCompare(b.kickoff||b.date));
-  if(!rows.length)return '<div class="empty">本赛季赛程尚未公布。</div>';
-  return `<div class="table-wrap"><table><thead><tr><th>场次</th><th>时间</th><th>主客</th><th>对手</th><th>比分</th><th>结果</th></tr></thead><tbody>${rows.map((m,index)=>{
+  const shown=filterVenue(rows,team.name,venue),stats=settlementSummary(shown,team.name,markets);
+  if(!shown.length)return '<div class="empty">这个主客场范围内没有赛程。</div>';
+  const summary='<dl class="stat-grid"><div><dt>当前范围已完赛</dt><dd>'+stats.finished+' 场</dd></div><div><dt>赢盘 / 半赢 / 走盘 / 半输 / 输盘</dt><dd>'+[stats.wins,stats.halfWins,stats.pushes,stats.halfLosses,stats.losses].join(' / ')+'</dd><small>有盘口 '+stats.handicap+' 场</small></div><div><dt>大球 / 走盘 / 小球</dt><dd>'+[stats.over,stats.totalPushes,stats.under].join(' / ')+'</dd><small>有盘口 '+stats.totals+' 场，半赢计对应方向</small></div></dl>';
+  return `${summary}<div class="table-wrap"><table><thead><tr><th>场次</th><th>时间</th><th>主客</th><th>对手</th><th>比分（主 : 客）</th><th>结果</th><th>亚洲让球盘</th><th>大小球</th></tr></thead><tbody>${shown.map(m=>{
     const home=m.home===team.name,scored=home?m.homeGoals:m.awayGoals,conceded=home?m.awayGoals:m.homeGoals;
     const result=!m.finished||scored==null?'':scored>conceded?'win':scored<conceded?'loss':'draw';
-    return `<tr><td>${index+1}</td><td>${esc(m.kickoff?timeText(m.kickoff):m.date)}</td><td>${home?'主':'客'}</td><td>${esc(cn(home?m.away:m.home))}</td><td class="score"><a href="#/match/${encodeURIComponent(m.id)}">${m.started||m.finished?`${m.homeGoals??'—'} : ${m.awayGoals??'—'}`:'未开赛'}</a></td><td>${result?`<span class="result ${result}">${{win:'胜',draw:'平',loss:'负'}[result]}</span>`:m.started?'进行中':''}</td></tr>`;}).join('')}</tbody></table></div><p class="note">场次按本队本赛季${league.name}比赛的时间顺序编号，不是联赛官方轮次。</p>`;
+    return `<tr><td>${rows.indexOf(m)+1}</td><td>${esc(m.kickoff?timeText(m.kickoff):m.date)}</td><td>${home?'主':'客'}</td><td>${esc(cn(home?m.away:m.home))}</td><td class="score"><a href="#/match/${encodeURIComponent(m.id)}">${m.started||m.finished?`${m.homeGoals??'—'} : ${m.awayGoals??'—'}`:'未开赛'}</a></td><td>${result?`<span class="result ${result}">${{win:'胜',draw:'平',loss:'负'}[result]}</span>`:m.started?'进行中':''}</td>${settlementCells(m,team)}</tr>`;}).join('')}</tbody></table></div><p class="note">场次按本队本赛季${league.name}比赛的时间顺序编号，不是联赛官方轮次。亚洲让球按本队视角结算，大小球按90分钟总进球；优先最后盘口，缺少时注明早期或开始盘口。缺少盘口不计入盘路统计。</p>`;
 }

@@ -3,6 +3,8 @@ import {main,esc,pageHeading,timeText} from './ui.mjs';
 import {competitionFeeds,combinedFixtures,readLeagueSnapshot} from './competition-feed.mjs';
 import {broadcastLinks} from './broadcasts.mjs';
 import {eventTimeline} from './match-extras.mjs';
+import {quotesForMatch,selectQuote} from './settlement.mjs';
+import {PHASE_NAMES} from './markets-core.mjs';
 
 export function renderLive(){
   let disposed=false,busy=false,feeds=[],rows=[],selected='all',state='upcoming',date='',region='all';
@@ -11,6 +13,13 @@ export function renderLive(){
     <div class="toolbar match-filters"><label>赛事<select id="live-league"><option value="all">全部五项赛事</option>${Object.values(LEAGUES).map(l=>`<option value="${l.id}">${l.name}</option>`).join('')}</select></label><label>状态<select id="live-state"><option value="upcoming">进行中与未来七天</option><option value="live">正在进行</option><option value="finished">最近完赛</option><option value="all">全部</option></select></label><label>本地日期<input type="date" id="live-date"></label><label>观看地区<select id="live-region"><option value="all">全部地区</option><option value="mo">澳门 · MPLUS</option><option value="hk">香港</option><option value="cn">中国内地</option></select></label></div>
     <p id="live-feed-status" class="note" role="status">正在读取五项赛事…</p><div id="combined-fixtures"></div>`;
   const href=m=>`./?league=${m.league}#/match/${encodeURIComponent(m.id)}`;
+  function handicapHtml(m){
+    const quotes=quotesForMatch(feeds.find(f=>f.league===m.league)?.markets,m);
+    const q=selectQuote(quotes,'asian-handicap',m.finished?['closing','preclosing','opening']:['latest','preclosing','opening']);
+    if(!q)return '<div class="live-handicap"><strong>亚洲让球盘</strong><span class="subtle">盘口暂缺</span></div>';
+    const line=n=>(n>0?'+':'')+n;
+    return '<div class="live-handicap"><strong>亚洲让球盘</strong><span>主队 '+line(q.line)+' <b>'+q.prices.H.toFixed(2)+'</b></span><span>客队 '+line(-q.line)+' <b>'+q.prices.A.toFixed(2)+'</b></span><small>'+esc(q.provider)+' · '+PHASE_NAMES[q.phase]+' · 采集 '+esc(timeText(q.fetchedAt))+(m.started&&!m.finished?' · 来源未标注滚球，按报价快照展示':'')+'</small></div>';
+  }
   function draw(){
     if(disposed)return;
     rows=combinedFixtures(feeds,{league:selected,state,date});
@@ -20,7 +29,7 @@ export function renderLive(){
     main.querySelector('#combined-fixtures').innerHTML=rows.length?rows.map((m,i)=>{
       const heading=m.day!==day?`<h2 class="fixture-day">${esc(m.day||'时间待定')}</h2>`:'';day=m.day;
       const running=m.started&&!m.finished,key=m.league+'|'+m.id;
-      return `${heading}<article class="live-match ${running?'is-live':''}" data-live-key="${esc(key)}"><div class="live-match-top"><time>${esc(timeText(m.kickoff||m.date))}</time><span class="tag">${LEAGUES[m.league].name}</span><span class="${running?'profit':''}">${m.finished?'已完赛':running?`进行中 ${esc(m.clock||'')}`:'未开赛'}</span>${m.delayed?'<span class="attention">比分待更新</span>':''}</div><a class="live-match-pair" href="${href(m)}"><strong>${esc(m.homeLabel)}</strong><b>${m.started||m.finished?`${m.homeGoals??'—'} : ${m.awayGoals??'—'}`:'VS'}</b><strong>${esc(m.awayLabel)}</strong></a><div class="toolbar"><a class="button quiet compact" href="${href(m)}">${m.finished?'赛后总结 / 赔率分析':'比赛详情 / 赔率分析'} →</a><button class="button secondary compact" data-live-events="${i}" aria-expanded="${opened.has(key)}">进球 · 换人 · 红黄牌</button></div><div class="live-events" ${opened.has(key)?'':'hidden'}>${opened.get(key)||''}</div><details><summary>官方直播入口</summary>${broadcastLinks(m.league,region)}</details><small class="subtle">比分最近更新 ${esc(timeText(m.updatedAt))}</small></article>`;
+      return `${heading}<article class="live-match ${running?'is-live':''}" data-live-key="${esc(key)}"><div class="live-match-top"><time>${esc(timeText(m.kickoff||m.date))}</time><span class="tag">${LEAGUES[m.league].name}</span><span class="${running?'profit':''}">${m.finished?'已完赛':running?`进行中 ${esc(m.clock||'')}`:'未开赛'}</span>${m.delayed?'<span class="attention">比分待更新</span>':''}</div><a class="live-match-pair" href="${href(m)}"><strong>${esc(m.homeLabel)}</strong><b>${m.started||m.finished?`${m.homeGoals??'—'} : ${m.awayGoals??'—'}`:'VS'}</b><strong>${esc(m.awayLabel)}</strong></a>${handicapHtml(m)}<div class="toolbar"><a class="button quiet compact" href="${href(m)}">${m.finished?'赛后总结 / 赔率分析':'比赛详情 / 赔率分析'} →</a><button class="button secondary compact" data-live-events="${i}" aria-expanded="${opened.has(key)}">进球 · 换人 · 红黄牌</button></div><div class="live-events" ${opened.has(key)?'':'hidden'}>${opened.get(key)||''}</div><details><summary>官方直播入口</summary>${broadcastLinks(m.league,region)}</details><small class="subtle">比分最近更新 ${esc(timeText(m.updatedAt))}</small></article>`;
     }).join(''):'<div class="empty">这个时段没有符合筛选的比赛。可选择其他日期或“全部”状态。</div>';
   }
   async function loadEvents(index){
