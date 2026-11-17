@@ -53,7 +53,8 @@ const KINDS={live:['比分与赛程','scores'],catalogue:['球队与球员','cat
 
 /** Readable name and category for a synchronizer job id such as "laliga-standings". */
 export function describeJob(name,group='') {
-  if(name.startsWith('finance-'))return {league:'市场',label:({quotes:'港股报价',assets:'黄金、原油与比特币',companies:'公司与财务',history:'历史价格',evaluation:'预测验证'})[name.slice(8)]||name,group:'市场资料'};
+  if(name.startsWith('racing-'))return {league:'香港赛马',label:({meetings:'排位与赛果',catalogue:'现役马匹目录',horses:'血统与往绩'})[name.slice(7)]||name,group:'赛马资料'};
+  if(name.startsWith('finance-'))return {league:'市场',label:({quotes:'港股报价',assets:'黄金、原油与比特币',companies:'公司与财务',history:'历史价格',evaluation:'预测验证',catalogue:'全港股目录'})[name.slice(8)]||name,group:'市场资料'};
   if(name==='odds-official-checks')return {league:'全部赛事',label:'书商官网可访问性检查',group:GROUPS.odds};
   const parts=name.split('-'),prefixed=['epl','laliga','ucl','seriea','bundesliga'].includes(parts[0])&&parts.length>1;
   const [label,kind]=KINDS[prefixed?parts.slice(1).join('-'):name]||[name,group];

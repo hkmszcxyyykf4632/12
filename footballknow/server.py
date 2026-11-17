@@ -21,7 +21,7 @@ from football.files import PUBLIC, read_json
 from football.leagues import LeagueId
 from football.match_details import get_detail, next_lineup_evidence
 from football.sync_control import SyncControlInput, read_control, set_control
-from football import stock_analysis, stock_service
+from football import stock_analysis, stock_service, racing, racing_analysis
 
 
 class LoginInput(BaseModel):
@@ -256,6 +256,44 @@ def match_detail(match_id: str, league: LeagueId = 'epl'):
         raise HTTPException(status_code=404, detail='比赛不存在。') from None
     except (OSError, ValueError, KeyError, TypeError, http.client.HTTPException):
         raise HTTPException(status_code=502, detail='本场详细资料暂时无法更新，请稍后重试。') from None
+
+
+@app.get('/api/racing/horses/{ident}')
+def get_horse(ident: str):
+    try:
+        return racing.horse_detail(ident)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/racing/races/{ident}')
+def get_racing_race(ident: str):
+    try:
+        return racing.get_race(ident)
+    except (LookupError, ValueError) as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/racing/races/{ident}/analysis')
+def get_racing_analysis(ident: str):
+    try:
+        return racing_analysis.public_status(ident)
+    except (LookupError, ValueError) as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.post('/api/racing/races/{ident}/analysis')
+def create_racing_analysis(ident: str, phase: str, account: auth.Administrator = Depends(administrator)):
+    try:
+        return racing_analysis.generate(ident, phase)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+    except ValidationError:
+        raise HTTPException(status_code=400, detail='AI 返回格式不完整，请重新生成。') from None
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from None
+    except (OSError, http.client.HTTPException):
+        raise HTTPException(status_code=502, detail='赛马分析暂时无法连接，请稍后重试。') from None
 
 
 app.mount('/',StaticFiles(directory=str(PUBLIC),html=True),name='website')

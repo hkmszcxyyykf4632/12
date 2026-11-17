@@ -110,3 +110,14 @@
 .segmented button{font:inherit;font-size:13px;background:transparent;color:var(--muted);border:0;border-radius:4px;padding:7px 11px;cursor:pointer;white-space:nowrap}
 .segmented button.active{background:var(--surface);color:var(--brand);font-weight:650;box-shadow:0 1px 3px #0001}
 @media(max-width:650px){.toolbar>label{flex:1 1 140px}.toolbar>label.search-field{flex-basis:100%;max-width:none}}
+.racing-tabs{margin:24px 0}.racing-horse strong,.racing-pick{color:var(--brand)}
+.racing-horse small{display:block;color:var(--muted)}
+.racing-race-head{display:flex;justify-content:space-between;gap:24px;align-items:center}
+.racing-race-head h2{font-size:24px;margin:8px 0}.racing-race-head strong{font:600 40px var(--num)}
+.racing-race-head small{font:14px var(--font)}
+.racing-pedigree{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--brand-soft);border-radius:var(--radius);overflow:hidden}
+.racing-pedigree>div{padding:24px;border-right:1px solid var(--line)}.racing-pedigree span{display:block;color:var(--muted);font-size:13px;margin-bottom:8px}
+.racing-pedigree strong{font-size:18px;overflow-wrap:anywhere;color:var(--brand)}
+.racing-suitability{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.racing-suitability>div{min-width:0}
+.racing-original{padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-top:18px}.racing-original summary{cursor:pointer;font-weight:600}
+@media(max-width:750px){.racing-suitability,.racing-pedigree{grid-template-columns:1fr}.racing-pedigree>div{border-right:0;border-bottom:1px solid var(--line)}.racing-race-head{align-items:start;flex-direction:column}}

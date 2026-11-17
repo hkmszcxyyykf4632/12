@@ -22,6 +22,7 @@ ReadWritePaths=/var/lib/footballknow
 ReadWritePaths=/opt/footballknow/public/match-details /opt/footballknow/public/laliga/match-details /opt/footballknow/public/ucl/match-details
 ReadWritePaths=/opt/footballknow/public/seriea/match-details /opt/footballknow/public/bundesliga/match-details
 ReadWritePaths=/opt/footballknow/public/finance/history /opt/footballknow/public/finance/companies /opt/footballknow/public/finance/quote-cache
+ReadWritePaths=/opt/footballknow/public/racing/horses
 UMask=0077
 
 [Install]

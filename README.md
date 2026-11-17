@@ -2,7 +2,7 @@
 
 网站：**[footballknow.art](https://footballknow.art)**。这份仓库保存网站源码、公开数据快照、需求与设计记录、可见对话归档，以及运行、腾讯云部署和维护说明。
 
-本轮在 Kyle 企业版 V2 基础上加入意甲、德甲、五项赛事合并赛程、新闻、俱乐部背景、扩展盘口、恒指成份股与全球行情、赞助商介绍，以及管理员暂停／恢复同步。新功能、来源覆盖、预测计分方法与本次验证见[五赛事、行情与同步控制](docs/五赛事行情与同步控制.md)。
+本轮在 Kyle 企业版 V2 基础上加入意甲、德甲、五项赛事合并赛程、新闻、俱乐部背景、扩展盘口、全港股与全球行情、香港赛马、赞助商介绍，以及管理员暂停／恢复同步。最新股票与赛马覆盖及验证见[香港赛马与全港股](docs/香港赛马与全港股上线记录.md)，较早扩展见[五赛事、行情与同步控制](docs/五赛事行情与同步控制.md)。
 
 来源实际状态以[同步监控](https://footballknow.art/#/status)为准；暂停时保留最近资料，恢复后默认最多同时运行 2 项后台任务。数据缺项、报价时间、财报币种和预测到期数量均在对应页面展示。
 
@@ -20,7 +20,9 @@
 
 DeepSeek 使用本地统计、详细分析规范与实际历史阵容整理下一场：默认两至三段结论，展开后查看细节。后台只需输入 API 密钥。38% 是 90 分钟胜平负的检验目标，当前没有完成本地大模型训练或宣称达到固定预测命中率。微信支付和付费会员按用户最新决定暂缓，保留两个管理员。
 
-新增入口：[五项赛事即场比赛](https://footballknow.art/#/live) · [球队新闻](https://footballknow.art/#/news) · [港股与全球行情](https://footballknow.art/#/markets) · [赞助商](https://footballknow.art/#/sponsors) · [同步开关](https://footballknow.art/#/admin)。
+新增入口：[五项赛事即场比赛](https://footballknow.art/#/live) · [球队新闻](https://footballknow.art/#/news) · [全部港股与全球行情](https://footballknow.art/#/markets) · [香港赛马](https://footballknow.art/#/racing) · [马匹血统与往绩示例](https://footballknow.art/#/horse/HK_2023_J463) · [赞助商](https://footballknow.art/#/sponsors) · [同步开关](https://footballknow.art/#/admin)。
+
+港股目录包含 2,825 个股票及 REIT 交易柜台（2026-11-17），股票名称使用绿色；公司业务、股东、资产负债及复权价格按需获取。香港赛马目录包含 1,466 匹现役马匹，提供父母系与外祖父、近三季往绩和按实际出赛计算的场地表现；赛前预测与赛后评价分开保存，原始预测不可覆盖。
 
 ## 从哪里开始
 
