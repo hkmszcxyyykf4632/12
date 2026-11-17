@@ -1,3 +1,4 @@
+import {paintMarketPreview} from './finance-page.mjs';
 import {data,rankings} from './repository.mjs';
 import {main,esc,cn,team,monogram,pageHeading,matchTable,timeText,oddsText} from './ui.mjs';
 import {fixtureBoard,localized} from './football-components.mjs';
@@ -5,6 +6,7 @@ import {league} from './league.mjs';
 import {standingsPreview} from './rankings-page.mjs';
 import {impliedProbabilities,seasonStats,leadMatch,countdownText,statusSummary} from './insights.mjs';
 import {readStatus} from './status-page.mjs';
+import {paintNewsPreview} from './news-page.mjs';
 
 const percent=value=>`${Math.round(value*100)}%`;
 
@@ -49,8 +51,8 @@ async function paintSync() {
 }
 
 export function renderHome() {
-  main.innerHTML=`${pageHeading(`${league.name}总览`,`${esc(data.season)} 赛季的赛程、比分、积分与球员数据，全部每 60 秒同步一次。`,`<a class="button secondary" href="#/compare">对比两支球队</a>`)}
-  <div id="home-lead"></div><div id="home-kpi"></div>
+  main.innerHTML=`${pageHeading(`${league.name}总览`,`${esc(data.season)} 赛季的赛程、比分、积分与球员数据，比赛资料按分钟检查，新闻与市场行情同步展示。`,`<a class="button secondary" href="#/compare">对比两支球队</a>`)}
+  <section id="home-markets"></section><div class="section-head"><h2>球队即时新闻</h2><a class="button quiet" href="#/news">全部新闻 →</a></div><div id="home-news"></div><div id="home-lead"></div><div id="home-kpi"></div>
   <div class="dash-grid"><div>
     <div class="section-head"><h2>比赛动态与赛程</h2><a class="button quiet" href="#/matches">比赛中心</a></div><div id="home-fixtures"></div>
     <div class="section-head"><h2>最近完赛</h2><a class="button quiet" href="#/matches">全部赛果</a></div><div id="home-recent"></div>
@@ -67,7 +69,7 @@ export function renderHome() {
     main.querySelector('#home-standings').innerHTML=standingsPreview();
     main.querySelector('#home-scorers').innerHTML=scorers();
     main.querySelector('#home-recent').innerHTML=matchTable(data.matches.filter(m=>m.finished&&m.season===data.season&&m.competition===league.name).slice(0,6));
-    paintSync();
+    paintMarketPreview(main.querySelector('#home-markets'));paintSync();paintNewsPreview(main.querySelector('#home-news'));
   };
   update();return update;
 }

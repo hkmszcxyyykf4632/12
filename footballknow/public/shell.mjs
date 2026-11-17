@@ -30,12 +30,12 @@ export function paintSync() {
   const status=data?liveStatus():null;
   const remaining=Math.max(0,Math.ceil((syncState.nextAt-Date.now())/1000));
   $('#sync-ring').style.strokeDashoffset=String(RING*(1-Math.min(1,remaining*1000/SYNC_MS)));
-  $('#sync-countdown').textContent=syncState.busy?'正在同步…':syncState.nextAt?`${remaining} 秒后同步`:'每 60 秒同步';
+  $('#sync-countdown').textContent=syncState.paused?'后台同步已暂停':syncState.busy?'正在同步…':syncState.nextAt?`${remaining} 秒后同步`:'每 60 秒同步';
   pill.classList.toggle('busy',syncState.busy);
   pill.classList.toggle('delayed',Boolean(status&&(status.stale||status.failed)));
   const area=$('#live-status');
   area.className=`sync-banner ${status&&(status.stale||status.failed)?'delayed':''}`;
-  area.textContent=status?`${status.text} · 最近成功 ${status.stamp}`:'正在检查更新时间…';
+  area.textContent=syncState.paused?'管理员已暂停自动抓取；显示最近资料':status?`${status.text} · 最近成功 ${status.stamp}`:'正在检查更新时间…';
 }
 
 /** Ticks the countdown once a second; returns a function that stops it. */
@@ -47,7 +47,7 @@ export function startSyncIndicator(syncNow) {
   return ()=>{clearInterval(timer);$('#sync-pill')?.removeEventListener('click',click);};
 }
 
-const PAGES=[['总览','#/'],['比赛中心','#/matches'],['数据榜单','#/rankings'],['球队列表','#/teams'],['球队对比','#/compare'],['我的关注','#/following'],
+const PAGES=[['总览','#/'],['即场比赛','#/live'],['球队新闻','#/news'],['港股与全球行情','#/markets'],['赞助商','#/sponsors'],['比赛中心','#/matches'],['数据榜单','#/rankings'],['球队列表','#/teams'],['球队对比','#/compare'],['我的关注','#/following'],
   ['模拟投注','#/simulator'],['我的记录','#/records'],['同步监控','#/status'],['数据质量','#/quality'],['数据说明','#/sources'],['管理后台','#/admin']];
 
 /** Everything the palette can open, rebuilt when it is shown so it reflects the latest snapshot. */

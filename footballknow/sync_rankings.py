@@ -6,7 +6,7 @@ from football.rankings import refresh_leaders, refresh_standings
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('league', choices=['epl', 'laliga', 'ucl'])
+    parser.add_argument('league', choices=['epl', 'laliga', 'ucl', 'seriea', 'bundesliga'])
     parser.add_argument('kind', choices=['standings', 'leaders'])
     args = parser.parse_args()
     snapshot = (refresh_standings if args.kind == 'standings' else refresh_leaders)(args.league)

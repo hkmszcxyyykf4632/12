@@ -4,29 +4,34 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0c1f19">
-  <meta name="description" content="Football Know 足球数据终端：英超、西甲与欧冠的赛程、比分、积分、阵容、赔率与赛前分析，全部资料每 60 秒同步。">
+  <meta name="description" content="Football Know 足球数据终端：英超、西甲、意甲、德甲与欧冠的赛程、比分、积分、阵容、赔率与赛前分析，另有新闻、港股与市场行情。">
   <title>Football Know · 足球数据终端</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <script src="./theme.js"></script>
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./expansion.css">
   <script type="module" src="./app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要内容</a>
   <aside class="sidebar" id="sidebar">
     <a class="brand" href="#/"><img src="./icon.svg" alt="" width="34" height="34"><span>Football Know<small>足球数据终端</small></span></a>
-    <nav class="league-switch" aria-label="选择赛事"><a href="./#/" data-league="epl">英超</a><a href="./?league=laliga#/" data-league="laliga">西甲</a><a href="./?league=ucl#/" data-league="ucl">欧冠</a></nav>
+    <nav class="league-switch" aria-label="选择赛事"><a href="./#/" data-league="epl">英超</a><a href="./?league=laliga#/" data-league="laliga">西甲</a><a href="./?league=seriea#/" data-league="seriea">意甲</a><a href="./?league=bundesliga#/" data-league="bundesliga">德甲</a><a href="./?league=ucl#/" data-league="ucl">欧冠</a></nav>
     <nav class="main-nav" aria-label="主导航">
       <p class="nav-group">赛事数据</p>
       <a href="#/" data-nav="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4zm10 7h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>总览</a>
+      <a href="#/live" data-nav="live"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>即场比赛 · 五项赛事</a>
+      <a href="#/news" data-nav="news"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16v18H4zM7 7h10M7 12h10M7 17h6"/></svg>球队新闻</a>
       <a href="#/matches" data-nav="matches"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18m-14 4h3m4 0h3"/></svg>比赛中心</a>
       <a href="#/rankings" data-nav="rankings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V11h4v10m2 0V3h4v18m2 0V8h4v13M2 21h20"/></svg>数据榜单</a>
       <a href="#/teams" data-nav="teams"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3-5 4 3 5 2-1v10h8V11l2 1 3-5-5-4c-1 3-7 3-8 0Z"/></svg><span data-league-team-label>英超球队</span></a>
       <a href="#/compare" data-nav="compare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v16M16 4v16M4 8l4-4 4 4M12 16l4 4 4-4"/></svg>球队对比</a>
+      <p class="nav-group">市场资讯</p><a href="#/markets" data-nav="markets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M4 16l5-5 4 3 7-10"/></svg>港股与全球行情</a>
       <p class="nav-group">研究与记录</p>
       <a href="#/following" data-nav="following"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/></svg>我的关注</a>
       <a href="#/simulator" data-nav="simulator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 12h2m4 0h2m-8 5h2m4 0h2"/></svg>模拟投注</a>
       <a href="#/records" data-nav="records"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM8 7h8M8 12h8M8 17h5"/></svg>我的记录</a>
+      <a href="#/sponsors" data-nav="sponsors"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 3 6 6 3-6 3-3 6-3-6-6-3 6-3Z"/></svg>赞助商</a>
       <p class="nav-group">系统</p>
       <a href="#/status" data-nav="status"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>同步监控</a>
       <a href="#/quality" data-nav="quality"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 7.6 8 9 4.8-1.4 8-4.5 8-9V6Zm-3.5 9 2.5 2.5 4.5-5"/></svg>数据质量</a>
@@ -48,7 +53,7 @@
       <button class="icon-button" id="theme-toggle" type="button" aria-label="切换深色或浅色界面"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
     </header>
     <main id="main" tabindex="-1"><div class="loading">正在载入球队与比赛资料…</div></main>
-    <footer><span>Football Know</span><span>全部资料每 60 秒同步，来源与采集时间随数据显示</span><a href="#/sources">来源与覆盖范围</a></footer>
+    <footer><span>Football Know · <a href="#/sponsors">赞助商</a></span><span>比赛与报价按分钟检查，来源及资料时间随数据显示</span><a href="#/sources">来源与覆盖范围</a></footer>
   </div>
   <div class="palette" id="palette" hidden>
     <div class="palette-box" role="dialog" aria-modal="true" aria-label="全站搜索">

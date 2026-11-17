@@ -12,7 +12,7 @@ if ! id footballknow >/dev/null 2>&1; then
     useradd --system --user-group --home-dir /var/lib/footballknow --shell /usr/sbin/nologin footballknow
 fi
 install -d -m 700 -o footballknow -g footballknow /var/lib/footballknow
-install -d -m 755 -o footballknow -g footballknow /opt/footballknow/public/match-details /opt/footballknow/public/laliga/match-details /opt/footballknow/public/ucl/match-details
+install -d -m 755 -o footballknow -g footballknow /opt/footballknow/public/match-details /opt/footballknow/public/laliga/match-details /opt/footballknow/public/ucl/match-details /opt/footballknow/public/seriea/match-details /opt/footballknow/public/bundesliga/match-details /opt/footballknow/public/finance/history
 if ! test -f /var/lib/footballknow/admin.sqlite3 && ! test -f /var/lib/footballknow/admin-seed.json; then
     test -f /opt/footballknow/deploy/private/admin-seed.json
     install -m 600 -o footballknow -g footballknow /opt/footballknow/deploy/private/admin-seed.json /var/lib/footballknow/admin-seed.json

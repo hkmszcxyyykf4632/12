@@ -5,13 +5,13 @@ import {validTable,validLeaders} from './rankings-core.mjs';
 export let data=null, live=null, names=null, history=null;
 export let liveFailed=false;
 export let standings=null,rankings=null,rankingsFailed=false;
-export let odds=null;
+export let odds=null,markets=null,profiles=null;
 // Optional snapshots: the site works without them and shows their sections once the synchronizer has produced them.
 export let facts=null,changes=null,oddsHistory=null;
 let archive=null, busy=false;
 // One cadence for everything: the server checks every source each minute and the page re-reads every snapshot each minute.
 export const SYNC_MS=60000;
-export const syncState={lastAttempt:0,lastSuccess:0,nextAt:0,busy:false};
+export const syncState={lastAttempt:0,lastSuccess:0,nextAt:0,busy:false,paused:false};
 
 async function readSnapshot(name) {
   const controller=new AbortController();
@@ -35,8 +35,9 @@ export async function refresh(force=false) {
         archive=next;
       } catch(error) {if(!archive)throw error;}
     }
-    const snapshotKeys=['live','names','history','standings','rankings','odds','match-facts','changes','odds-history'];
-    const snapshots=await Promise.allSettled(snapshotKeys.map(readSnapshot));
+    const snapshotKeys=['live','names','history','standings','rankings','odds','match-facts','changes','odds-history','market-odds','profiles'];
+    const snapshots=await Promise.allSettled([...snapshotKeys.map(readSnapshot),fetch('/api/status',{cache:'no-store',signal:AbortSignal.timeout(8000)}).then(r=>r.json())]);
+    const syncStatus=snapshots.at(-1);if(syncStatus.status==='fulfilled')syncState.paused=syncStatus.value.paused===true;
     const result=snapshots[0];
     if(result.status==='fulfilled'&&validLive(result.value,archive)) {live=result.value;liveFailed=false;}
     else liveFailed=true;
@@ -63,6 +64,10 @@ export async function refresh(force=false) {
     if(facts?.season!==archive.season)facts=null;
     if(Array.isArray(nextChanges?.entries))changes=nextChanges;
     if(nextMoves?.league===league.id&&nextMoves.season===archive.season&&nextMoves.matches)oddsHistory=nextMoves;
+    const nextMarkets=optional('market-odds'),nextProfiles=optional('profiles');
+    if(nextMarkets?.league===league.id&&nextMarkets.season===archive.season&&nextMarkets.matches)markets=nextMarkets;
+    if(markets?.season!==archive.season)markets=null;
+    if(nextProfiles?.league===league.id&&nextProfiles.teams)profiles=nextProfiles;
     syncState.lastSuccess=Date.now();
     return true;
   } finally {busy=false;syncState.busy=false;}
@@ -73,7 +78,7 @@ export function findMatch(id) {return data?.matches.find(row=>row.id===id||row.a
 export function liveStatus() {
   const state=freshness(live,liveFailed);
   const stamp=live?.updatedAt ? new Date(live.updatedAt).toLocaleString('zh-CN') : '尚无成功记录';
-  return {...state,text:state.stale?'比分资料待更新':state.failed?'连接暂时中断':'全部资料每 60 秒同步',stamp};
+  return {...state,text:state.stale?'比分资料待更新':state.failed?'连接暂时中断':'比赛资料按分钟检查',stamp};
 }
 
 export function startPolling(onUpdate) {

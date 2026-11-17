@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
 import server
-from football import ai, auth, history, live, names
+from football import ai, auth, history, live, names, sync_control, stock_analysis
 from football.analysis import Match, poisson_baseline
 from football.name_rosters import roster_names
 from sync_data import validate_feed
@@ -17,6 +17,8 @@ from sync_data import validate_feed
 def client(tmp_path, monkeypatch):
     monkeypatch.setattr(auth,'STATE',tmp_path)
     monkeypatch.setattr(ai,'STATE',tmp_path)
+    monkeypatch.setattr(sync_control,'STATE',tmp_path)
+    monkeypatch.setattr(stock_analysis,'STATE',tmp_path)
     monkeypatch.delenv('FOOTBALL_PRODUCTION',raising=False)
     salt='ab'*16
     seed={'users':[{'username':name,'salt':salt,'password_hash':auth.password_hash('test-pass-long-123',salt)} for name in ['admin01','admin02']]}
@@ -160,3 +162,31 @@ def test_health_reports_synchronizer_heartbeat_and_snapshots_revalidate(client,t
     assert client.get('/standings.json').headers['cache-control']=='no-cache'
     monkeypatch.setenv('FOOTBALL_ALLOWED_ORIGINS','https://client.example')
     assert server.allowed_origins()=={'https://client.example'}
+
+
+def test_admin_sync_switch_requires_login_and_remembers_state(client):
+    assert client.get('/api/sync/control').status_code == 401
+    assert client.put('/api/sync/control', json={'enabled': False}).status_code == 401
+    sign_in(client)
+    assert client.put('/api/sync/control', json={'enabled': 'false'}).status_code == 422
+    assert client.put('/api/sync/control', json={'enabled': False}, headers={'Origin': 'https://evil.example'}).status_code == 403
+    assert client.put('/api/sync/control', json={'enabled': False}).json()['enabled'] is False
+    assert client.get('/api/sync/control').json()['enabled'] is False
+    assert client.get('/sync-control.json').status_code == 404
+    assert client.put('/api/sync/control', json={'enabled': True}).json()['enabled'] is True
+
+
+def test_paused_match_does_not_trigger_network(client, monkeypatch):
+    sign_in(client)
+    client.put('/api/sync/control', json={'enabled': False})
+    calls = []
+    monkeypatch.setattr(server, 'get_detail', lambda *args, **kwargs: calls.append(kwargs) or None)
+    assert client.get('/api/match?match_id=example').status_code == 503
+    assert calls == [{'fetch_missing': False}]
+
+
+def test_stock_analysis_public_get_is_unrated_and_post_requires_admin(client):
+    result = client.get('/api/stocks/00700/analysis')
+    assert result.status_code == 200 and result.json()['evaluation']['week']['successRate'] is None
+    assert client.post('/api/stocks/00700/analysis').status_code == 401
+    assert client.get('/api/stocks/abc/analysis').status_code == 404

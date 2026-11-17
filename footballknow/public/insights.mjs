@@ -47,16 +47,17 @@ export function comparisonRows(a,b) {
   });
 }
 
-const GROUPS={scores:'比分与赛程',catalogue:'球队与球员',history:'转会与领队',names:'中文姓名',rankings:'积分与球员榜',lineups:'阵容与技术统计',odds:'赔率'};
+const GROUPS={scores:'比分与赛程',catalogue:'球队与球员',history:'转会与领队',names:'中文姓名',rankings:'积分与球员榜',lineups:'阵容与技术统计',odds:'赔率',news:'球队新闻',profiles:'球队背景'};
 const KINDS={live:['比分与赛程','scores'],catalogue:['球队与球员','catalogue'],history:['转会与领队','history'],names:['中文姓名','names'],
-  standings:['积分榜','rankings'],leaders:['射手、助攻与纪律榜','rankings'],lineups:['阵容与技术统计','lineups'],odds:['赔率快照','odds']};
+  standings:['积分榜','rankings'],leaders:['射手、助攻与纪律榜','rankings'],lineups:['阵容与技术统计','lineups'],odds:['赔率快照','odds'],news:['球队新闻','news'],profiles:['背景与持有人','profiles']};
 
 /** Readable name and category for a synchronizer job id such as "laliga-standings". */
 export function describeJob(name,group='') {
+  if(name.startsWith('finance-'))return {league:'市场',label:({quotes:'港股报价',assets:'黄金、原油与比特币',companies:'公司与财务',history:'历史价格',evaluation:'预测验证'})[name.slice(8)]||name,group:'市场资料'};
   if(name==='odds-official-checks')return {league:'全部赛事',label:'书商官网可访问性检查',group:GROUPS.odds};
-  const parts=name.split('-'),prefixed=['epl','laliga','ucl'].includes(parts[0])&&parts.length>1;
+  const parts=name.split('-'),prefixed=['epl','laliga','ucl','seriea','bundesliga'].includes(parts[0])&&parts.length>1;
   const [label,kind]=KINDS[prefixed?parts.slice(1).join('-'):name]||[name,group];
-  return {league:{epl:'英超',laliga:'西甲',ucl:'欧冠'}[prefixed?parts[0]:'epl'],label,group:GROUPS[group||kind]||'其他'};
+  return {league:{epl:'英超',laliga:'西甲',ucl:'欧冠',seriea:'意甲',bundesliga:'德甲'}[prefixed?parts[0]:'epl'],label,group:GROUPS[group||kind]||'其他'};
 }
 
 export function statusSummary(status,now=Date.now()) {
@@ -64,8 +65,8 @@ export function statusSummary(status,now=Date.now()) {
   const summary=status?.summary||{total:jobs.length,ok:jobs.filter(j=>j.ok===true).length,failed:jobs.filter(j=>j.ok===false).length,pending:jobs.filter(j=>j.ok==null).length};
   const age=now-Date.parse(status?.heartbeat);
   const alive=Boolean(status?.running)&&Number.isFinite(age)&&age<120000;
-  return {...summary,alive,level:!alive?'down':summary.failed?'warn':'ok',
-    text:!alive?'同步服务未运行，或心跳已超过两分钟':summary.failed?`${summary.ok} 项正常，${summary.failed} 项失败并自动重试`:summary.pending?`${summary.ok} 项正常，${summary.pending} 项等待首次同步`:`全部 ${summary.total} 项同步正常`};
+  return {...summary,alive,level:!alive?'down':status.paused?'warn':summary.failed?'warn':'ok',
+    text:!alive?'同步服务未运行，或心跳已超过两分钟':status.paused?'管理员已暂停同步，显示最近成功资料':summary.failed?`${summary.ok} 项正常，${summary.failed} 项失败并自动重试`:summary.pending?`${summary.ok} 项正常，${summary.pending} 项等待首次同步`:`全部 ${summary.total} 项同步正常`};
 }
 
 // ---- Season, player and data-quality calculations ----

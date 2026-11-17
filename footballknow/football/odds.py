@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, timezone
 
 from .files import PUBLIC, STATE, fetch_text, publish, read_json
 from .odds_history import append_history
+from .market_odds import historical_markets, espn_markets, combine_quotes, append_market_history
 from .leagues import league_path, league_config
 
 PROVIDERS = {
@@ -112,10 +113,13 @@ def refresh_odds(league):
     previous = read_json(folder / 'odds.json') if (folder / 'odds.json').exists() else {}
     quotes = previous.get('matches', {}) if previous.get('season') == catalogue['season'] else {}
     stamp = datetime.now(timezone.utc).isoformat()
+    market_path = folder / 'market-odds.json'
+    market_previous = read_json(market_path) if market_path.exists() else {}
+    markets = market_previous.get('matches', {}) if market_previous.get('season') == catalogue['season'] else {}
     errors, feeds = [], []
     if league != 'ucl':
         year = int(catalogue['season'][:4])
-        divisions = ['E0', 'E1'] if league == 'epl' else ['SP1', 'SP2']
+        divisions = {'epl': ['E0', 'E1'], 'laliga': ['SP1', 'SP2'], 'seriea': ['I1', 'I2'], 'bundesliga': ['D1', 'D2']}[league]
         urls = [f'https://www.football-data.co.uk/mmz4281/{y%100:02}{(y+1)%100:02}/{division}.csv' for y in [year, year-1] for division in divisions]
         urls.append('https://www.football-data.co.uk/fixtures.csv')
         def collect(url):
@@ -146,6 +150,7 @@ def refresh_odds(league):
                     match = lookup.get((date, canonical(home, league), canonical(away, league)))
                     if not match:
                         continue
+                    markets[match['id']] = combine_quotes(markets.get(match['id'], []), historical_markets(row, url, stamp))
                     result = historical_odds(row, url, stamp)
                     if result:
                         quotes[match['id']] = result
@@ -154,24 +159,27 @@ def refresh_odds(league):
         path = STATE / 'match-summaries' / f'{event_id}.json' if event_id else None
         if path and path.exists():
             saved = read_json(path)
+            markets[match['id']] = combine_quotes(markets.get(match['id'], []), espn_markets(saved['raw'], event_id, saved['updatedAt']))
             result = espn_odds(saved['raw'], event_id, saved['updatedAt'])
             if result:
                 quotes[match['id']] = result
     horizon = (datetime.now(timezone.utc) + timedelta(days=14)).isoformat()
     upcoming = sorted([m for m in matches if m['competition'] == league_config(league).competition and not m.get('finished')
-                       and not m.get('started') and m.get('kickoff') and stamp < m['kickoff'] < horizon], key=lambda m: m['kickoff'])[:40]
+                       and m.get('kickoff') and (m.get('started') or stamp < m['kickoff'] < horizon)], key=lambda m: m['kickoff'])[:40]
     def next_quote(match):
         try:
             event = resolve_event(match, league)
             if not event:
-                return match['id'], None
+                return match['id'], None, None
             raw = fetch_json(f'https://site.api.espn.com/apis/site/v2/sports/soccer/all/summary?event={event}')
             parse_detail(raw, match, catalogue, league, event)
-            return match['id'], espn_odds(raw, event, stamp)
+            return match['id'], espn_odds(raw, event, stamp), espn_markets(raw, event, stamp)
         except (OSError, ValueError, KeyError, TypeError, http.client.HTTPException):
-            return match['id'], None
+            return match['id'], None, None
     with ThreadPoolExecutor(max_workers=4) as pool:
-        for match_id, result in pool.map(next_quote, upcoming):
+        for match_id, result, extra in pool.map(next_quote, upcoming):
+            if extra is not None:
+                markets[match_id] = combine_quotes([q for q in markets.get(match_id, []) if not (q.get('via') == 'ESPN' and q.get('phase') == 'latest')], extra)
             if result is None:
                 errors.append(match_id)
             elif result:
@@ -180,6 +188,13 @@ def refresh_odds(league):
                 # A successfully retrieved empty market is not an unchanged live quote.
                 quotes.pop(match_id, None)
     known = {m['id'] for m in matches}
+    markets = {key: rows for key, rows in markets.items() if key in known and rows}
+    recent_market = (datetime.now(timezone.utc) - timedelta(days=30)).date().isoformat()
+    tracked_markets = {m['id'] for m in matches if m['date'] >= recent_market}
+    market_history = append_market_history(market_previous.get('history', {}) if market_previous.get('season') == catalogue['season'] else {}, markets, tracked_markets, stamp)
+    publish(market_path, {'version': 1, 'league': league, 'season': catalogue['season'], 'updatedAt': stamp,
+                         'matches': markets, 'history': market_history, 'failedSources': errors,
+                         'meaning': '开始、赛前、最新和收盘分开标注；Football-Data赛前不是保证的开盘；所有价格为十进制。'})
     quotes = {key: value for key, value in quotes.items() if key in known}
     snapshot = {'version': 1, 'league': league, 'season': catalogue['season'], 'updatedAt': stamp,
                 'intervalSeconds': 300, 'matches': quotes, 'failedSources': errors, 'feeds': feeds,

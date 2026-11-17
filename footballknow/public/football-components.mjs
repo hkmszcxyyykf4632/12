@@ -5,7 +5,7 @@ import {laligaNameDrafts} from './laliga-name-drafts.mjs';
 import {uclNameDrafts} from './ucl-name-drafts.mjs';
 import {league} from './league.mjs';
 
-export function localized(player) {return names?.names?.[String(player.code)]||(league.id==='epl'?nameDrafts:league.id==='ucl'?{...laligaNameDrafts,...uclNameDrafts}:laligaNameDrafts)[String(player.code)];}
+export function localized(player) {return names?.names?.[String(player.code)]||(league.id==='epl'?nameDrafts:league.id==='ucl'?{...laligaNameDrafts,...uclNameDrafts}:league.id==='laliga'?laligaNameDrafts:{})[String(player.code)];}
 
 export function playerLabel(player) {
   const name=localized(player);

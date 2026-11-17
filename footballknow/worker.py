@@ -21,13 +21,15 @@ from pydantic import BaseModel
 from football.changelog import diff_live, merge_log
 from football.files import PUBLIC, ROOT, publish, read_json
 from football.leagues import league_path
+from football.sync_control import read_control
 
 LOG = logging.getLogger('football.sync')
 STOP = threading.Event()
+PAUSED = threading.Event()
 DEFAULT_SECONDS = 60
 MINIMUM_SECONDS = 30
 BACKOFF_CEILING = 900
-LEAGUES = ['epl', 'laliga', 'ucl']
+LEAGUES = ['epl', 'laliga', 'ucl', 'seriea', 'bundesliga']
 
 # name, script, group shown on the status page
 JOBS: list[tuple[str, str, str]] = [
@@ -37,10 +39,16 @@ JOBS: list[tuple[str, str, str]] = [
     ('laliga-history', 'sync_laliga.py history', 'history'), ('laliga-names', 'sync_laliga.py names', 'names'),
     ('ucl-live', 'sync_ucl.py live', 'scores'), ('ucl-catalogue', 'sync_ucl.py catalogue', 'catalogue'),
     ('ucl-history', 'sync_ucl.py history', 'history'), ('ucl-names', 'sync_ucl.py names', 'names'),
+    *[(f'{league}-{kind}', f'sync_domestic.py {league} {kind}', group)
+      for league in ['seriea', 'bundesliga']
+      for kind, group in [('live', 'scores'), ('catalogue', 'catalogue'), ('history', 'history'), ('names', 'names')]],
     *[(f'{league}-{kind}', f'sync_rankings.py {league} {kind}', 'rankings')
       for league in LEAGUES for kind in ['standings', 'leaders']],
     *[(f'{league}-lineups', f'sync_match_details.py {league}', 'lineups') for league in LEAGUES],
     *[(f'{league}-odds', f'sync_odds.py {league}', 'odds') for league in LEAGUES],
+    *[(f'{league}-news', f'sync_news.py {league}', 'news') for league in LEAGUES],
+    *[(f'{league}-profiles', f'sync_profiles.py {league}', 'profiles') for league in LEAGUES],
+    *[(f'finance-{kind}', f'sync_finance.py {kind}', 'finance') for kind in ['quotes', 'assets', 'companies', 'history', 'evaluation']],
     ('odds-official-checks', 'sync_odds.py sources', 'odds'),
 ]
 
@@ -89,8 +97,19 @@ def interval_overrides(environ: dict[str, str] | None = None) -> dict[str, int]:
 
 def job_table(environ: dict[str, str] | None = None) -> dict[str, Job]:
     base, overrides = sync_seconds(environ), interval_overrides(environ)
-    return {name: Job(script, JobStatus(intervalSeconds=overrides.get(name, base), group=group))
+    defaults = {**{f'{league}-profiles': 86400 for league in LEAGUES},
+                'finance-companies': 86400, 'finance-history': 3600, 'finance-evaluation': 3600}
+    return {name: Job(script, JobStatus(intervalSeconds=overrides.get(name, defaults.get(name, base)), group=group))
             for name, script, group in JOBS}
+
+
+def max_workers(environ=None):
+    raw = (environ if environ is not None else os.environ).get('FOOTBALL_SYNC_WORKERS', '2')
+    return max(1, min(8, int(raw))) if raw.isdigit() else 2
+
+
+class SyncPaused(Exception):
+    pass
 
 
 def retry_delay(interval: int, consecutive_failures: int) -> int:
@@ -100,7 +119,7 @@ def retry_delay(interval: int, consecutive_failures: int) -> int:
     return max(interval, min(BACKOFF_CEILING, interval * 2 ** (consecutive_failures - 1)))
 
 
-LIVE_JOBS = {'live': 'epl', 'laliga-live': 'laliga', 'ucl-live': 'ucl'}
+LIVE_JOBS = {'live': 'epl', **{f'{league}-live': league for league in LEAGUES if league != 'epl'}}
 
 
 def read_live(league: str) -> dict:
@@ -128,12 +147,32 @@ def run_job(script: str, league: str | None = None) -> str:
 
 
 def run_script(script: str) -> str:
-    result = subprocess.run([sys.executable, *shlex.split(script)], cwd=ROOT,
-                            capture_output=True, text=True, encoding='utf-8', timeout=600,
-                            check=False)
-    if result.returncode:
-        raise OSError('上游读取或解析失败；保留最近一次成功资料')
-    return result.stdout.strip()[-300:] or '同步完成'
+    if PAUSED.is_set() or STOP.is_set():
+        raise SyncPaused()
+    with subprocess.Popen([sys.executable, *shlex.split(script)], cwd=ROOT,
+                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8') as process:
+        deadline = time.monotonic() + 600
+        while True:
+            cancelled = PAUSED.is_set() or STOP.is_set()
+            expired = time.monotonic() >= deadline
+            if cancelled or expired:
+                process.terminate()
+                try:
+                    process.communicate(timeout=5)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.communicate()
+                if cancelled:
+                    raise SyncPaused()
+                raise subprocess.TimeoutExpired(script, 600)
+            try:
+                stdout, _ = process.communicate(timeout=.5)
+                break
+            except subprocess.TimeoutExpired:
+                continue
+        if process.returncode:
+            raise OSError('上游读取或解析失败；保留最近一次成功资料')
+        return stdout.strip()[-300:] or '同步完成'
 
 
 def settle(job: Job, name: str, clock: float, stamp: datetime) -> None:
@@ -145,6 +184,8 @@ def settle(job: Job, name: str, clock: float, stamp: datetime) -> None:
         status.lastSuccess = stamp.isoformat()
         status.consecutiveFailures = 0
         LOG.info('%s refreshed', name)
+    except SyncPaused:
+        status.message = '管理员已暂停同步；保留最近成功资料'
     except (OSError, subprocess.TimeoutExpired):
         status.ok = False
         status.failures += 1
@@ -161,7 +202,8 @@ def settle(job: Job, name: str, clock: float, stamp: datetime) -> None:
 
 def snapshot(jobs: dict[str, Job], running: bool, started_at: str) -> dict:
     states = [job.status for job in jobs.values()]
-    return {'running': running, 'heartbeat': datetime.now(timezone.utc).isoformat(), 'startedAt': started_at,
+    return {'running': running, 'paused': PAUSED.is_set(), 'maxConcurrentJobs': max_workers(),
+            'heartbeat': datetime.now(timezone.utc).isoformat(), 'startedAt': started_at,
             'syncSeconds': sync_seconds(),
             'summary': {'total': len(states), 'ok': sum(s.ok is True for s in states),
                         'failed': sum(s.ok is False for s in states), 'pending': sum(s.ok is None for s in states)},
@@ -179,18 +221,29 @@ def main() -> None:
     jobs = job_table()
     started_at = datetime.now(timezone.utc).isoformat()
     published = 0.0
-    with ThreadPoolExecutor(max_workers=len(jobs)) as executor:
+    with ThreadPoolExecutor(max_workers=max_workers()) as executor:
         while not STOP.is_set():
             clock, stamp, changed = time.monotonic(), datetime.now(timezone.utc), False
+            paused = not read_control()['enabled']
+            if paused != PAUSED.is_set():
+                PAUSED.set() if paused else PAUSED.clear()
+                changed = True
             for name, job in jobs.items():
                 if job.future and job.future.done():
                     settle(job, name, clock, stamp)
                     changed = True
-                if job.future is None and clock >= job.due:
+            slots = max_workers() - sum(job.future is not None for job in jobs.values())
+            fast = lambda name, job: job.status.group in {'scores', 'odds'} or name in {'finance-quotes', 'finance-assets'}
+            background_running = sum(job.future is not None and not fast(name, job) for name, job in jobs.items())
+            for name, job in sorted(jobs.items(), key=lambda item: (item[1].due, item[1].status.group != 'scores')):
+                available = fast(name, job) or background_running < max(1, max_workers() - 1)
+                if not paused and slots > 0 and available and job.future is None and clock >= job.due:
                     job.status.running = True
                     job.status.lastAttempt = stamp.isoformat()
                     job.started = clock
                     job.future = executor.submit(run_job, job.script, LIVE_JOBS.get(name))
+                    slots -= 1
+                    background_running += int(not fast(name, job))
                     changed = True
             if changed or clock - published >= 5:
                 publish(PUBLIC / 'sync-status.json', snapshot(jobs, True, started_at))

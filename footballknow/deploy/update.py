@@ -52,7 +52,7 @@ def load_archive(path, digest, revision):
         if relative.endswith('.py'):
             compile(raw, relative, 'exec')
     assert 'server.py' in content and 'public/rankings-page.mjs' in content
-    for league, folder, expected in [('epl', '', 20), ('laliga', 'laliga/', 20), ('ucl', 'ucl/', 36)]:
+    for league, folder, expected in [('epl', '', 20), ('laliga', 'laliga/', 20), ('ucl', 'ucl/', 36), ('seriea', 'seriea/', 20), ('bundesliga', 'bundesliga/', 18)]:
         catalogue = json.loads(content[f'public/{folder}data.json'])
         assert len(catalogue['teams']) == expected
         table = json.loads(content[f'public/{folder}standings.json'])
@@ -72,7 +72,7 @@ def stop_worker():
 
 
 def health(content):
-    for league, folder in [('epl', ''), ('laliga', 'laliga/'), ('ucl', 'ucl/')]:
+    for league, folder in [('epl', ''), ('laliga', 'laliga/'), ('ucl', 'ucl/'), ('seriea', 'seriea/'), ('bundesliga', 'bundesliga/')]:
         catalogue = json.loads(content[f'public/{folder}data.json'])
         team_id = catalogue['teams'][0]['id']
         with urllib.request.urlopen(f'http://127.0.0.1:8765/api/analysis/{team_id}?league={league}', timeout=25) as response:
@@ -148,7 +148,7 @@ def main():
             temporary.chmod(0o644)
             os.chown(temporary, owner.st_uid, owner.st_gid)
             os.replace(temporary, target)
-        for folder in ['public/match-details', 'public/laliga/match-details', 'public/ucl/match-details']:
+        for folder in ['public/match-details', 'public/laliga/match-details', 'public/ucl/match-details', 'public/seriea/match-details', 'public/bundesliga/match-details']:
             path = ROOT / folder
             path.mkdir(parents=True, exist_ok=True)
             path.chmod(0o755)

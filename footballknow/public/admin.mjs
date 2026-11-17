@@ -1,3 +1,4 @@
+import {syncState} from './repository.mjs';
 import {api} from './api.mjs';
 import {main,esc,pageHeading,toast,timeText} from './ui.mjs';
 
@@ -5,11 +6,13 @@ const JOBS={live:'比赛与比分',catalogue:'球队与球员',history:'转会�
 
 export function renderAdmin() {
   const controller=new AbortController();
+  let syncEnabled=null,syncBusy=false,statusTimer=null;
   const request=(path,options={})=>api(path,{...options,signal:controller.signal});
   main.innerHTML=`${pageHeading('管理后台','管理 AI 服务与分析规则，查看资料同步情况。')}<div class="loading">正在检查登录状态…</div>`;
   const fail=error=>{if(!controller.signal.aborted)main.innerHTML=`${pageHeading('管理后台','管理员服务暂时无法读取。')}<div class="error-box">${esc(error.message)}</div><a class="button secondary" href="#/">返回网站</a>`;};
 
   function login(message='') {
+    clearInterval(statusTimer);
     if(controller.signal.aborted)return;
     main.innerHTML=`${pageHeading('管理员登录','使用你的独立管理员账号进入。')}<div class="admin-login-layout"><section class="panel login-panel"><h2>欢迎回来</h2><form id="login-form"><div class="field"><label for="admin-username">管理员账号</label><input id="admin-username" name="username" autocomplete="username" maxlength="30" required placeholder="admin01 / admin02"></div><div class="field"><label for="admin-password">密码</label><input id="admin-password" name="password" type="password" autocomplete="current-password" maxlength="256" required></div><p class="form-error" id="login-error" role="alert">${esc(message)}</p><button class="button" type="submit">登录管理后台</button></form></section><div class="login-note"><h2>把资料交给系统，<br>把判断留给自己。</h2><p>在这里连接 AI 服务、维护分析方法，以及查看每个资料来源的同步情况。</p><p class="note">当前提供两个管理员账号。账号密码由网站负责人单独保管。</p></div></div>`;
     main.querySelector('#login-form').addEventListener('submit',async event=>{
@@ -27,7 +30,7 @@ export function renderAdmin() {
       <nav class="section-nav" aria-label="后台内容"><a href="#ai-config">AI 接口</a><a href="#analysis-rules">分析方法</a><a href="#sync-panel">资料同步</a><a href="#password-panel">修改密码</a></nav>
       <div class="admin-grid"><section class="panel" id="ai-config"><h2>连接 DeepSeek</h2><p class="note" id="key-status">${settings.configured?'已保存密钥；留空即可继续使用。':'已预设 DeepSeek，只需粘贴 API 密钥即可生成分析。'}</p>
       <form id="ai-settings-form"><div class="field"><label for="ai-key">DeepSeek API 密钥</label><input id="ai-key" type="password" autocomplete="new-password" maxlength="4000" ${settings.configured?'':'required'} placeholder="${settings.configured?'已保存；不修改时留空':'粘贴你的 DeepSeek API 密钥'}"><small>填写 DeepSeek 开放平台的 API 密钥。保存后不会回显。<a href="https://platform.deepseek.com/" target="_blank" rel="noopener noreferrer">获取密钥</a></small></div><p class="form-error" role="alert"></p><button class="button" type="submit">保存 DeepSeek 密钥</button></form></section>
-      <section class="panel" id="sync-panel"><h2>同步情况</h2><div id="sync-jobs">正在读取…</div><button class="button secondary compact" id="refresh-status">刷新同步状态</button><p class="note">全部资料每 60 秒检查一次，来源不可用时保留最近成功资料。<a href="#/status">查看全部任务的同步监控</a></p></section></div>
+      <section class="panel" id="sync-panel"><h2>同步情况</h2><div class="sync-control"><p id="sync-control-state" role="status">正在读取同步开关…</p><button class="button" id="sync-toggle" type="button" disabled>读取开关</button><p class="note">暂停后停止后台抓取，已有资料仍可浏览。开关重启后仍会保留；恢复后分批更新。</p></div><div id="sync-jobs">正在读取…</div><button class="button secondary compact" id="refresh-status">刷新同步状态</button><p class="note">比赛与报价按分钟检查，背景和财务按较长间隔更新；同时最多运行 2 个任务。<a href="#/status">查看全部任务的同步监控</a></p></section></div>
       <section class="panel spaced-panel" id="analysis-rules"><h2>本地分析规范</h2><p class="note">详细方法随每次请求交给 DeepSeek，前台呈现两三段结论，其余依据可展开查看。</p><form id="rules-form"><div class="field"><label for="rules-text">要求 AI 遵守的方法与输出规范</label><textarea id="rules-text" rows="16" minlength="80" maxlength="16000" required>${esc(rules.text)}</textarea></div><p class="form-error" role="alert"></p><button class="button" type="submit">保存分析规范</button></form></section>
       <section class="panel spaced-panel" id="password-panel"><h2>修改我的密码</h2><form id="password-form"><div class="field-row"><div class="field"><label for="current-password">当前密码</label><input id="current-password" type="password" autocomplete="current-password" required maxlength="256"></div><div class="field"><label for="new-password">新密码</label><input id="new-password" type="password" autocomplete="new-password" required minlength="12" maxlength="256"><small>至少 12 个字符。</small></div></div><div class="field"><label for="confirm-password">再次输入新密码</label><input id="confirm-password" type="password" autocomplete="new-password" required minlength="12" maxlength="256"></div><p class="form-error" role="alert"></p><button class="button secondary" type="submit">修改密码并重新登录</button></form></section>`;
     main.querySelectorAll('.section-nav a').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();main.querySelector(link.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});}));
@@ -45,6 +48,14 @@ export function renderAdmin() {
       login('密码已修改，请使用新密码登录。');
     });
     main.querySelector('#refresh-status').addEventListener('click',refreshStatus);
+    main.querySelector('#sync-toggle').addEventListener('click',async()=>{
+      if(syncEnabled===null||syncBusy)return;
+      syncBusy=true;const button=main.querySelector('#sync-toggle');button.disabled=true;
+      try{const updated=await request('/api/sync/control',{method:'PUT',body:{enabled:!syncEnabled}});syncEnabled=updated.enabled;toast(updated.enabled?'已开启同步，任务将分批恢复。':'已关闭同步，正在停止抓取任务。');await refreshStatus();}
+      catch(error){if(!controller.signal.aborted)toast(error.message);}
+      finally{syncBusy=false;if(!controller.signal.aborted)button.disabled=false;}
+    });
+    clearInterval(statusTimer);statusTimer=setInterval(()=>{if(!document.hidden)refreshStatus();},3000);
     refreshStatus();
   }
 
@@ -59,12 +70,16 @@ export function renderAdmin() {
 
   async function refreshStatus() {
     try {
-      const status=await request('/api/status');if(controller.signal.aborted)return;
+      const control=await request('/api/sync/control');if(controller.signal.aborted)return;
       const area=main.querySelector('#sync-jobs');if(!area)return;
+      const status=control.worker||{};syncEnabled=control.enabled;syncState.paused=!control.enabled;
       const fresh=status.running&&Date.now()-Date.parse(status.heartbeat)<120000;
-      area.innerHTML=`<p class="notice">${fresh?'后台同步任务运行中':'后台同步尚未运行，或心跳已超过两分钟。'}</p><dl class="sync-list">${Object.entries(JOBS).map(([key,label])=>{const job=status.jobs?.[key];return `<div><dt>${label}</dt><dd>${job?.running?'正在获取':job?.ok?'最近检查成功':job?.ok===false?'检查失败，稍后重试':'尚未完成'}<small>最近成功：${job?.lastSuccess?esc(timeText(job.lastSuccess)):'暂无'}</small></dd></div>`;}).join('')}</dl>`;
+      const stopped=status.paused&&!Object.values(status.jobs||{}).some(job=>job.running);
+      const button=main.querySelector('#sync-toggle');button.textContent=syncEnabled?'暂停同步':'恢复同步';button.disabled=syncBusy;
+      main.querySelector('#sync-control-state').textContent=syncEnabled?(fresh&&!status.paused?'同步已开启':'已开启，等待同步服务响应'):(fresh&&stopped?'同步已暂停':'已关闭，正在等待任务停止');
+      area.innerHTML='<p class="notice">'+(fresh?(status.paused?'已暂停自动更新，保留最近成功资料。':'后台同步中；同时最多 '+(status.maxConcurrentJobs||2)+' 个任务。'):'同步服务心跳已超过两分钟，请检查服务器。')+'</p><p class="note">正在执行 '+Object.values(status.jobs||{}).filter(job=>job.running).length+' 项；最近心跳 '+(status.heartbeat?esc(timeText(status.heartbeat)):'暂无')+'。</p>';
     } catch(error) {const area=main.querySelector('#sync-jobs');if(area&&!controller.signal.aborted)area.textContent=error.message;}
   }
   request('/api/auth/me').then(session=>session.authenticated?dashboard(session):login()).catch(error=>error.status===401?login():fail(error));
-  return ()=>controller.abort();
+  return ()=>{controller.abort();clearInterval(statusTimer);};
 }

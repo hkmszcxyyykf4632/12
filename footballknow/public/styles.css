@@ -52,7 +52,7 @@ kbd{font:11px/1 var(--font);padding:4px 6px;border:1px solid var(--line-strong);
 .brand{display:flex;gap:11px;align-items:center;padding:4px 8px 14px;color:#fff;font-weight:650;font-size:15px;line-height:1.25}
 .brand small{display:block;font-size:11px;font-weight:400;color:var(--sidebar-ink)}
 .brand img{width:34px;height:34px;border-radius:8px}
-.league-switch{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:3px;background:var(--sidebar-line);border-radius:8px;margin-bottom:8px}
+.league-switch{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:3px;background:var(--sidebar-line);border-radius:8px;margin-bottom:8px}
 .league-switch a{text-align:center;padding:7px 4px;border-radius:6px;font-size:13px;color:var(--sidebar-ink)}
 .league-switch a:hover{color:#fff}
 .league-switch a.active{background:#f2f7f4;color:#0c1f19;font-weight:650}

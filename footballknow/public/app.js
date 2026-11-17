@@ -3,6 +3,10 @@ import {storeProblem,STORAGE_KEY,reloadStore,reconcile} from './personal-store.m
 import {main,esc,toast} from './ui.mjs';
 import {renderTeams,renderSources} from './pages.mjs';
 import {renderHome} from './dashboard.mjs';
+import {renderLive} from './live-page.mjs';
+import {renderNews} from './news-page.mjs';
+import {renderSponsors} from './sponsors-page.mjs';
+import {renderMarkets,renderStock,renderAsset} from './finance-page.mjs';
 import {renderStatus} from './status-page.mjs';
 import {renderCompare} from './compare-page.mjs';
 import {bindTheme,bindDrawer,bindPalette,paintSync,startSyncIndicator} from './shell.mjs';
@@ -47,11 +51,17 @@ export function updateView() {
 function render() {
  disposePage();disposePage=()=>{};updatePage=()=>{};
  const [current,id,second]=route(),page=current||'home';closeDrawer();
- const active=['team','analysis','player'].includes(page)?'teams':page==='match'?'matches':page;
+ const active=['stock','asset'].includes(page)?'markets':['team','analysis','player'].includes(page)?'teams':page==='match'?'matches':page;
  document.querySelectorAll('[data-nav]').forEach(nav=>{nav.classList.toggle('active',nav.dataset.nav===active);if(nav.dataset.nav===active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');});
- document.querySelector('#breadcrumb').textContent=({home:`${league.name} / 总览`,status:'系统 / 同步监控',quality:'系统 / 数据质量',player:`${league.name} / 球员档案`,compare:`${league.name} / 球队对比`,teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'Football Know / 管理后台'})[page]||'足球资料库';
+ document.querySelector('#breadcrumb').textContent=({home:`${league.name} / 总览`,sponsors:'Football Know / 赞助商',markets:'市场 / 港股与报价',stock:'市场 / 股票详情',asset:'市场 / 品种走势',live:'五项赛事 / 即场比赛',news:'五项赛事 / 球队新闻',status:'系统 / 同步监控',quality:'系统 / 数据质量',player:`${league.name} / 球员档案`,compare:`${league.name} / 球队对比`,teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'Football Know / 管理后台'})[page]||'足球资料库';
+ if(page==='markets'){disposePage=renderMarkets();return;}
+ if(page==='stock'){disposePage=renderStock(id);return;}
+ if(page==='asset'){disposePage=renderAsset(id);return;}
+ if(page==='sponsors'){renderSponsors();return;}
  if(page==='admin'){disposePage=renderAdmin();updateStatus();return;}
  if(page==='status'){disposePage=renderStatus();updateStatus();return;}
+ if(page==='live'){disposePage=renderLive();return;}
+ if(page==='news'){disposePage=renderNews(id||'');return;}
  if(!data)return;
  if(page==='home')updatePage=renderHome();
  else if(page==='rankings')updatePage=renderRankings();
@@ -110,7 +120,7 @@ window.addEventListener('pagehide',()=>{stopPolling();stopIndicator();disposePag
 async function start() {
  try {await refresh(true);reconcile(data.matches);render();stopPolling=startPolling(updateView);stopIndicator=startSyncIndicator(()=>stopPolling.now?.());}
  catch(error) {
-   if(['admin','status'].includes(route()[0])){render();return;}
+   if(['admin','status','live','news','sponsors','markets','stock','asset'].includes(route()[0])){render();return;}
    main.innerHTML=`<div class="error-box"><h2>暂时无法载入球队资料</h2><p>${esc(error.message)}。已有个人记录仍保存在本浏览器。</p><button class="button" id="reload">重新载入</button> <a class="button secondary" href="#/admin">管理后台</a></div>`;
    main.querySelector('#reload').addEventListener('click',()=>location.reload());
  }

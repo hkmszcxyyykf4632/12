@@ -1,0 +1,38 @@
+import {LEAGUES} from './league.mjs';
+import {validLive} from './live-core.mjs';
+
+const cache=new Map();
+export async function readLeagueSnapshot(league,name){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+  try{const r=await fetch(`./${LEAGUES[league].folder}${name}.json`,{cache:'no-cache',signal:controller.signal});if(!r.ok)throw Error('读取失败');return await r.json();}
+  finally{clearTimeout(timer);}
+}
+export async function competitionFeeds(){
+  await Promise.allSettled(Object.values(LEAGUES).map(async league=>{
+    try{
+      const [data,live]=await Promise.all([readLeagueSnapshot(league.id,'data'),readLeagueSnapshot(league.id,'live')]);
+      const competition=data.competition||(league.id==='epl'?'英超':null);
+      if(competition!==league.name||data.teams?.length!==league.teamCount||!validLive(live,data))throw Error('赛事资料不完整');
+      cache.set(league.id,{league:league.id,data,live,failed:false});
+    }catch{cache.set(league.id,{...cache.get(league.id),league:league.id,failed:true});}
+  }));
+  return [...cache.values()];
+}
+export function localDate(value){const d=new Date(value);return Number.isFinite(d.getTime())?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:'';}
+export const fixtureTime=m=>Date.parse(m.kickoff||(m.date?`${m.date}T12:00:00`:''));
+export function combinedFixtures(feeds,{league='all',state='upcoming',date='',now=Date.now()}={}){
+  const rows=[];
+  for(const feed of feeds){
+    if(!feed.data||!feed.live||league!=='all'&&league!==feed.league)continue;
+    const names=Object.fromEntries(feed.data.teams.map(t=>[t.name,t.cn]));
+    for(const m of feed.live.matches){
+      const kickoff=fixtureTime(m),day=localDate(m.kickoff||`${m.date}T12:00:00`);
+      if(date&&date!==day)continue;
+      if(!date&&Number.isFinite(kickoff)&&(kickoff<now-7*86400000||kickoff>now+7*86400000))continue;
+      if(state==='live'&&(!m.started||m.finished)||state==='upcoming'&&(m.finished||!m.started&&(!Number.isFinite(kickoff)||kickoff<now))||state==='finished'&&!m.finished)continue;
+      rows.push({...m,league:feed.league,homeLabel:names[m.home]||m.home,awayLabel:names[m.away]||m.away,day,
+        updatedAt:feed.live.updatedAt,delayed:feed.failed||now-Date.parse(feed.live.updatedAt)>180000});
+    }
+  }
+  return rows.sort((a,b)=>(fixtureTime(a)||Infinity)-(fixtureTime(b)||Infinity)||a.league.localeCompare(b.league)||a.id.localeCompare(b.id));
+}

@@ -1,3 +1,4 @@
+import {orderedEvents} from './research-core.mjs';
 import {facts,oddsHistory} from './repository.mjs';
 import {esc,oddsText,timeText} from './ui.mjs';
 import {localized} from './football-components.mjs';
@@ -16,20 +17,22 @@ function statRow(home,away,[key,label,kind]) {
   return `<div class="stat-row"><b class="${h>a?'lead':''}">${text(h)}</b><div class="stat-bars"><span>${label}</span><div class="stat-bar"><i class="${h>a?'lead':''}" style="width:${share(h)}%"></i><i class="${a>h?'lead':''}" style="width:${share(a)}%"></i></div></div><b class="${a>h?'lead':''}">${text(a)}</b></div>`;
 }
 
-/** Statistics split by side and the minute-by-minute event stream, worded from the structured events. */
-export function statsAndEvents(detail) {
-  const stats=Object.fromEntries((detail.statistics||[]).map(s=>[s.side,s.values]));
+export function eventTimeline(detail,customName){
   const people=Object.values(detail.lineups||{}).flatMap(s=>s.players||[]);
-  const name=p=>{const known=people.find(x=>x.espnId===p.espnId);const n=known?.playerCode?localized({code:known.playerCode}):null;return n?.mandarin||p.name;};
-  const groups=STAT_GROUPS.map(([title,rows])=>[title,rows.map(row=>statRow(stats.home,stats.away,row)).join('')]).filter(([,html])=>html);
+  const name=customName||((p)=>{const known=people.find(x=>x.espnId===p.espnId);const n=known?.playerCode?localized({code:known.playerCode}):null;return n?.mandarin||p.name;});
   let period=0;
-  const events=(detail.events||[]).map(e=>{
+  const events=orderedEvents(detail.events||[]).map(e=>{
     const marker=e.period&&e.period!==period&&period?`<li class="period-mark">${{2:'下半场',3:'加时赛上半场',4:'加时赛下半场'}[e.period]||`第 ${e.period} 节`}</li>`:'';
     period=e.period||period;
     return `${marker}<li class="event-${esc(e.type)} ${e.side==='away'?'away':''}"><time>${esc(e.clock)}</time><div><strong>${esc(e.label)}</strong> · ${e.side==='home'?esc(detail.home||'主队'):esc(detail.away||'客队')}<p>${esc(eventSentence(e,name))}</p></div></li>`;
   }).join('');
-  return `<div class="detail-columns"><section><h2>技术统计</h2>${groups.length?`<div class="stat-panel"><div class="stat-head"><span>主队</span><span>客队</span></div>${groups.map(([title,html])=>`<h3>${title}</h3>${html}`).join('')}</div><p class="small subtle">来源提供的整场统计，主客队分列；含加时的场次包含加时数据。来源没有提供预期进球、热区、传球网络和射门位置，本站不估算这些数据。</p>`:'<p class="empty">本场技术统计暂未提供。</p>'}</section>
-    <section><h2>比赛事件</h2>${events?`<ol class="event-timeline">${events}</ol><p class="small subtle">事件说明由本站按进球、点球、乌龙、红黄牌和换人记录生成。来源未列出的事件不会出现，条数可能少于实际进球数。</p>`:'<p class="empty">来源暂未提供比赛事件。</p>'}</section></div>`;
+  return events?'<ol class="event-timeline">'+events+'</ol><p class="small subtle">按来源公布的时间排序；记录包含进球、点球、乌龙、换人及红黄牌。</p>':'<p class="empty">来源暂未提供比赛事件。</p>';
+}
+
+export function statsAndEvents(detail){
+  const stats=Object.fromEntries((detail.statistics||[]).map(s=>[s.side,s.values]));
+  const groups=STAT_GROUPS.map(([title,rows])=>[title,rows.map(row=>statRow(stats.home,stats.away,row)).join('')]).filter(([,html])=>html);
+  return '<section><h2>技术统计</h2>'+(groups.length?'<div class="stat-panel"><div class="stat-head"><span>主队</span><span>客队</span></div>'+groups.map(([title,html])=>'<h3>'+title+'</h3>'+html).join('')+'</div>':'<p class="empty">本场技术统计暂未提供。</p>')+'<p class="note">主客队数据分列；加时赛场次包含加时数据。</p></section>';
 }
 
 export function matchFacts(match) {

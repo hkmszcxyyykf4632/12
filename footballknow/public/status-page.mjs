@@ -36,7 +36,7 @@ export function renderStatus() {
     if(!latest||!main.querySelector('#status-table'))return;
     const summary=statusSummary(latest);
     main.querySelector('#status-banner').className=`status-banner ${summary.level==='ok'?'':summary.level}`;
-    main.querySelector('#status-banner').innerHTML=`<span class="status-light"></span><div><strong>${esc(summary.text)}</strong><span>共 ${summary.total} 项任务${latest.syncSeconds?`，统一间隔 ${seconds(latest.syncSeconds)}`:''}</span></div>`;
+    main.querySelector('#status-banner').innerHTML=`<span class="status-light"></span><div><strong>${esc(summary.text)}</strong><span>共 ${summary.total} 项任务${latest.syncSeconds?`，基本间隔 ${seconds(latest.syncSeconds)}`:''}</span></div>`;
     main.querySelector('#status-stamp').textContent=`同步服务心跳：${latest.heartbeat?timeText(latest.heartbeat):'暂无'}。本页每 10 秒读取一次。`;
     const rows=jobRows(latest,onlyProblems);
     main.querySelector('#status-table').innerHTML=rows?`<div class="table-wrap"><table><thead><tr><th>任务</th><th>分类</th><th>状态</th><th>最近成功</th><th>用时</th><th>间隔</th><th>下次检查</th><th>最近结果</th></tr></thead><tbody>${rows}</tbody></table></div>`

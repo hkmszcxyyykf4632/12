@@ -9,11 +9,13 @@ from .files import PUBLIC, fetch_text, publish, read_json
 from .leagues import league_config, league_path
 from .ucl import fetch_json
 
-COMPETITIONS = {'epl': 'eng.1', 'laliga': 'esp.1', 'ucl': 'uefa.champions'}
+COMPETITIONS = {'epl': 'eng.1', 'laliga': 'esp.1', 'ucl': 'uefa.champions', 'seriea': 'ita.1', 'bundesliga': 'ger.1'}
 OFFICIAL_TABLES = {
     'epl': 'https://www.premierleague.com/en/tables',
     'laliga': 'https://www.laliga.com/en-GB/laliga-easports/standing',
     'ucl': 'https://www.uefa.com/uefachampionsleague/standings/',
+    'seriea': 'https://www.legaseriea.it/en/serie-a/standings',
+    'bundesliga': 'https://www.bundesliga.com/en/bundesliga/table',
 }
 EPL_NAMES = {
     'Brighton & Hove Albion': 'Brighton', 'Manchester City': 'Man City',
@@ -111,7 +113,7 @@ def match_breakdowns(catalogue: dict, live: dict, rows: list[dict], league: str)
             continue
         if league == 'ucl' and match.get('phase') != '联赛阶段':
             continue
-        key = match.get('id') if league == 'ucl' else (match.get('date'), match.get('home'), match.get('away'))
+        key = match.get('id') if league == 'ucl' else (match.get('season'), match.get('home'), match.get('away'))
         merged[key] = match
     finished = [m for m in merged.values() if m.get('finished') and not m.get('provisional')
                 and isinstance(m.get('homeGoals'), int) and isinstance(m.get('awayGoals'), int)]
@@ -262,7 +264,7 @@ def parse_discipline(stats: dict, catalogue: dict) -> list[dict]:
     return rows
 
 
-def refresh_leaders(league: str) -> dict:
+def refresh_official_leaders(league: str) -> dict:
     folder = league_path(PUBLIC, league)
     catalogue = read_json(folder / 'data.json')
     base = f'https://www.espn.com/soccer/stats/_/league/{COMPETITIONS[league].upper()}/season/{catalogue["season"][:4]}'
@@ -277,8 +279,51 @@ def refresh_leaders(league: str) -> dict:
         raise ValueError('Unexpected empty player leaders; keep previous snapshot')
     snapshot = {'version': 1, 'league': league, 'season': catalogue['season'],
                 'updatedAt': datetime.now(timezone.utc).isoformat(), 'intervalSeconds': 300,
-                'provider': 'ESPN', 'providerCadence': '来源注明夜间更新，本站每5分钟检查。',
+                'provider': 'ESPN', 'providerCadence': '来源注明夜间更新，本站每60秒检查。',
                 'limit': 50, 'boards': boards, 'discipline': parse_discipline(discipline, catalogue),
                 'sources': urls}
     publish(folder / 'rankings.json', snapshot)
     return snapshot
+
+
+def leaders_from_facts(catalogue, facts, league):
+    if facts.get('league') != league or facts.get('season') != catalogue['season'] or not facts.get('coveredMatches'):
+        raise ValueError('No current-season match facts for leaders')
+    clubs = {team['name']: team for team in catalogue['teams']}
+    boards = {}
+    for board, metric in [('scorers', 'goals'), ('assists', 'assists')]:
+        players = sorted([p for p in facts['players'] if p.get('team') in clubs and isinstance(p.get(metric), int) and p[metric] > 0],
+                         key=lambda p: (-p[metric], p['name']))[:50]
+        rows = []
+        for index, person in enumerate(players):
+            team = clubs[person['team']]
+            value = person[metric]
+            rows.append({'rank': rows[-1]['rank'] if rows and rows[-1]['value'] == value else index + 1,
+                         'espnId': str(person['espnId']), 'name': person['name'], 'playerCode': person.get('playerCode'),
+                         'teamId': team['id'], 'teamName': team['cn'], 'appearances': person['appearances'],
+                         'value': value, 'source': 'https://www.espn.com/soccer/player/_/id/' + str(person['espnId'])})
+        boards[board] = rows
+    discipline = [{'teamId': clubs[name]['id'], 'name': clubs[name]['cn'], 'played': row['statMatches'],
+                   'yellowCards': row['totals'].get('yellowCards', 0), 'redCards': row['totals'].get('redCards', 0)}
+                  for name, row in facts.get('teams', {}).items() if name in clubs and row.get('statMatches')]
+    return {'version': 1, 'league': league, 'season': catalogue['season'], 'updatedAt': facts['updatedAt'],
+            'intervalSeconds': 60, 'provider': 'ESPN 已收录比赛汇总', 'limit': 50, 'boards': boards,
+            'discipline': discipline, 'coveredMatches': facts['coveredMatches'], 'targetMatches': facts['targetMatches'],
+            'providerCadence': f"按已收录的 {facts['coveredMatches']} / {facts['targetMatches']} 场本赛季完赛汇总，缺场不计为零；非官方完整球员榜。",
+            'sources': ['https://www.espn.com/soccer/scoreboard/_/league/' + COMPETITIONS[league]]}
+
+
+def refresh_leaders(league):
+    try:
+        return refresh_official_leaders(league)
+    except (OSError, ValueError, KeyError, TypeError):
+        folder = league_path(PUBLIC, league)
+        catalogue = read_json(folder / 'data.json')
+        facts = read_json(folder / 'match-facts.json')
+        previous = read_json(folder / 'rankings.json') if (folder / 'rankings.json').exists() else {}
+        # Keep a complete official table until a genuinely newer match snapshot is available.
+        if previous.get('season') == catalogue['season'] and previous.get('updatedAt', '') >= facts.get('updatedAt', ''):
+            return previous
+        result = leaders_from_facts(catalogue, facts, league)
+        publish(folder / 'rankings.json', result)
+        return result

@@ -6,9 +6,9 @@ import worker
 
 def test_every_dataset_runs_on_the_sixty_second_cadence():
     jobs = worker.job_table({})
-    assert len(jobs) == 25
-    assert {job.status.intervalSeconds for job in jobs.values()} == {60}
-    assert {job.status.group for job in jobs.values()} == {'scores', 'catalogue', 'history', 'names', 'rankings', 'lineups', 'odds'}
+    assert len(jobs) == 56
+    assert {job.status.intervalSeconds for job in jobs.values()} == {60, 3600, 86400}
+    assert {job.status.group for job in jobs.values()} == {'scores', 'catalogue', 'history', 'names', 'rankings', 'lineups', 'odds', 'news', 'profiles', 'finance'}
 
 
 def test_cadence_can_be_lengthened_but_not_dropped_below_the_floor():

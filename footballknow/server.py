@@ -20,6 +20,8 @@ from football.evaluation import evaluation_status
 from football.files import PUBLIC, read_json
 from football.leagues import LeagueId
 from football.match_details import get_detail, next_lineup_evidence
+from football.sync_control import SyncControlInput, read_control, set_control
+from football import stock_analysis
 
 
 class LoginInput(BaseModel):
@@ -169,6 +171,38 @@ def sync_status():
     return read_json(path) if path.exists() else {'running':False,'jobs':{},'message':'后台同步服务尚未启动。'}
 
 
+@app.get('/api/sync/control')
+def get_sync_control(account: auth.Administrator = Depends(administrator)):
+    return {**read_control(), 'worker': sync_status()}
+
+
+@app.put('/api/sync/control')
+def update_sync_control(value: SyncControlInput, account: auth.Administrator = Depends(administrator)):
+    return set_control(value.enabled, account.username)
+
+
+@app.get('/api/stocks/{code}/analysis')
+def get_stock_analysis(code: str):
+    try:
+        return stock_analysis.public_status(code)
+    except LookupError:
+        raise HTTPException(status_code=404, detail='这只股票不在当前恒生指数成份股名单内。') from None
+
+
+@app.post('/api/stocks/{code}/analysis')
+def create_stock_analysis(code: str, account: auth.Administrator = Depends(administrator)):
+    try:
+        return stock_analysis.generate(code)
+    except LookupError:
+        raise HTTPException(status_code=404, detail='股票不存在。') from None
+    except ValidationError:
+        raise HTTPException(status_code=400, detail='AI 返回的预测格式不正确，请稍后重试。') from None
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from None
+    except (OSError, http.client.HTTPException):
+        raise HTTPException(status_code=502, detail='股票分析服务暂时无法连接，请稍后重试。') from None
+
+
 @app.get('/api/health')
 def health(response: Response):
     """Machine-readable liveness for uptime monitors: 200 while the synchronizer heartbeat is fresh."""
@@ -180,7 +214,8 @@ def health(response: Response):
     healthy = bool(status.get('running')) and age is not None and age < 120
     if not healthy:
         response.status_code = 503
-    return {'status': 'ok' if healthy else 'degraded', 'heartbeatAgeSeconds': None if age is None else round(age),
+    return {'status': ('paused' if status.get('paused') else 'ok') if healthy else 'degraded', 'paused': status.get('paused', False),
+            'heartbeatAgeSeconds': None if age is None else round(age),
             'syncSeconds': status.get('syncSeconds'), 'summary': status.get('summary')}
 
 
@@ -189,7 +224,10 @@ def match_detail(match_id: str, league: LeagueId = 'epl'):
     if len(match_id) > 200:
         raise HTTPException(status_code=422, detail='比赛编号格式不正确。')
     try:
-        return get_detail(match_id, league)
+        detail = get_detail(match_id, league, fetch_missing=read_control()['enabled'])
+        if detail is None:
+            raise HTTPException(status_code=503, detail='同步已暂停，本场尚无缓存资料。')
+        return detail
     except LookupError:
         raise HTTPException(status_code=404, detail='比赛不存在。') from None
     except (OSError, ValueError, KeyError, TypeError, http.client.HTTPException):

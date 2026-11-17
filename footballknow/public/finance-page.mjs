@@ -1,0 +1,120 @@
+import {main,esc,pageHeading,sourceLink,timeText} from './ui.mjs';
+import {finite,figure,signed,direction,forecastLabel,validQuotes,chartPoints,rateText,financialRows,financialAmount} from './finance-core.mjs';
+
+async function read(url,signal,options={}){
+  const controller=new AbortController(),abort=()=>controller.abort();
+  signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
+  const timer=setTimeout(abort,options.method?90000:15000);
+  try{
+    const response=await fetch(url,{cache:'no-cache',...options,signal:controller.signal});
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.detail||'资料暂时无法读取。');
+    return data;
+  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
+}
+const stamp=value=>value?esc(new Date(value).toLocaleString('zh-CN')):'—';
+const quoteNote=q=>'<small class="subtle">报价 '+stamp(q?.quotedAt)+' · '+esc(q?.provider||'来源待同步')+'</small>';
+function spark(bars,limit=90){
+  const graph=chartPoints(bars,limit);
+  if(!graph)return '<div class="empty">价格历史正在同步。</div>';
+  return '<figure class="price-chart"><svg viewBox="0 0 770 220" role="img" aria-label="收盘价格走势"><line x1="30" y1="190" x2="740" y2="190" stroke="var(--line)"/><polyline points="'+graph.points+'" fill="none" stroke="var(--brand)" stroke-width="2.5" vector-effect="non-scaling-stroke"/><text x="30" y="215">'+esc(graph.rows[0].date)+'</text><text x="740" y="215" text-anchor="end">'+esc(graph.rows.at(-1).date)+'</text></svg><figcaption>区间最低 '+figure(graph.low)+' · 最高 '+figure(graph.high)+' · 每日收盘</figcaption></figure>';
+}
+function assetCards(snapshot){
+  return '<div class="asset-strip">'+['gold','brent','wti','bitcoin'].map(key=>{
+    const q=snapshot?.assets?.[key];
+    return '<a class="asset-tile" href="#/asset/'+key+'"><span>'+esc(q?.name||({gold:'黄金期货',brent:'布伦特原油',wti:'WTI 原油',bitcoin:'比特币'})[key])+'</span><strong>'+figure(q?.price)+'</strong><span class="'+direction(q?.changePercent)+'">'+signed(q?.changePercent)+'%</span><small>'+esc(q?.unit||'美元')+'</small>'+quoteNote(q)+(snapshot?.failedAssets?.includes(key)?'<small class="attention">更新暂未成功</small>':'')+'</a>';
+  }).join('')+'</div>';
+}
+export async function paintMarketPreview(target){
+  if(!target)return;
+  try{const data=await read('./finance/assets.json');if(target.isConnected)target.innerHTML='<div class="section-head"><h2>市场行情</h2><a class="button quiet" href="#/markets">港股与市场 →</a></div>'+assetCards(data);}
+  catch{if(target.isConnected)target.innerHTML='<p class="note"><a href="#/markets">查看港股与市场行情 →</a></p>';}
+}
+export function renderMarkets(){
+  const controller=new AbortController();let catalogue=null,quotes=null,assets=null,query='',sector='';
+  main.innerHTML=pageHeading('港股与市场','恒生指数成份股、公司资料与全球市场参考行情。')+'<div id="market-assets"></div><section id="hsi-quote"></section><div class="toolbar"><label class="search-field">搜索股票<input type="search" id="stock-search" placeholder="代码或公司名称"></label><label>行业<select id="stock-sector"><option value="">全部行业</option></select></label></div><div id="stock-list" class="loading">正在读取成份股与报价…</div><p id="stock-source" class="note"></p>';
+  function paint(){
+    if(controller.signal.aborted||!catalogue)return;
+    const hsi=quotes?.quotes?.HSI;
+    main.querySelector('#market-assets').innerHTML=assetCards(assets);
+    main.querySelector('#hsi-quote').innerHTML='<div class="market-index"><div><span>恒生指数 HSI</span><strong>'+figure(hsi?.price)+'<small> 点</small></strong></div><div class="'+direction(hsi?.changePercent)+'">'+signed(hsi?.change)+' · '+signed(hsi?.changePercent)+'%</div><div>'+quoteNote(hsi)+'<small>参考行情 · 来源未注明固定延时</small></div></div>';
+    const rows=catalogue.constituents.filter(r=>(!sector||r.sector===sector)&&(!query||(r.code+r.name+(quotes?.quotes?.[r.code]?.name||'')).toLowerCase().includes(query)));
+    main.querySelector('#stock-list').className='';
+    main.querySelector('#stock-list').innerHTML=rows.length?'<div class="table-wrap"><table><thead><tr><th>股票</th><th>行业</th><th>报价（港元）</th><th>涨跌幅</th><th>开盘</th><th>最高 / 最低</th><th>报价时间</th></tr></thead><tbody>'+rows.map(r=>{const q=quotes?.quotes?.[r.code];return '<tr><td><a class="stock-name" href="#/stock/'+r.code+'"><strong>'+esc(q?.name||r.name)+'</strong><small>'+r.code+'</small></a></td><td>'+esc(r.sector)+'</td><td><b>'+figure(q?.price)+'</b></td><td class="'+direction(q?.changePercent)+'">'+signed(q?.changePercent)+'%</td><td>'+figure(q?.open)+'</td><td>'+figure(q?.high)+' / '+figure(q?.low)+'</td><td class="small">'+stamp(q?.quotedAt)+(quotes?.failedCodes?.includes(r.code)?'<small class="attention">本次更新未成功</small>':'')+'</td></tr>';}).join('')+'</tbody></table></div>':'<div class="empty">没有符合条件的成份股。</div>';
+    main.querySelector('#stock-source').innerHTML='共 '+catalogue.constituents.length+' 只恒生指数成份股；名单生效 '+esc(catalogue.effectiveDate)+'，核对 '+esc(catalogue.checkedAt)+'。'+sourceLink(catalogue.source,'恒生指数公司名单')+'。报价每分钟检查，资料按各自发布日展示。';
+  }
+  async function load(){
+    const results=await Promise.allSettled(['constituents','quotes','assets'].map(name=>read('./finance/'+name+'.json',controller.signal)));
+    if(controller.signal.aborted)return;
+    const first=!catalogue;
+    if(results[0].status==='fulfilled'&&Array.isArray(results[0].value.constituents))catalogue=results[0].value;
+    if(results[1].status==='fulfilled'&&validQuotes(results[1].value))quotes=results[1].value;
+    if(results[2].status==='fulfilled'&&results[2].value.version===1)assets=results[2].value;
+    if(!catalogue){main.querySelector('#stock-list').innerHTML='<div class="notice">股票名单暂时无法读取，请稍后刷新。</div>';return;}
+    if(first)main.querySelector('#stock-sector').insertAdjacentHTML('beforeend',[...new Set(catalogue.constituents.map(r=>r.sector))].map(s=>'<option>'+esc(s)+'</option>').join(''));
+    paint();
+  }
+  main.querySelector('#stock-search').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();paint();});
+  main.querySelector('#stock-sector').addEventListener('change',e=>{sector=e.target.value;paint();});
+  load();const timer=setInterval(()=>{if(!document.hidden)load();},60000);
+  return()=>{controller.abort();clearInterval(timer);};
+}
+function holderTable(value){
+  if(!value?.rows?.length)return '<div class="empty">这个来源暂未提供主要股东资料。</div>';
+  return '<div class="table-wrap"><table><thead><tr><th>持有人 / 身份</th><th>权益比例</th><th>归属股数</th><th>直接股数</th><th>股份类别</th><th>报告日期 / 披露日期</th></tr></thead><tbody>'+value.rows.map(r=>'<tr><td><strong>'+esc(r.name)+'</strong><small>'+esc(r.identity||'')+' '+esc(r.basis||'')+'</small></td><td>'+figure(r.percentage)+'%</td><td>'+figure(r.shares,0)+'</td><td>'+figure(r.directShares,0)+'</td><td>'+esc(r.shareClass||'—')+'</td><td>'+esc(r.asOf?.slice(0,10)||'—')+'<small>'+esc(r.announcedAt?.slice(0,10)||'—')+'</small></td></tr>').join('')+'</tbody></table></div><p class="note">归属权益可能包含受控公司持股，同一权益可出现在多个持有人名下，不能相加。报告期与公告日分开显示。最近采集 '+stamp(value.updatedAt)+'。</p>';
+}
+function predictionHtml(data){
+  const current=data.latest;
+  const stats=data.evaluation||{};
+  const kpis='<div class="forecast-rates">'+['week','quarter'].map(k=>'<div><span>'+({week:'一周',quarter:'一季度'})[k]+'预测命中率</span><strong>'+rateText(stats[k])+'</strong><small>'+ (stats[k]?.correct||0)+' / '+(stats[k]?.evaluated||0)+' 次已验证 · '+(stats[k]?.pending||0)+' 次待到期</small></div>').join('')+'</div>';
+  const result=current?'<div class="research-summary"><div class="forecast-picks"><span>短期：<b>'+forecastLabel[current.week]+'</b></span><span>中期：<b>'+forecastLabel[current.quarter]+'</b></span></div>'+current.summary.map(p=>'<p>'+esc(p)+'</p>').join('')+'<small class="subtle">DeepSeek · '+esc(current.model)+' · 发布 '+stamp(current.issuedAt)+'</small><details><summary>更多详细资料</summary>'+current.details.map(d=>'<h3>'+esc(d.title)+'</h3><p>'+esc(d.text)+'</p>').join('')+'</details></div>':'<div class="empty">尚未发布这只股票的预测。管理员可使用已配置的 DeepSeek 生成。</div>';
+  const ledger=(data.forecasts||[]).slice(0,30);
+  return kpis+result+'<p class="note">计分基准：'+esc(data.rules?.baseline)+'。短期 '+esc(data.rules?.short)+'；中期 '+esc(data.rules?.medium)+'。全部到期预测都会计入，未到期不计成功或失败。</p><details><summary>历史预测与验证记录（最近 '+ledger.length+' 份）</summary><div class="table-wrap"><table><thead><tr><th>发布时间</th><th>一周预测 / 结果</th><th>一季度预测 / 结果</th></tr></thead><tbody>'+ledger.map(row=>'<tr><td>'+stamp(row.issuedAt)+'</td>'+['week','quarter'].map(h=>{const o=row.outcomes?.[h];return '<td>'+forecastLabel[row[h]]+' · '+(o?(o.correct?'命中':'未命中')+'<small>'+esc(o.base_date)+' → '+esc(o.target_date)+'，复权收益 '+signed(o.return_value*100)+'%</small>':'待到期')+'</td>';}).join('')+'</tr>').join('')+'</tbody></table></div></details>';
+}
+export function renderStock(code){
+  const controller=new AbortController();let company=null,history=null,chartLimit=90;
+  if(!/^\d{5}$/.test(code||'')){main.innerHTML='<div class="empty">股票代码不正确。</div>';return()=>{};}
+  main.innerHTML=pageHeading('股票资料 · '+esc(code),'报价、业务、股东、财务与预测。','<a class="button secondary" href="#/markets">全部成份股</a>')+'<div id="stock-top" class="loading">正在读取报价…</div><section><div class="section-head"><h2>股价走势</h2><div class="segmented"><button data-chart-range="30">一个月</button><button data-chart-range="90" class="active">三个月</button><button data-chart-range="260">一年</button></div></div><div id="stock-chart"></div></section><section><div class="section-head"><h2>AI 分析与预测</h2><button class="button" id="stock-analyze">生成今日分析</button></div><p id="stock-ai-message" role="status"></p><div id="stock-prediction" class="loading">读取历史预测…</div></section><section><div class="section-head"><h2>公司业务与背景</h2></div><div id="stock-company" class="loading">正在读取资料…</div></section><section><div class="section-head"><h2>主要股东与披露权益</h2></div><div id="stock-holders"></div></section><section><div class="section-head"><h2>财务报表</h2></div><div class="toolbar"><label>报表<select id="statement-kind"><option value="balance">资产负债表</option><option value="income">利润表</option><option value="cashflow">现金流量表</option></select></label><label>报告期<select id="statement-period"></select></label></div><div id="stock-financials"></div><p class="note">金额单位：亿元（各行注明原币种）；空白不视为零。中期与年度报告不能直接混比。</p></section><p id="company-source" class="note"></p>';
+  async function quote(){
+    try{const snapshot=await read('./finance/quotes.json',controller.signal),q=snapshot.quotes?.[code];if(controller.signal.aborted)return;main.querySelector('#stock-top').className='';main.querySelector('#stock-top').innerHTML='<div class="market-index"><div><span>'+esc(q?.name||company?.name||code)+'</span><strong>'+figure(q?.price)+'<small> 港元</small></strong></div><div class="'+direction(q?.changePercent)+'">'+signed(q?.change)+' · '+signed(q?.changePercent)+'%</div><div>'+quoteNote(q)+'</div></div>';}catch{if(!controller.signal.aborted)main.querySelector('#stock-top').textContent='报价暂时无法更新。';}
+  }
+  function paintFinancials(){
+    const kind=main.querySelector('#statement-kind').value,date=main.querySelector('#statement-period').value,rows=financialRows(company?.financials,kind,date);
+    main.querySelector('#stock-financials').innerHTML=rows.length?'<div class="table-wrap"><table><thead><tr><th>项目</th><th>金额（亿元）</th><th>原币种</th><th>报告类型</th></tr></thead><tbody>'+rows.map(r=>'<tr><th>'+esc(r.name)+'</th><td>'+financialAmount(r)+'</td><td>'+esc(r.currency||'来源未注明')+'</td><td>'+esc(r.reportType||'—')+'</td></tr>').join('')+'</tbody></table></div>':'<div class="empty">这个来源暂未提供此期报表。</div>';
+  }
+  async function loadCompany(){
+    try{
+      company=await read('./finance/companies/'+code+'.json',controller.signal);if(controller.signal.aborted)return;
+      if(company.code!==code)throw new Error('公司身份不一致');
+      const p=company.profile||{};
+      main.querySelector('#stock-company').className='research-summary';
+      main.querySelector('#stock-company').innerHTML='<h3>'+esc(p.legalName||company.name)+'</h3><p>'+esc(p.business||'主要业务说明尚未同步。')+'</p><dl class="identity-grid">'+[['所属行业',p.industry],['成立日期',p.foundedAt?.slice(0,10)],['上市日期',p.listedAt?.slice(0,10)],['主席',p.chairman],['注册地',p.registeredAt],['员工人数',p.employees]].map(([label,value])=>'<div><dt>'+label+'</dt><dd>'+esc(value??'—')+'</dd></div>').join('')+'</dl>';
+      main.querySelector('#stock-holders').innerHTML=holderTable(company.holders);
+      main.querySelector('#statement-period').innerHTML=(company.financials?.periods||[]).map(p=>'<option value="'+esc(p.REPORT_DATE.slice(0,10))+'">'+esc(p.REPORT_DATE.slice(0,10)+' '+(p.REPORT_TYPE||''))+'</option>').join('');
+      main.querySelector('#company-source').innerHTML=sourceLink(company.source,company.sourceLabel)+' · '+sourceLink(company.officialFilings,'港交所披露易')+'。采集时间 '+stamp(company.checkedAt)+(company.failedSections?.length?'；部分栏目更新暂未成功，保留最近资料。':'。');
+      paintFinancials();
+    }catch{if(!controller.signal.aborted){main.querySelector('#stock-company').className='empty';main.querySelector('#stock-company').textContent='公司资料正在同步，稍后可重新进入本页。';}}
+  }
+  async function loadHistory(){
+    try{history=await read('./finance/history/'+code+'.json',controller.signal);if(!controller.signal.aborted)main.querySelector('#stock-chart').innerHTML=spark(history.bars,chartLimit)+'<p class="note">'+sourceLink(history.source,history.provider)+' · 港元 · 每日收盘，最近一个交易日可能尚未完成。</p>';}catch{if(!controller.signal.aborted)main.querySelector('#stock-chart').innerHTML='<div class="empty">历史价格正在同步。</div>';}
+  }
+  async function prediction(generate=false){
+    const button=main.querySelector('#stock-analyze');button.disabled=true;
+    try{const data=await read('/api/stocks/'+code+'/analysis',controller.signal,generate?{method:'POST'}:{});if(!controller.signal.aborted){main.querySelector('#stock-prediction').className='';main.querySelector('#stock-prediction').innerHTML=predictionHtml(data);main.querySelector('#stock-ai-message').textContent=generate?'今日预测已保存；同一天重复点击会显示同一份结果。':'';}}
+    catch(error){if(!controller.signal.aborted){main.querySelector('#stock-ai-message').innerHTML=esc(error.name==='AbortError'?'分析用时较长，请稍后重试。':error.message)+' <a href="#/admin">管理后台</a>';if(!generate){main.querySelector('#stock-prediction').className='';main.querySelector('#stock-prediction').textContent='暂无可读取的预测记录。';}}}
+    finally{if(!controller.signal.aborted)button.disabled=false;}
+  }
+  main.querySelector('#stock-analyze').addEventListener('click',()=>prediction(true));
+  main.querySelector('#statement-kind').addEventListener('change',paintFinancials);main.querySelector('#statement-period').addEventListener('change',paintFinancials);
+  main.querySelectorAll('[data-chart-range]').forEach(button=>button.addEventListener('click',()=>{chartLimit=Number(button.dataset.chartRange);main.querySelectorAll('[data-chart-range]').forEach(b=>b.classList.toggle('active',b===button));main.querySelector('#stock-chart').innerHTML=spark(history?.bars,chartLimit)+'<p class="note">港元 · 每日收盘；来源 Yahoo Finance，最近交易日可能未完成。</p>';}));
+  quote();loadCompany();loadHistory();prediction();const timer=setInterval(()=>{if(!document.hidden)quote();},60000);
+  return()=>{controller.abort();clearInterval(timer);};
+}
+export function renderAsset(id){
+  const controller=new AbortController();
+  main.innerHTML=pageHeading('市场品种','报价与近期走势。','<a class="button secondary" href="#/markets">返回市场</a>')+'<div id="asset-detail" class="loading">正在读取市场资料…</div>';
+  async function load(){
+    try{const all=await read('./finance/assets.json',controller.signal);if(controller.signal.aborted)return;const q=all.assets?.[id];if(!q)throw new Error('这个品种暂时没有报价。');main.querySelector('#asset-detail').className='';main.querySelector('#asset-detail').innerHTML='<div class="market-index"><div><span>'+esc(q.name)+'</span><strong>'+figure(q.price)+'</strong><small>'+esc(q.unit)+'</small></div><div class="'+direction(q.changePercent)+'">'+signed(q.changePercent)+'%</div><div>'+quoteNote(q)+'</div></div>'+spark(q.bars)+'<p class="note">'+esc(q.contract||q.symbol)+' · '+sourceLink(q.source,q.provider)+'。'+(q.instrumentType==='FUTURE'?'这是期货合约报价，连续图表可能受换月影响。':'美元交易参考价。')+'</p>';}catch(error){if(!controller.signal.aborted)main.querySelector('#asset-detail').innerHTML='<div class="notice">'+esc(error.message)+'</div>';}
+  }
+  load();const timer=setInterval(()=>{if(!document.hidden)load();},60000);return()=>{controller.abort();clearInterval(timer);};
+}

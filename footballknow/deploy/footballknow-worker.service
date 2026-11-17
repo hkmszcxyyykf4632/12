@@ -8,8 +8,9 @@ User=footballknow
 Group=footballknow
 WorkingDirectory=/opt/footballknow
 Environment=FOOTBALL_STATE_DIR=/var/lib/footballknow
-# Every dataset is checked on this cadence. Per-job exceptions: FOOTBALL_SYNC_OVERRIDES=names=3600,odds-official-checks=86400
+# Scores and quotes use this base cadence; profiles and financial statements have longer defaults.
 Environment=FOOTBALL_SYNC_SECONDS=60
+Environment=FOOTBALL_SYNC_WORKERS=2
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=PYTHONUNBUFFERED=1
 Environment=PYTHONIOENCODING=utf-8

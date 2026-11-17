@@ -51,6 +51,9 @@ def match_catalogue(league):
 
 
 def canonical(name, league):
+    if league in {'seriea', 'bundesliga'}:
+        from .domestic import canonical_name
+        name = canonical_name(name)
     return normalize(EPL_NAMES.get(name, name) if league == 'epl' else SPANISH_NAMES.get(name, name) if league == 'laliga' else name)
 
 
@@ -59,7 +62,7 @@ def resolve_event(match, league, fetch_missing=True):
         return match['id'].split(':')[1]
     competition = COMPETITIONS[league]
     if match['competition'] == league_config(league).lower:
-        competition = {'epl': 'eng.2', 'laliga': 'esp.2'}.get(league, competition)
+        competition = {'epl': 'eng.2', 'laliga': 'esp.2', 'seriea': 'ita.2', 'bundesliga': 'ger.2'}.get(league, competition)
     key = f'{competition}-{match["date"]}'
     path = STATE / 'event-index' / f'{key}.json'
     saved = read_json(path) if path.exists() else {}
@@ -167,7 +170,7 @@ def cache_seconds(match, cached):
     if cached and cached.get('status') == 'unavailable':
         return 21600
     if match.get('started') and not match.get('finished'):
-        return 300
+        return 60
     if cached and cached.get('completed') and cached.get('status') == 'available':
         age = (now().date() - datetime.fromisoformat(match['date']).date()).days
         return 1800 if age <= 2 else 604800
@@ -242,7 +245,7 @@ def refresh_details(league, limit=80):
         if detail:
             entries[m['id']] = {'status': detail['status'], 'updatedAt': detail['updatedAt'], 'eventId': detail.get('eventId')}
     snapshot = {'version': 1, 'league': league, 'season': catalogue['season'], 'updatedAt': now().isoformat(),
-                'intervalSeconds': 300, 'targetMatches': len(chosen), 'available': sum(e['status'] == 'available' for e in entries.values()),
+                'intervalSeconds': 60, 'targetMatches': len(chosen), 'available': sum(e['status'] == 'available' for e in entries.values()),
                 'entries': entries}
     publish(league_path(PUBLIC, league) / 'match-index.json', snapshot)
     competition = league_config(league).competition

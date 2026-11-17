@@ -58,7 +58,7 @@ def test_live_lineups_and_recent_results_refresh_promptly():
     from datetime import datetime, timezone
     from football.match_details import cache_seconds
     date = datetime.now(timezone.utc).date().isoformat()
-    assert cache_seconds({'date': date, 'started': True, 'finished': False}, {'status': 'available'}) == 300
+    assert cache_seconds({'date': date, 'started': True, 'finished': False}, {'status': 'available'}) == 60
     assert cache_seconds({'date': date, 'finished': True}, {'status': 'available', 'completed': True}) == 1800
     assert cache_seconds({'date': '2020-01-01', 'finished': True}, {'status': 'available', 'completed': True}) == 604800
 

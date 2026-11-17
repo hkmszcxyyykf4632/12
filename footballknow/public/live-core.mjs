@@ -16,7 +16,8 @@ export function mergeMatches(archive, live, previous=[]) {
 
 export function validLive(value,archive) {
   const ucl=archive.competition==='欧冠';
-  if(value?.version!==1 || value.season!==archive.season || !Number.isFinite(Date.parse(value.updatedAt)) || !Array.isArray(value.matches) || (ucl?value.matches.length<144:value.matches.length!==380))return false;
+  const expected=archive.teams.length*(archive.teams.length-1);
+  if(value?.version!==1 || value.season!==archive.season || !Number.isFinite(Date.parse(value.updatedAt)) || !Array.isArray(value.matches) || (ucl?value.matches.length<144:value.matches.length!==expected))return false;
   const teams=new Set(archive.teams.map(row=>row.name));
   const pairs=new Set();
   const ids=new Set(), phaseCounts=new Map();let phaseMatches=0;
@@ -32,7 +33,7 @@ export function validLive(value,archive) {
       if(row.phase==='联赛阶段'){phaseMatches++;for(const name of [row.home,row.away])phaseCounts.set(name,(phaseCounts.get(name)||0)+1);}
     }
   }
-  return ucl?teams.size===36&&phaseMatches===144&&phaseCounts.size===36&&[...phaseCounts.values()].every(n=>n===8):pairs.size===380;
+  return ucl?teams.size===36&&phaseMatches===144&&phaseCounts.size===36&&[...phaseCounts.values()].every(n=>n===8):teams.size>=2&&pairs.size===expected;
 }
 
 export function freshness(value,failed=false,now=Date.now()) {

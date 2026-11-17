@@ -124,7 +124,7 @@ test('club search, manual odds, locked simulation, two-step settlement and backu
     input.dispatchEvent(new w.Event('change'));await tick();click('#confirm-import');
     assert.equal(saved().bets.length,0);
     await route('#/sources');
-    assert.match(w.document.querySelector('#main').textContent,/未接入实时赔率/);
+    assert.match(w.document.querySelector('#main').textContent,/ESPN 公开赛事接口采集/);
     await route(`#/analysis/${club.id}`);await tick();
     assert.equal(w.document.querySelectorAll('.probability').length,3);
     assert.equal(w.document.querySelector('#analysis-details').open,false);

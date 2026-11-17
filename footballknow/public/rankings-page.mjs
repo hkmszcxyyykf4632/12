@@ -29,7 +29,7 @@ export function renderRankings() {
   if(board==='advanced'){main.querySelector('#rank-status').textContent=advancedStatus();main.querySelector('#rank-content').innerHTML=advancedHtml();return;}
   const snapshot=board==='players'||['yellowCards','redCards'].includes(teamMetric)&&board==='clubs'?rankings:standings;
   const age=Date.now()-Date.parse(snapshot?.updatedAt);
-  main.querySelector('#rank-status').textContent=`${snapshot?`最近成功检查 ${timestamp(snapshot.updatedAt)}`:'尚未取得本赛季榜单'}${rankingsFailed?' · 最近检查未成功，保留已有资料':age>(snapshot?.intervalSeconds||60)*3000?' · 等待更新':''}。${board==='players'||board==='clubs'&&['yellowCards','redCards'].includes(teamMetric)?'本站每 60 秒检查；来源自身注明夜间更新。':'积分榜每 60 秒检查。'}`;
+  main.querySelector('#rank-status').textContent=`${snapshot?`最近成功检查 ${timestamp(snapshot.updatedAt)}`:'尚未取得本赛季榜单'}${rankingsFailed?' · 最近检查未成功，保留已有资料':age>(snapshot?.intervalSeconds||60)*3000?' · 等待更新':''}。${board==='players'||board==='clubs'&&['yellowCards','redCards'].includes(teamMetric)?(snapshot?.providerCadence||'本站每 60 秒检查；来源更新后同步。'):'积分榜每 60 秒检查。'}`;
   let html='';
   if(board==='table'){
    const rows=scope==='all'?standings?.entries:standings?.breakdowns?.tables?.[scope];
@@ -38,7 +38,7 @@ export function renderRankings() {
   }else if(board==='players'){
    const rows=(rankings?.boards?.[metric]||[]).map(r=>{const n=r.playerCode?localized({code:r.playerCode}):null;return {...r,translation:n?{...n,provisional:n.status==='draft'}:null};}).filter(r=>[r.name,r.teamName,r.translation?.mandarin,r.translation?.cantonese].join(' ').toLowerCase().includes(search.trim().toLowerCase()));
    html=rows.length?`<div class="table-wrap"><table><thead><tr><th>排名</th><th>球员 · 普通话 / 粤语</th><th>球队</th><th>出场</th><th>${metric==='scorers'?'进球':'助攻'}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.rank}</td><td><strong>${esc(r.translation?.mandarin||r.name)}</strong>${r.translation?`<div class="small">粤 ${esc(r.translation.cantonese)}${r.translation.provisional?' · 暂译':''}</div>`:''}<div class="small subtle">${sourceLink(r.source,r.name)}</div></td><td><a href="#/team/${r.teamId}">${esc(r.teamName)}</a></td><td>${r.appearances}</td><td class="points-cell">${r.value}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">${rankings?'没有符合搜索条件的球员。':'球员榜正在同步。'}</div>`;
-   html+=`<p class="note">来源收录前 ${rankings?.limit||50} 名；数值相同按并列名次显示。统计为 ${esc(data.season)} ${league.name}，中文译名未核对时保留原名。${sourceLink(rankings?.sources?.[0],'查看榜单来源')}</p>`;
+   html+=`<p class="note">${rankings?.coverage?esc(rankings.providerCadence)+'。本站收录前 ':'来源收录前 '}${rankings?.limit||50} 名；数值相同按并列名次显示。统计为 ${esc(data.season)} ${league.name}，中文译名未核对时保留原名。${sourceLink(rankings?.sources?.[0],'查看榜单来源')}</p>`;
   }else{
    const rows=metricRows(standings,rankings,teamMetric);
    const label={goalsFor:'进球',goalsAgainst:'失球',goalDifference:'净胜球',goalsPerGame:'场均进球',cleanSheets:'零封',yellowCards:'黄牌',redCards:'红牌'}[teamMetric];

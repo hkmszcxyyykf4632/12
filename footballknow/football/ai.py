@@ -175,8 +175,10 @@ def generate_analysis(team_id: int, league: str = 'epl') -> AIResult:
         raise ValueError('已有分析正在生成，请稍后再试。')
     try:
         rules = analysis_rules()
-        if league == 'laliga':
-            rules = rules.replace('英超', '西甲').replace('英冠', '西乙').replace('FPL', 'ESPN')
+        if league in {'laliga', 'seriea', 'bundesliga'}:
+            rules = rules.replace('英超', competition.competition).replace('英冠', competition.lower).replace('FPL', 'ESPN')
+            if league == 'bundesliga':
+                rules += '\n德甲为18队，主客双循环34轮、306场。只使用德甲当前赛季基线；德乙近况必须单独标注。'
         elif league == 'ucl':
             rules = rules.replace('英超', '欧冠').replace('英冠', '国内联赛').replace('FPL', 'ESPN')
             rules = rules.replace('二十场联赛', '二十场已收录正式比赛').replace('20 场已完成联赛', '20 场已收录正式比赛')

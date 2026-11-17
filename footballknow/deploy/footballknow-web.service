@@ -20,6 +20,8 @@ ProtectSystem=strict
 ProtectHome=true
 ReadWritePaths=/var/lib/footballknow
 ReadWritePaths=/opt/footballknow/public/match-details /opt/footballknow/public/laliga/match-details /opt/footballknow/public/ucl/match-details
+ReadWritePaths=/opt/footballknow/public/seriea/match-details /opt/footballknow/public/bundesliga/match-details
+ReadWritePaths=/opt/footballknow/public/finance/history
 UMask=0077
 
 [Install]

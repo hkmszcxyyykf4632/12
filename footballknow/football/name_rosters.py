@@ -97,7 +97,7 @@ def refresh_club_names(league: str = 'epl') -> NameSnapshot:
     if league == 'laliga':
         from .laliga import CLUBS
         articles = {values[0]: values[3] for values in CLUBS.values()}
-    elif league == 'ucl':
+    elif league in {'ucl', 'seriea', 'bundesliga'}:
         import json
         articles = {team['name']: team['article'] for team in json.loads((folder / 'data.json').read_text(encoding='utf-8'))['teams']}
     raw=(folder/'data.json').read_text(encoding='utf-8')

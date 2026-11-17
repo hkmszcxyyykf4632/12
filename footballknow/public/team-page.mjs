@@ -3,6 +3,7 @@ import {main,esc,cn,dateText,monogram,recent,resultFor,formRun,matchTable,source
 import {localized,fixtureStrip} from './football-components.mjs';
 import {historySections,bindHistory} from './team-history.mjs';
 import {league} from './league.mjs';
+import {clubResearch} from './club-research.mjs';
 import {followButton} from './matches-page.mjs';
 import {seasonBlock,availabilityBlock,calendarBlock} from './team-extras.mjs';
 
@@ -33,7 +34,7 @@ export function renderTeam(id) {
   const players=data.players.filter(p=>p.team===team.id);
   main.innerHTML=`<a class="back-link" href="#/teams">← 全部${league.name}球队</a><div class="page-heading"><div class="team-title">${monogram(team)}<div><h1>${esc(team.cn)}</h1><p class="lede">${esc(team.name)} · ${esc(data.season)} ${league.name}</p></div></div><span class="tag">${players.length} 位收录球员</span></div>
     <div class="toolbar">${followButton(team)}<button class="button secondary compact" type="button" data-share>分享链接</button><a class="button quiet compact" href="#/rankings">查看${league.name}排名 →</a><a class="button quiet compact" href="#/matches">比赛中心 →</a></div><dl class="team-summary" id="team-summary">${summaryBlock(team)}</dl><div id="team-fixture">${fixtureStrip(team)}</div>
-    <nav class="tabs" aria-label="球队资料跳转"><button class="active" data-jump="players">球员资料</button><button data-jump="season">赛季数据</button><button data-jump="availability">伤停</button><button data-jump="calendar">赛程日历</button><button data-jump="matches">近二十场</button><button data-jump="transfers">转会记录</button><button data-jump="managers">领队更换</button></nav>
+    <div id="team-research">${clubResearch(team)}</div><nav class="tabs" aria-label="球队资料跳转"><button class="active" data-jump="players">球员资料</button><button data-jump="season">赛季数据</button><button data-jump="availability">伤停</button><button data-jump="calendar">赛程日历</button><button data-jump="matches">近二十场</button><button data-jump="transfers">转会记录</button><button data-jump="managers">领队更换</button></nav>
     <section id="players-section"><div class="section-head"><div><h2>球员资料</h2></div><span class="small subtle">粤语 · 普通话 · 原名</span></div><div class="toolbar"><div class="search"><input id="player-search" type="search" placeholder="搜索中文、粤语译名或英文名" aria-label="搜索球员"></div><select class="filter-select" id="position-filter" aria-label="筛选球员位置"><option value="">全部位置</option>${Object.entries(POSITIONS).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></div>
     <div class="table-wrap"><table class="squad-table"><thead><tr><th>粤语 / 香港译名</th><th>普通话 / 大陆译名</th><th>位置（${league.roster}）</th><th>出生日期</th><th>分钟</th><th>进球 / 助攻</th><th>状态</th></tr></thead><tbody id="player-rows">${playerRows(team)}</tbody></table></div><div id="player-empty" class="empty hidden">没有符合筛选条件的球员。</div><p class="note" id="names-coverage"></p><p class="note">分钟、进球与助攻为本赛季${league.name}数据；位置按 ${league.roster} 分类，未提供的数值留空，名单可能不包含全部注册球员。</p></section>
     <section id="season-section"><div class="section-head"><h2>赛季攻防数据</h2><p>${esc(data.season)} ${league.name}</p></div><div id="team-season">${seasonBlock(team)}</div></section>
@@ -59,7 +60,7 @@ export function renderTeam(id) {
     main.querySelector('#team-fixture').innerHTML=fixtureStrip(team);
     main.querySelector('#team-summary').innerHTML=summaryBlock(team);
     main.querySelector('#team-season').innerHTML=seasonBlock(team);main.querySelector('#team-availability').innerHTML=availabilityBlock(team);main.querySelector('#team-calendar').innerHTML=calendarBlock(team);
-    updateMatches();
+    updateMatches();main.querySelector('#team-research').innerHTML=clubResearch(team);
     if(rosterVersion!==data.updatedAt||namesVersion!==names?.updatedAt){main.querySelector('#player-rows').innerHTML=playerRows(team);filterPlayers();rosterVersion=data.updatedAt;namesVersion=names?.updatedAt;}
   };
 }
