@@ -6,7 +6,7 @@ import {league} from './league.mjs';
 import {standingsPreview} from './rankings-page.mjs';
 import {impliedProbabilities,seasonStats,leadMatch,countdownText,statusSummary} from './insights.mjs';
 import {readStatus} from './status-page.mjs';
-import {paintNewsPreview} from './news-page.mjs';
+import {paintPortalNews} from './portal-news.mjs';
 
 const percent=value=>`${Math.round(value*100)}%`;
 
@@ -51,8 +51,8 @@ async function paintSync() {
 }
 
 export function renderHome() {
-  main.innerHTML=`${pageHeading('Football Know','涵盖足球、赛马、黄金、原油、股票与比特币的综合资料分析网站。')}<p class="note">由<a href="#/sponsors">茗是观茶业与自在堂唐卡</a>赞助开发。</p>
-  <section id="home-markets"></section><div class="section-head"><h2>球队即时新闻</h2><a class="button quiet" href="#/news">全部新闻 →</a></div><div id="home-news"></div><div id="home-lead"></div><div id="home-kpi"></div>
+  main.innerHTML=`<div class="portal-masthead"><div class="portal-identity"><h1 class="brand-seal brand-seal-home" aria-label="峰弈科技"><span>峰弈</span><span>科技</span></h1><div><span class="eyebrow">足球 · 香港赛马 · 全球市场</span><p>涵盖足球、赛马、黄金、原油、股票与比特币的综合资料分析网站。</p></div></div><div class="portal-sponsors">赞助开发<a href="#/sponsors">茗是观茶业 · 自在堂唐卡 ↗</a></div></div>
+  <section id="home-markets"></section><div class="section-head portal-section-head"><h2>即时资讯</h2><a class="button quiet" href="#/portal-news">全部中文新闻 →</a></div><div id="home-news"></div><div class="portal-shortcuts"><a href="#/live"><span>足球</span><strong>即场比赛与赔率 →</strong></a><a href="#/racing"><span>香港赛马</span><strong>赛马日与即时赛果 →</strong></a><a href="#/markets"><span>港股</span><strong>报价与公司资料 →</strong></a><a href="#/horses"><span>马匹资料</span><strong>马房、马主与往绩 →</strong></a></div><div class="section-head"><h2>${league.name}赛程与数据</h2><a href="#/matches">比赛中心 →</a></div><div id="home-lead"></div><div id="home-kpi"></div>
   <div class="dash-grid"><div>
     <div class="section-head"><h2>比赛动态与赛程</h2><a class="button quiet" href="#/matches">比赛中心</a></div><div id="home-fixtures"></div>
     <div class="section-head"><h2>最近完赛</h2><a class="button quiet" href="#/matches">全部赛果</a></div><div id="home-recent"></div>
@@ -69,7 +69,7 @@ export function renderHome() {
     main.querySelector('#home-standings').innerHTML=standingsPreview();
     main.querySelector('#home-scorers').innerHTML=scorers();
     main.querySelector('#home-recent').innerHTML=matchTable(data.matches.filter(m=>m.finished&&m.season===data.season&&m.competition===league.name).slice(0,6));
-    paintMarketPreview(main.querySelector('#home-markets'));paintSync();paintNewsPreview(main.querySelector('#home-news'));
+    paintMarketPreview(main.querySelector('#home-markets'));paintSync();paintPortalNews(main.querySelector('#home-news'));
   };
   update();return update;
 }

@@ -12,6 +12,6 @@ export function sponsorCard(sponsor){
 }
 
 export function renderSponsors(){
-  main.innerHTML=pageHeading('赞助商','感谢合作伙伴对 Football Know 的支持。')+
+  main.innerHTML=pageHeading('赞助商','感谢合作伙伴对 峰弈科技 的支持。')+
     '<div class="sponsor-grid">'+SPONSORS.map(sponsorCard).join('')+'</div>';
 }

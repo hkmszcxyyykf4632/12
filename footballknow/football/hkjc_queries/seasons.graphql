@@ -1,0 +1,8 @@
+query rw_RacingSeasonPeriod($locSim: LocalSim) {
+  racingSeasonPeriod(locSim: $locSim) {
+    code
+    endDate
+    startDate 
+  }
+}
+

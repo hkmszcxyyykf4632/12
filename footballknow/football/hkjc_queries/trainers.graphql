@@ -1,0 +1,35 @@
+query rw_GetTrainerRanking($season: String) {
+  trainerStat(season: $season) {
+    code
+    name_ch
+    name_en
+    status 
+    id
+    isCurSsn
+    season
+    visitingIndex
+    ssnStat {
+      numFirst
+      numSecond
+      numThird
+      numFourth
+      numFifth
+      numStarts
+      stakeWon
+      trk
+      ven
+    }
+    dhStat {
+      numFirst
+      numSecond
+      numThird
+      numFourth
+      numFifth
+      numStarts
+      stakeWon
+      trk
+      ven
+    }
+  }
+}
+

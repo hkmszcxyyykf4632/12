@@ -1,6 +1,7 @@
 import {data,names} from './repository.mjs';
 import {main,esc,cn,dateText,monogram,recent,resultFor,formRun,matchTable,sourceLink} from './ui.mjs';
 import {localized,fixtureStrip} from './football-components.mjs';
+import {playerPortrait,hydratePlayerPortraits} from './portraits.mjs';
 import {historySections,bindHistory} from './team-history.mjs';
 import {league} from './league.mjs';
 import {clubResearch} from './club-research.mjs';
@@ -15,7 +16,7 @@ function playerRows(team) {
   return players.map(p=>{
     const name=localized(p);
     const search=[name?.cantonese,name?.mandarin,p.first_name,p.second_name,p.web_name].join(' ').toLowerCase();
-    return `<tr data-player="${esc(search)}" data-position="${p.position}"><td class="player-name"><a href="#/player/${p.id}">${name?esc(name.cantonese):'<span class="subtle">译名待收录</span>'}</a><small>${esc(p.known_name||p.web_name)}</small></td><td class="player-name">${name?esc(name.mandarin):'—'}<small>${name?.status==='draft'?'<span class="attention">暂用音译 · 两版均待核</span>':name?sourceLink(name.mandarinSource,'普通话')+' · '+sourceLink(name.cantoneseSource,'香港译名'):esc(p.first_name+' '+p.second_name)}</small></td><td>${POSITIONS[p.position]||'—'}</td><td>${dateText(p.birth_date)}</td><td>${p.minutes??'—'}</td><td>${p.goals_scored??'—'} / ${p.assists??'—'}</td><td><span class="status ${p.status==='a'?'':'attention'}" title="${esc(p.news||'')}">${STATUS[p.status]||'未知'}</span>${p.news?`<details class="player-news"><summary>说明</summary><p>${esc(p.news)}</p></details>`:''}</td></tr>`;
+    return `<tr data-player="${esc(search)}" data-position="${p.position}"><td class="player-name"><span class="person-identity">${playerPortrait(p,league.id)}<span><a href="#/player/${p.id}">${name?esc(name.cantonese):'<span class="subtle">译名待收录</span>'}</a><small>${esc(p.known_name||p.web_name)}</small></span></span></td><td class="player-name">${name?esc(name.mandarin):'—'}<small>${name?.status==='draft'?'<span class="attention">暂用音译 · 两版均待核</span>':name?sourceLink(name.mandarinSource,'普通话')+' · '+sourceLink(name.cantoneseSource,'香港译名'):esc(p.first_name+' '+p.second_name)}</small></td><td>${POSITIONS[p.position]||'—'}</td><td>${dateText(p.birth_date)}</td><td>${p.minutes??'—'}</td><td>${p.goals_scored??'—'} / ${p.assists??'—'}</td><td><span class="status ${p.status==='a'?'':'attention'}" title="${esc(p.news||'')}">${STATUS[p.status]||'未知'}</span>${p.news?`<details class="player-news"><summary>说明</summary><p>${esc(p.news)}</p></details>`:''}</td></tr>`;
   }).join('');
 }
 
@@ -61,6 +62,6 @@ export function renderTeam(id) {
     main.querySelector('#team-summary').innerHTML=summaryBlock(team);
     main.querySelector('#team-season').innerHTML=seasonBlock(team);main.querySelector('#team-availability').innerHTML=availabilityBlock(team);main.querySelector('#team-calendar').innerHTML=calendarBlock(team);
     updateMatches();main.querySelector('#team-research').innerHTML=clubResearch(team);
-    if(rosterVersion!==data.updatedAt||namesVersion!==names?.updatedAt){main.querySelector('#player-rows').innerHTML=playerRows(team);filterPlayers();rosterVersion=data.updatedAt;namesVersion=names?.updatedAt;}
+    if(rosterVersion!==data.updatedAt||namesVersion!==names?.updatedAt){main.querySelector('#player-rows').innerHTML=playerRows(team);filterPlayers();hydratePlayerPortraits(main,league.id);rosterVersion=data.updatedAt;namesVersion=names?.updatedAt;}
   };
 }

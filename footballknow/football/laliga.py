@@ -99,6 +99,7 @@ def squad(team: dict, season: str, endpoint: str = ESPN) -> list[dict]:
         players.append({'id': int(person['id']), 'code': int(person['id']), 'team': team['id'],
                         'first_name': first, 'second_name': last, 'web_name': person['displayName'],
                         'known_name': person.get('fullName') or person['displayName'],
+                        'photoUrl': (person.get('headshot') or {}).get('href'),
                         'birth_date': (person.get('dateOfBirth') or '')[:10] or None,
                         'squad_number': person.get('jersey'), 'country': person.get('citizenship', ''),
                         'position': pos, 'minutes': stats.get('minutesPlayed'),

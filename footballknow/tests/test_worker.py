@@ -4,13 +4,18 @@ from datetime import datetime, timezone
 import worker
 
 
-def test_every_dataset_runs_on_the_sixty_second_cadence():
+def test_live_data_is_frequent_and_profile_work_is_bounded():
     jobs = worker.job_table({})
-    assert len(jobs) == 60
+    assert len(jobs) == 69
+    assert jobs['racing-live'].status.intervalSeconds == 60
+    assert jobs['racing-people'].status.intervalSeconds == 1800
+    assert jobs['racing-directory'].status.intervalSeconds == 86400
+    assert jobs['portal-news'].status.intervalSeconds == 300
+    assert jobs['laliga-photos'].status.intervalSeconds == 3600
     assert jobs['racing-meetings'].status.intervalSeconds == 300
     assert jobs['racing-horses'].status.intervalSeconds == 600
     assert jobs['finance-catalogue'].status.intervalSeconds == 86400
-    assert {job.status.intervalSeconds for job in jobs.values()} == {60, 300, 600, 3600, 86400}
+    assert {job.status.intervalSeconds for job in jobs.values()} == {60, 300, 600, 1800, 3600, 86400}
     assert {job.status.group for job in jobs.values()} == {'scores', 'catalogue', 'history', 'names', 'rankings', 'lineups', 'odds', 'news', 'profiles', 'finance', 'racing'}
 
 

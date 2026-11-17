@@ -49,8 +49,10 @@ JOBS: list[tuple[str, str, str]] = [
     *[(f'{league}-news', f'sync_news.py {league}', 'news') for league in LEAGUES],
     *[(f'{league}-profiles', f'sync_profiles.py {league}', 'profiles') for league in LEAGUES],
     *[(f'finance-{kind}', f'sync_finance.py {kind}', 'finance') for kind in ['quotes', 'assets', 'companies', 'history', 'evaluation', 'catalogue']],
-    *[(f'racing-{kind}', f'sync_racing.py {kind}', 'racing') for kind in ['meetings', 'catalogue', 'horses']],
+    *[(f'racing-{kind}', f'sync_racing.py {kind}', 'racing') for kind in ['meetings', 'catalogue', 'horses', 'directory', 'people', 'live']],
     ('odds-official-checks', 'sync_odds.py sources', 'odds'),
+    ('portal-news', 'sync_portal_news.py', 'news'),
+    *[(f'{league}-photos', f'sync_player_photos.py {league}', 'catalogue') for league in LEAGUES],
 ]
 
 
@@ -100,7 +102,9 @@ def job_table(environ: dict[str, str] | None = None) -> dict[str, Job]:
     base, overrides = sync_seconds(environ), interval_overrides(environ)
     defaults = {**{f'{league}-profiles': 86400 for league in LEAGUES},
                 'finance-companies': 86400, 'finance-catalogue': 86400, 'finance-history': 3600, 'finance-evaluation': 3600,
-                'racing-meetings': 300, 'racing-catalogue': 86400, 'racing-horses': 600}
+                'racing-meetings': 300, 'racing-catalogue': 86400, 'racing-horses': 600,
+                'racing-directory': 86400, 'racing-people': 1800, 'racing-live': 60,
+                'portal-news': 300, **{f'{league}-photos': 3600 for league in LEAGUES}}
     return {name: Job(script, JobStatus(intervalSeconds=overrides.get(name, defaults.get(name, base)), group=group))
             for name, script, group in JOBS}
 
@@ -235,7 +239,7 @@ def main() -> None:
                     settle(job, name, clock, stamp)
                     changed = True
             slots = max_workers() - sum(job.future is not None for job in jobs.values())
-            fast = lambda name, job: job.status.group in {'scores', 'odds'} or name in {'finance-quotes', 'finance-assets', 'racing-meetings'}
+            fast = lambda name, job: job.status.group in {'scores', 'odds'} or name in {'finance-quotes', 'finance-assets', 'racing-meetings', 'racing-live'}
             background_running = sum(job.future is not None and not fast(name, job) for name, job in jobs.items())
             for name, job in sorted(jobs.items(), key=lambda item: (item[1].due, item[1].status.group != 'scores')):
                 available = fast(name, job) or background_running < max(1, max_workers() - 1)

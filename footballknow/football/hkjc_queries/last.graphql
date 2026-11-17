@@ -1,0 +1,7 @@
+query rw_LastMeeting($venueCodes: [String!]) {
+  lastMeeting(venueCodes: $venueCodes) {
+    date
+    season 
+  }
+}
+

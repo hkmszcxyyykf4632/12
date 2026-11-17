@@ -1,6 +1,7 @@
 import {data,history} from './repository.mjs';
 import {main,esc,dateText,monogram,sourceLink,cn} from './ui.mjs';
 import {localized} from './football-components.mjs';
+import {playerPortrait} from './portraits.mjs';
 import {league} from './league.mjs';
 import {radarPoints} from './insights.mjs';
 import {playerStats,METRICS,POSITIONS,STATUS,clubOf,playerOriginal} from './player-stats.mjs';
@@ -38,7 +39,7 @@ export function renderPlayer(id,otherId) {
   const label=row=>`${displayName(row)}（${clubOf(row)?.cn||''}）`;
   const candidates=data.players.filter(row=>row.id!==p.id).sort((a,b)=>(b.minutes||0)-(a.minutes||0));
   main.innerHTML=`<a class="back-link" href="${club?`#/team/${club.id}`:'#/teams'}">← ${club?esc(club.cn):'球队列表'}</a>
-    <div class="page-heading"><div class="team-title">${club?monogram(club):''}<div><h1>${esc(name?.mandarin||p.web_name)}</h1><p class="lede">${name?.cantonese&&name.cantonese!==name.mandarin?`粤 ${esc(name.cantonese)} · `:''}${esc(playerOriginal(p))}${name?.status==='draft'?' · 中文为暂用音译':''}</p></div></div><button class="button secondary compact" type="button" data-share>分享链接</button></div>
+    <div class="page-heading"><div class="team-title">${playerPortrait(p,league.id,true)}<div><h1>${esc(name?.mandarin||p.web_name)}</h1><p class="lede">${name?.cantonese&&name.cantonese!==name.mandarin?`粤 ${esc(name.cantonese)} · `:''}${esc(playerOriginal(p))}${name?.status==='draft'?' · 中文为暂用音译':''}</p>${club?`<a href="#/team/${club.id}">${esc(club.cn)}</a>`:''}</div></div><button class="button secondary compact" type="button" data-share>分享链接</button></div>
     <dl class="team-summary" id="player-profile"></dl>
     <div class="section-head"><h2>${esc(data.season)} ${league.name}数据</h2></div><dl class="stat-grid" id="player-stats"></dl><p class="note" id="player-basis"></p>
     <div class="section-head"><h2>与另一名球员对比</h2></div>

@@ -42,6 +42,7 @@ def load_archive(path, digest, revision):
                 raise ValueError('Private or generated state in source archive')
             allowed = (len(parts) == 1 and (relative.endswith('.py') or relative in {'requirements.txt', 'analysis-rules.txt'}))
             allowed |= parts[0] == 'football' and relative.endswith('.py')
+            allowed |= relative.startswith('football/hkjc_queries/') and relative.endswith('.graphql')
             allowed |= parts[0] == 'public' and Path(relative).suffix in {'.html', '.css', '.js', '.mjs', '.json', '.svg', '.png', '.webp', '.ico'}
             allowed |= relative in {f'deploy/{name}' for name in UNITS} | {'deploy/update.py', 'deploy/Caddyfile'}
             if allowed:

@@ -4,18 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0c1f19">
-  <meta name="description" content="Football Know 足球数据终端：英超、西甲、意甲、德甲与欧冠的赛程、比分、积分、阵容、赔率与赛前分析，另有新闻、港股与市场行情。">
-  <title>Football Know · 足球数据终端</title>
+  <meta name="description" content="峰弈科技：足球、香港赛马与全球市场的综合资料分析网站，提供中文新闻、比赛资料、港股、黄金、原油与比特币行情。">
+  <title>峰弈科技 · 体育与市场资讯</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <script src="./theme.js"></script>
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./expansion.css">
+  <link rel="stylesheet" href="./sections.css">
   <script type="module" src="./app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要内容</a>
   <aside class="sidebar" id="sidebar">
-    <a class="brand" href="#/"><img src="./icon.svg" alt="" width="34" height="34"><span>Football Know<small>足球数据终端</small></span></a>
+    <a class="brand" href="#/" aria-label="峰弈科技首页"><span class="brand-seal" aria-hidden="true"><span>峰弈</span><span>科技</span></span><small>体育与市场<br>资料分析平台</small></a>
     <nav class="league-switch" aria-label="选择赛事"><a href="./#/" data-league="epl">英超</a><a href="./?league=laliga#/" data-league="laliga">西甲</a><a href="./?league=seriea#/" data-league="seriea">意甲</a><a href="./?league=bundesliga#/" data-league="bundesliga">德甲</a><a href="./?league=ucl#/" data-league="ucl">欧冠</a></nav>
     <nav class="main-nav" aria-label="主导航">
       <p class="nav-group">赛事数据</p>
@@ -26,7 +27,9 @@
       <a href="#/rankings" data-nav="rankings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V11h4v10m2 0V3h4v18m2 0V8h4v13M2 21h20"/></svg>数据榜单</a>
       <a href="#/teams" data-nav="teams"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 3-5 4 3 5 2-1v10h8V11l2 1 3-5-5-4c-1 3-7 3-8 0Z"/></svg><span data-league-team-label>英超球队</span></a>
       <a href="#/compare" data-nav="compare"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v16M16 4v16M4 8l4-4 4 4M12 16l4 4 4-4"/></svg>球队对比</a>
-      <p class="nav-group">香港赛马</p><a href="#/racing" data-nav="racing"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 18V9l6-5 6 5v9M9 18v-5h6v5"/></svg>赛期、马匹与预测</a>
+      <p class="nav-group">香港赛马</p><a href="#/racing" data-nav="racing"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 18V9l6-5 6 5v9M9 18v-5h6v5"/></svg>赛马日与即时赛果</a>
+      <a href="#/horses" data-nav="horses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10l7-7 6 5-2 6h-5v6M8 8l1-5 3 2"/></svg>马匹资料与分类</a>
+      <a href="#/racing-rankings" data-nav="racing-rankings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V12h5v9M10 21V4h5v17M17 21v-6h4v6"/></svg>骑师榜与练马师榜</a>
       <p class="nav-group">市场资讯</p><a href="#/markets" data-nav="markets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18M4 16l5-5 4 3 7-10"/></svg>港股与全球行情</a>
       <p class="nav-group">研究与记录</p>
       <a href="#/following" data-nav="following"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/></svg>我的关注</a>
@@ -54,7 +57,7 @@
       <button class="icon-button" id="theme-toggle" type="button" aria-label="切换深色或浅色界面"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
     </header>
     <main id="main" tabindex="-1"><div class="loading">正在载入球队与比赛资料…</div></main>
-    <footer><span>Football Know · <a href="#/sponsors">赞助商</a></span><span>比赛与报价按分钟检查，来源及资料时间随数据显示</span><a href="#/sources">来源与覆盖范围</a></footer>
+    <footer><span>峰弈科技 · <a href="#/sponsors">赞助商</a></span><span>比赛与报价按分钟检查，来源及资料时间随数据显示</span><a href="#/sources">来源与覆盖范围</a></footer>
   </div>
   <div class="palette" id="palette" hidden>
     <div class="palette-box" role="dialog" aria-modal="true" aria-label="全站搜索">

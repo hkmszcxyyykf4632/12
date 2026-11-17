@@ -7,7 +7,7 @@ export const POSITIONS={1:'门将',2:'后卫',3:'中场',4:'前锋'};
 export const STATUS={unreported:'未标注伤停',a:'可出场',d:'出场待定',i:'伤缺',s:'停赛',u:'暂不可用',n:'暂不可用'};
 const num=value=>{const n=Number(value);return value==null||value===''||!Number.isFinite(n)?null:n;};
 
-let indexed=null,indexedFor=null;
+let indexed=new Map(),indexedFor=null;
 function factIndex() {
   if(indexedFor!==facts){indexedFor=facts;indexed=new Map();for(const row of facts?.players||[]){if(row.playerCode!=null)indexed.set(`c${row.playerCode}`,row);indexed.set(`e${row.espnId}`,row);}}
   return indexed;
