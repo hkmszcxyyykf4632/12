@@ -53,11 +53,16 @@ kbd{font:11px/1 var(--font);padding:4px 6px;border:1px solid var(--line-strong);
 .brand small{display:block;font-size:11px;font-weight:400;color:var(--sidebar-ink)}
 .brand-seal{display:inline-flex;flex:none;width:66px;height:66px;aspect-ratio:1;border:2px solid currentColor;border-radius:50%;align-items:center;justify-content:center;flex-direction:column;gap:2px;font-size:19px;font-weight:700;line-height:1.2;letter-spacing:.1em;padding-left:.1em}
 .brand-seal>span{display:block}
-.league-switch{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:3px;background:var(--sidebar-line);border-radius:8px;margin-bottom:8px}
-.league-switch a{text-align:center;padding:7px 4px;border-radius:6px;font-size:13px;color:var(--sidebar-ink)}
+.league-switch{display:grid;grid-template-columns:1fr;gap:2px;margin:1px 0 8px 28px;padding:2px 0 2px 8px;border-left:1px solid var(--sidebar-line)}
+.main-nav .league-switch a{min-height:32px;padding:5px 12px;border-radius:5px;font-size:13px;color:var(--sidebar-ink)}
 .league-switch a:hover{color:#fff}
-.league-switch a.active{background:#f2f7f4;color:#0c1f19;font-weight:650}
+.main-nav .league-switch a.active{background:var(--sidebar-active);color:#fff;font-weight:650;box-shadow:inset 2px 0 var(--section-accent,#48c79b)}
 .main-nav{display:grid;gap:2px}
+.football-nav summary{display:flex;align-items:center;gap:11px;min-height:38px;padding:7px 10px;border-radius:7px;font-size:14px;font-weight:600;cursor:pointer;list-style:none;color:var(--sidebar-ink)}
+.football-nav summary::-webkit-details-marker{display:none}
+.football-nav summary:hover{background:var(--sidebar-line);color:#fff}
+.nav-chevron{margin-left:auto;font-size:21px;line-height:1;transition:transform .15s}
+.football-nav[open] .nav-chevron{transform:rotate(90deg)}
 .nav-group{margin:14px 10px 4px;font-size:11px;color:#7f948b}
 .main-nav a{display:flex;gap:11px;align-items:center;min-height:38px;padding:7px 10px;border-radius:7px;font-size:14px;color:var(--sidebar-ink)}
 .main-nav a:hover{background:var(--sidebar-line);color:#fff}

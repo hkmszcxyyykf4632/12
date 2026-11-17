@@ -8,6 +8,7 @@ from xml.etree import ElementTree as ET
 
 from .files import publish, read_json
 from .finance import FOLDER, now, request, parse_tencent
+from .stock_sectors import enrich_catalogue
 
 SOURCE = 'https://www.hkex.com.hk/eng/services/trading/securities/securitieslists/ListOfSecurities.xlsx'
 NS = {'s': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
@@ -70,5 +71,6 @@ def refresh_catalogue():
                     row['name'] = quotes[row['code']]['name']
         except (OSError, ValueError, UnicodeError):
             pass
+    enrich_catalogue(result, previous)
     publish(path, result)
     return result

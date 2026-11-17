@@ -1,5 +1,5 @@
 import {main,esc,pageHeading,sourceLink,timeText} from './ui.mjs';
-import {finite,figure,signed,direction,forecastLabel,validQuotes,chartPoints,rateText,financialRows,financialAmount} from './finance-core.mjs';
+import {finite,figure,signed,direction,forecastLabel,validQuotes,chartPoints,rateText,financialRows,financialAmount,stockSector,industryGroups,filterStocks} from './finance-core.mjs';
 
 async function read(url,signal,options={}){
   const controller=new AbortController(),abort=()=>controller.abort();
@@ -32,21 +32,25 @@ export async function paintMarketPreview(target){
   catch{if(target.isConnected)target.innerHTML='<p class="note"><a href="#/markets">查看港股与市场行情 →</a></p>';}
 }
 export function renderMarkets(){
-  const controller=new AbortController();let catalogue=null,quotes={quotes:{}},assets=null,query='',scope='all',page=0,loadingQuotes=false,searchTimer;
-  main.innerHTML=pageHeading('港股与市场','港交所全部上市股票与全球市场参考行情。')+'<div id="market-assets"></div><section id="hsi-quote"></section><div class="toolbar"><label class="search-field">搜索全部港股<input type="search" id="stock-search" placeholder="股票代码、中文或英文名称"></label><label>股票范围<select id="stock-sector"><option value="all">全部港股</option><option value="hsi">恒指成份股</option><option value="main">主板</option><option value="gem">GEM 创业板</option><option value="reit">房地产信托 REIT</option></select></label></div><p id="stock-count" role="status"></p><div id="stock-list" class="loading">正在读取全部港股名单…</div><div class="toolbar"><button class="button secondary" id="stock-prev">上一页</button><span id="stock-page"></span><button class="button secondary" id="stock-next">下一页</button></div><p id="stock-source" class="note"></p>';
-  function selected(){return (catalogue?.stocks||[]).filter(r=>(scope==='all'||scope==='hsi'&&r.isHsi||scope==='main'&&r.board==='主板'||scope==='gem'&&r.board==='GEM'||scope==='reit'&&r.category==='Real Estate Investment Trusts')&&(!query||(r.code+r.name+r.englishName+(quotes.quotes?.[r.code]?.name||'')).toLowerCase().includes(query)));}
+  const controller=new AbortController();let catalogue=null,quotes={quotes:{}},assets=null,query='',scope='all',sector='all',page=0,loadingQuotes=false,searchTimer;
+  main.innerHTML=pageHeading('港股与市场','港交所全部上市股票与全球市场参考行情。')+'<div id="market-assets"></div><section id="hsi-quote"></section><div class="toolbar"><label class="search-field">搜索全部港股<input type="search" id="stock-search" placeholder="股票代码、中文或英文名称"></label><label>股票范围<select id="stock-sector"><option value="all">全部港股</option><option value="hsi">恒指成份股</option><option value="main">主板</option><option value="gem">GEM 创业板</option><option value="reit">房地产信托 REIT</option></select></label><label>行业分类<select id="stock-industry"><option value="all">全部行业</option></select></label></div><div id="stock-industry-quick" class="stock-industry-quick" role="group" aria-label="常用行业"></div><p id="stock-count" role="status"></p><div id="stock-list" class="loading">正在读取全部港股名单…</div><div class="toolbar"><button class="button secondary" id="stock-prev">上一页</button><span id="stock-page"></span><button class="button secondary" id="stock-next">下一页</button></div><p id="stock-source" class="note"></p>';
+  function selected(){return filterStocks(catalogue?.stocks,{scope,sector,query,quotes:quotes.quotes});}
   function visible(){const rows=selected();page=Math.min(page,Math.max(0,Math.ceil(rows.length/40)-1));return rows.slice(page*40,page*40+40);}
   function paint(){
     if(controller.signal.aborted||!catalogue)return;
     const hsi=quotes.quotes?.HSI,all=selected(),rows=visible();
+    const groups=industryGroups(catalogue.stocks),counts=new Map(groups);
+    main.querySelector('#stock-industry').innerHTML='<option value="all">全部行业（'+catalogue.stocks.length+'）</option>'+groups.map(([name,count])=>'<option value="'+esc(name)+'">'+esc(name)+'（'+count+'）</option>').join('');
+    main.querySelector('#stock-industry').value=sector;
+    main.querySelector('#stock-industry-quick').innerHTML=['all','地产','金融','博彩','科技'].map(name=>'<button type="button" data-stock-industry="'+name+'" aria-pressed="'+(sector===name)+'" class="'+(sector===name?'active':'')+'">'+(name==='all'?'全部行业':name)+'<span>'+(name==='all'?catalogue.stocks.length:counts.get(name)||0)+'</span></button>').join('');
     main.querySelector('#market-assets').innerHTML=assetCards(assets);
     main.querySelector('#hsi-quote').innerHTML='<div class="market-index"><div><span>恒生指数 HSI</span><strong>'+figure(hsi?.price)+'<small> 点</small></strong></div><div class="'+direction(hsi?.changePercent)+'">'+signed(hsi?.change)+' · '+signed(hsi?.changePercent)+'%</div><div>'+quoteNote(hsi)+'</div></div>';
     main.querySelector('#stock-count').textContent='共 '+catalogue.stocks.length+' 个股票及 REIT 交易柜台 · 当前筛选 '+all.length+' 个';
     main.querySelector('#stock-list').className='';
-    main.querySelector('#stock-list').innerHTML=rows.length?'<div class="table-wrap"><table><thead><tr><th>股票</th><th>市场 / 类别</th><th>报价 / 币种</th><th>涨跌幅</th><th>开盘</th><th>最高 / 最低</th><th>报价时间</th></tr></thead><tbody>'+rows.map(r=>{const q=quotes.quotes?.[r.code];return '<tr><td><a class="stock-name" href="#/stock/'+r.code+'"><strong>'+esc(q?.name||r.name)+'</strong><small>'+r.code+' · '+esc(r.englishName||'')+'</small></a></td><td>'+esc(r.board)+(r.isHsi?'<small>恒指成份股</small>':'')+'</td><td><b>'+figure(q?.price)+'</b><small>'+esc(q?.currency||r.currency)+'</small></td><td class="'+direction(q?.changePercent)+'">'+signed(q?.changePercent)+'%</td><td>'+figure(q?.open)+'</td><td>'+figure(q?.high)+' / '+figure(q?.low)+'</td><td class="small">'+stamp(q?.quotedAt)+(quotes.failedCodes?.includes(r.code)?'<small class="attention">等待报价更新</small>':'')+'</td></tr>';}).join('')+'</tbody></table></div>':'<div class="empty">没有符合条件的股票。</div>';
+    main.querySelector('#stock-list').innerHTML=rows.length?'<div class="table-wrap"><table><thead><tr><th>股票</th><th>行业</th><th>市场 / 类别</th><th>报价 / 币种</th><th>涨跌幅</th><th>开盘</th><th>最高 / 最低</th><th>报价时间</th></tr></thead><tbody>'+rows.map(r=>{const q=quotes.quotes?.[r.code];return '<tr><td><a class="stock-name" href="#/stock/'+r.code+'"><strong>'+esc(q?.name||r.name)+'</strong><small>'+r.code+' · '+esc(r.englishName||'')+'</small></a></td><td><span class="stock-sector-label">'+esc(stockSector(r))+'</span>'+(r.industry&&r.industry!==stockSector(r)?'<small>'+esc(r.industry)+'</small>':'')+'</td><td>'+esc(r.board)+(r.isHsi?'<small>恒指成份股</small>':'')+'</td><td><b>'+figure(q?.price)+'</b><small>'+esc(q?.currency||r.currency)+'</small></td><td class="'+direction(q?.changePercent)+'">'+signed(q?.changePercent)+'%</td><td>'+figure(q?.open)+'</td><td>'+figure(q?.high)+' / '+figure(q?.low)+'</td><td class="small">'+stamp(q?.quotedAt)+(quotes.failedCodes?.includes(r.code)?'<small class="attention">等待报价更新</small>':'')+'</td></tr>';}).join('')+'</tbody></table></div>':'<div class="empty">没有符合条件的股票。</div>';
     main.querySelector('#stock-page').textContent='第 '+(page+1)+' / '+Math.max(1,Math.ceil(all.length/40))+' 页';
     main.querySelector('#stock-prev').disabled=page===0;main.querySelector('#stock-next').disabled=(page+1)*40>=all.length;
-    main.querySelector('#stock-source').innerHTML=sourceLink(catalogue.source,catalogue.sourceLabel||'港交所完整证券名单')+' · 名单日期 '+esc(catalogue.effectiveDate)+'。'+esc(catalogue.scope||'')+' 当前页报价按分钟检查，公司资料按需读取并缓存。';
+    main.querySelector('#stock-source').innerHTML=sourceLink(catalogue.source,catalogue.sourceLabel||'港交所完整证券名单')+' · 名单日期 '+esc(catalogue.effectiveDate)+'。'+esc(catalogue.scope||'')+' 当前页报价按分钟检查，公司资料按需读取并缓存。'+(catalogue.industryUpdatedAt?'<br>行业资料：'+sourceLink(catalogue.industrySource,catalogue.industrySourceLabel)+' · 更新 '+stamp(catalogue.industryUpdatedAt)+' · 已分类 '+catalogue.industryCoverage+' / '+catalogue.stocks.length+'。按主营行业归组；博彩含博彩、彩票及相关业务。'+(catalogue.industryRefreshFailed?' 行业更新暂未成功，保留上次资料。':''):'<br>行业资料正在同步，缺少资料的股票列为待分类。');
   }
   async function refreshVisible(){
     if(loadingQuotes||controller.signal.aborted||!catalogue)return;
@@ -66,6 +70,8 @@ export function renderMarkets(){
   const changed=()=>{page=0;paint();clearTimeout(searchTimer);searchTimer=setTimeout(refreshVisible,300);};
   main.querySelector('#stock-search').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase();changed();});
   main.querySelector('#stock-sector').addEventListener('change',e=>{scope=e.target.value;changed();});
+  main.querySelector('#stock-industry').addEventListener('change',e=>{sector=e.target.value;changed();});
+  main.querySelector('#stock-industry-quick').addEventListener('click',e=>{const button=e.target.closest('[data-stock-industry]');if(button){sector=button.dataset.stockIndustry;changed();}});
   main.querySelector('#stock-prev').addEventListener('click',()=>{page--;paint();refreshVisible();});
   main.querySelector('#stock-next').addEventListener('click',()=>{page++;paint();refreshVisible();});
   load();const timer=setInterval(()=>{if(!document.hidden)refreshVisible();},60000);
