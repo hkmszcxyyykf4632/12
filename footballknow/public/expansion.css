@@ -97,6 +97,7 @@
  .field-row{flex-direction:column}
 }
 
+.table-wrap a.stock-name,.table-wrap a.stock-name strong,#stock-top .stock-title,#stock-company h3{color:var(--brand)}
 .news-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
 .broadcast-links{display:flex;flex-wrap:wrap;gap:12px}.broadcast-link small{display:block}
 #news-list{background:var(--surface);border-radius:var(--radius)}
