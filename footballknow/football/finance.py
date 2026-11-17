@@ -11,6 +11,8 @@ from .files import PUBLIC, publish, read_json
 
 FOLDER = PUBLIC / 'finance'
 HK = timezone(timedelta(hours=8))
+_STOCK_VERSION = None
+_STOCK_INDEX = {}
 EASTMONEY = 'https://datacenter.eastmoney.com/securities/api/data/v1/get'
 ASSETS = {
     'gold': ('GC=F', 'COMEX 黄金期货', '美元/金衡盎司'),
@@ -58,7 +60,14 @@ def constituents():
 
 
 def stock(code):
-    return next((row for row in constituents() if row['code'] == code), None)
+    global _STOCK_VERSION, _STOCK_INDEX
+    path = FOLDER / 'stocks.json'
+    version = (str(path), path.stat().st_mtime_ns if path.exists() else None)
+    if version != _STOCK_VERSION:
+        rows = load(path).get('stocks') or constituents()
+        _STOCK_INDEX = {row['code']: row for row in rows}
+        _STOCK_VERSION = version
+    return _STOCK_INDEX.get(code)
 
 
 def parse_tencent(raw, expected, fetched_at):
@@ -144,11 +153,19 @@ def normalize_chart(raw, fetched_at):
 
 
 def refresh_assets():
+    from .market_sources import alternative_assets
     path = FOLDER / 'assets.json'
     rows = dict(load(path).get('assets', {}))
     failed = []
     stamp = now()
+    alternatives = alternative_assets(stamp)
     for key, (symbol, label, unit) in ASSETS.items():
+        if key in alternatives:
+            old = rows.get(key, {})
+            history = old.get('history') or ({k: old.get(k) for k in ['bars', 'provider', 'source', 'updatedAt', 'symbol']} if old.get('bars') else None)
+            rows[key] = {**alternatives[key], 'id': key, 'name': label, 'unit': unit, 'updatedAt': stamp,
+                         'history': history}
+            continue
         try:
             raw = chart(symbol, '3mo')
             meta = raw['meta']
@@ -170,12 +187,44 @@ def refresh_assets():
     return result
 
 
+def normalize_em_history(payload, code, currency, fetched_at):
+    data = payload.get('data') or {}
+    if data.get('code') != code:
+        raise ValueError('History identity mismatch')
+    bars = []
+    for raw in data.get('klines', []):
+        parts = raw.split(',')
+        if len(parts) < 6:
+            continue
+        day = datetime.strptime(parts[0], '%Y-%m-%d').replace(tzinfo=HK)
+        close = number(parts[2], True)
+        if day > datetime.fromisoformat(fetched_at) or close is None:
+            continue
+        bars.append({'date': parts[0], 'timestamp': day.isoformat(), 'open': number(parts[1]),
+                     'close': close, 'adjustedClose': close, 'high': number(parts[3]),
+                     'low': number(parts[4]), 'volume': number(parts[5])})
+    if not bars:
+        raise ValueError('Empty adjusted price history')
+    return {'version': 1, 'code': code, 'symbol': code + '.HK', 'currency': currency,
+            'updatedAt': fetched_at, 'provider': '东方财富前复权日线', 'adjustment': 'forward',
+            'source': 'https://quote.eastmoney.com/hk/' + code + '.html',
+            'bars': sorted({bar['date']: bar for bar in bars}.values(), key=lambda bar: bar['date'])}
+
+
 def refresh_history(code):
-    if not stock(code):
+    item = stock(code)
+    if not item:
         raise LookupError('Unknown constituent')
-    symbol = str(int(code)).zfill(4) + '.HK'
-    result = normalize_chart(chart(symbol), now())
-    if result.get('currency') != 'HKD' or not result['bars']:
+    currency = item.get('currency', 'HKD')
+    try:
+        query = {'secid': '116.' + code, 'klt': '101', 'fqt': '1', 'lmt': '320', 'end': '20500101',
+                 'fields1': 'f1,f2,f3,f4,f5,f6', 'fields2': 'f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61'}
+        payload = json.loads(request('https://push2his.eastmoney.com/api/qt/stock/kline/get?' + urllib.parse.urlencode(query)))
+        result = normalize_em_history(payload, code, currency, now())
+    except (OSError, ValueError, KeyError, TypeError):
+        symbol = str(int(code)).zfill(4) + '.HK'
+        result = normalize_chart(chart(symbol), now())
+    if result.get('currency') != currency or not result['bars']:
         raise ValueError('Invalid HK price history')
     result['code'] = code
     publish(FOLDER / 'history' / (code + '.json'), result)
@@ -270,8 +319,14 @@ def refresh_collection(kind):
             return item['code'], True
         except (OSError, ValueError, KeyError, TypeError):
             return item['code'], False
-    with ThreadPoolExecutor(max_workers=3) as pool:
-        rows = list(pool.map(one, constituents()))
+    items = {row['code']: row for row in constituents()}
+    if kind == 'history':
+        for path in (FOLDER / 'history').glob('*.json'):
+            item = stock(path.stem)
+            if item:
+                items[item['code']] = item
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        rows = list(pool.map(one, items.values()))
     good = sum(ok for _, ok in rows)
     result = {'updatedAt': now(), 'total': len(rows), 'ok': good, 'failedCodes': [code for code, ok in rows if not ok]}
     publish(FOLDER / (kind + '-status.json'), result)

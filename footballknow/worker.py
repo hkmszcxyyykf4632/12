@@ -48,7 +48,7 @@ JOBS: list[tuple[str, str, str]] = [
     *[(f'{league}-odds', f'sync_odds.py {league}', 'odds') for league in LEAGUES],
     *[(f'{league}-news', f'sync_news.py {league}', 'news') for league in LEAGUES],
     *[(f'{league}-profiles', f'sync_profiles.py {league}', 'profiles') for league in LEAGUES],
-    *[(f'finance-{kind}', f'sync_finance.py {kind}', 'finance') for kind in ['quotes', 'assets', 'companies', 'history', 'evaluation']],
+    *[(f'finance-{kind}', f'sync_finance.py {kind}', 'finance') for kind in ['quotes', 'assets', 'companies', 'history', 'evaluation', 'catalogue']],
     ('odds-official-checks', 'sync_odds.py sources', 'odds'),
 ]
 
@@ -98,7 +98,7 @@ def interval_overrides(environ: dict[str, str] | None = None) -> dict[str, int]:
 def job_table(environ: dict[str, str] | None = None) -> dict[str, Job]:
     base, overrides = sync_seconds(environ), interval_overrides(environ)
     defaults = {**{f'{league}-profiles': 86400 for league in LEAGUES},
-                'finance-companies': 86400, 'finance-history': 3600, 'finance-evaluation': 3600}
+                'finance-companies': 86400, 'finance-catalogue': 86400, 'finance-history': 3600, 'finance-evaluation': 3600}
     return {name: Job(script, JobStatus(intervalSeconds=overrides.get(name, defaults.get(name, base)), group=group))
             for name, script, group in JOBS}
 

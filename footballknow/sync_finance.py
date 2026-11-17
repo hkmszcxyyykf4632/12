@@ -3,9 +3,12 @@ from football.finance import refresh_assets, refresh_quotes, refresh_collection
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('kind', choices=['quotes', 'assets', 'companies', 'history', 'evaluation'])
+    parser.add_argument('kind', choices=['quotes', 'assets', 'companies', 'history', 'evaluation', 'catalogue'])
     args = parser.parse_args()
-    if args.kind == 'evaluation':
+    if args.kind == 'catalogue':
+        from football.hk_catalogue import refresh_catalogue
+        result = refresh_catalogue()
+    elif args.kind == 'evaluation':
         from football.stock_analysis import evaluate_all
         result = evaluate_all()
     elif args.kind in ['companies', 'history']:

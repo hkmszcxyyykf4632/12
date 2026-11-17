@@ -168,14 +168,20 @@ def generate(code):
         if not config.apiKey.get_secret_value():
             raise ValueError('请先在管理后台填写 DeepSeek API Key。')
         history = load(FOLDER / 'history' / (code + '.json'))
+        history_refresh_failed = False
         if not history.get('updatedAt') or (stamp - datetime.fromisoformat(history['updatedAt'])).total_seconds() > 3600:
-            history = refresh_history(code)
+            try:
+                history = refresh_history(code)
+            except (OSError, ValueError):
+                history_refresh_failed = True
         bars = completed_bars(history, stamp)
         if len(bars) < 30 or (stamp.date() - datetime.fromisoformat(bars[-1]['date']).date()).days > 7:
             raise ValueError('可核对的近期复权价格不足，暂不能生成预测。')
         company = load(FOLDER / 'companies' / (code + '.json'))
         context = {'stock': stock(code), 'asOf': stamp.isoformat(), 'company': company,
                    'prices': bars[-80:], 'metrics': price_metrics(bars), 'priceSource': history.get('source'),
+                   'priceFreshness': {'fetchedAt': history.get('updatedAt'), 'lastCompletedDate': bars[-1]['date'],
+                                      'refreshFailed': history_refresh_failed},
                    'quote': load(FOLDER / 'quotes.json').get('quotes', {}).get(code),
                    'evaluationRules': public_status(code)['rules'], 'historicalEvaluation': public_status(code)['evaluation']}
         # Bound report input to the two most recent periods, retaining all published line items.
@@ -184,14 +190,17 @@ def generate(code):
             dates = sorted({p['REPORT_DATE'][:10] for p in finance.get('periods', [])}, reverse=True)[:2]
             finance['statements'] = {k: [r for r in rows if r['date'] in dates] for k, rows in finance.get('statements', {}).items()}
         content = ForecastContent.model_validate(request_json(RULES, context, 5000))
-        if any(len(p) > 240 or not p.strip() or '\n' in p for p in content.summary):
+        content.summary = [' '.join(p.split()) for p in content.summary]
+        if any(len(p) > 240 or not p for p in content.summary):
             raise ValueError('模型摘要格式不正确，请稍后重试。')
         issued_at = now()
         day = datetime.fromisoformat(issued_at).astimezone(HK).date().isoformat()
         snapshot_hash = hashlib.sha256(json.dumps(context, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+        saved_content = content.model_dump()
+        saved_content['priceData'] = context['priceFreshness']
         with connect() as connection:
             connection.execute('INSERT OR IGNORE INTO forecasts(code,day,version,issued_at,model,snapshot_hash,content) VALUES (?,?,?,?,?,?,?)',
-                (code, day, VERSION, issued_at, config.model, snapshot_hash, content.model_dump_json()))
+                (code, day, VERSION, issued_at, config.model, snapshot_hash, json.dumps(saved_content, ensure_ascii=False)))
         return public_status(code)
     finally:
         LOCK.release()

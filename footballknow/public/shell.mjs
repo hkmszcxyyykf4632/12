@@ -47,7 +47,7 @@ export function startSyncIndicator(syncNow) {
   return ()=>{clearInterval(timer);$('#sync-pill')?.removeEventListener('click',click);};
 }
 
-const PAGES=[['总览','#/'],['即场比赛','#/live'],['球队新闻','#/news'],['港股与全球行情','#/markets'],['赞助商','#/sponsors'],['比赛中心','#/matches'],['数据榜单','#/rankings'],['球队列表','#/teams'],['球队对比','#/compare'],['我的关注','#/following'],
+const PAGES=[['首页','#/'],['即场比赛','#/live'],['球队新闻','#/news'],['港股与全球行情','#/markets'],['赞助商','#/sponsors'],['比赛中心','#/matches'],['数据榜单','#/rankings'],['球队列表','#/teams'],['球队对比','#/compare'],['我的关注','#/following'],
   ['模拟投注','#/simulator'],['我的记录','#/records'],['同步监控','#/status'],['数据质量','#/quality'],['数据说明','#/sources'],['管理后台','#/admin']];
 
 /** Everything the palette can open, rebuilt when it is shown so it reflects the latest snapshot. */

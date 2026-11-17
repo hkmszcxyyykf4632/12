@@ -148,7 +148,7 @@ def main():
             temporary.chmod(0o644)
             os.chown(temporary, owner.st_uid, owner.st_gid)
             os.replace(temporary, target)
-        for folder in ['public/match-details', 'public/laliga/match-details', 'public/ucl/match-details', 'public/seriea/match-details', 'public/bundesliga/match-details']:
+        for folder in ['public/match-details', 'public/laliga/match-details', 'public/ucl/match-details', 'public/seriea/match-details', 'public/bundesliga/match-details', 'public/finance/history', 'public/finance/companies', 'public/finance/quote-cache']:
             path = ROOT / folder
             path.mkdir(parents=True, exist_ok=True)
             path.chmod(0o755)

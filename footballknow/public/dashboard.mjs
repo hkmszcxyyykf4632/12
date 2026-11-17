@@ -51,7 +51,7 @@ async function paintSync() {
 }
 
 export function renderHome() {
-  main.innerHTML=`${pageHeading(`${league.name}总览`,`${esc(data.season)} 赛季的赛程、比分、积分与球员数据，比赛资料按分钟检查，新闻与市场行情同步展示。`,`<a class="button secondary" href="#/compare">对比两支球队</a>`)}
+  main.innerHTML=`${pageHeading('Football Know','涵盖足球、赛马（筹备中）、黄金、原油、股票与比特币的综合资料分析网站。')}<p class="note">由<a href="#/sponsors">茗是观茶业与自在堂唐卡</a>赞助开发。</p>
   <section id="home-markets"></section><div class="section-head"><h2>球队即时新闻</h2><a class="button quiet" href="#/news">全部新闻 →</a></div><div id="home-news"></div><div id="home-lead"></div><div id="home-kpi"></div>
   <div class="dash-grid"><div>
     <div class="section-head"><h2>比赛动态与赛程</h2><a class="button quiet" href="#/matches">比赛中心</a></div><div id="home-fixtures"></div>

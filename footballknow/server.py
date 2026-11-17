@@ -21,7 +21,7 @@ from football.files import PUBLIC, read_json
 from football.leagues import LeagueId
 from football.match_details import get_detail, next_lineup_evidence
 from football.sync_control import SyncControlInput, read_control, set_control
-from football import stock_analysis
+from football import stock_analysis, stock_service
 
 
 class LoginInput(BaseModel):
@@ -181,12 +181,36 @@ def update_sync_control(value: SyncControlInput, account: auth.Administrator = D
     return set_control(value.enabled, account.username)
 
 
+@app.get('/api/stocks/quotes')
+def get_stock_quotes(codes: str):
+    try:
+        return stock_service.viewed_quotes(codes.split(','))
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from None
+
+
+@app.get('/api/stocks/{code}/company')
+def get_stock_company(code: str):
+    try:
+        return stock_service.detail(code, 'companies')
+    except LookupError:
+        raise HTTPException(status_code=404, detail='股票不存在。') from None
+
+
+@app.get('/api/stocks/{code}/history')
+def get_stock_history(code: str):
+    try:
+        return stock_service.detail(code, 'history')
+    except LookupError:
+        raise HTTPException(status_code=404, detail='股票不存在。') from None
+
+
 @app.get('/api/stocks/{code}/analysis')
 def get_stock_analysis(code: str):
     try:
         return stock_analysis.public_status(code)
     except LookupError:
-        raise HTTPException(status_code=404, detail='这只股票不在当前恒生指数成份股名单内。') from None
+        raise HTTPException(status_code=404, detail='这只股票不在当前港股名单内。') from None
 
 
 @app.post('/api/stocks/{code}/analysis')
