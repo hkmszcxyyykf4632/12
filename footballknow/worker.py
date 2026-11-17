@@ -235,7 +235,7 @@ def main() -> None:
                     settle(job, name, clock, stamp)
                     changed = True
             slots = max_workers() - sum(job.future is not None for job in jobs.values())
-            fast = lambda name, job: job.status.group in {'scores', 'odds'} or name in {'finance-quotes', 'finance-assets'}
+            fast = lambda name, job: job.status.group in {'scores', 'odds'} or name in {'finance-quotes', 'finance-assets', 'racing-meetings'}
             background_running = sum(job.future is not None and not fast(name, job) for name, job in jobs.items())
             for name, job in sorted(jobs.items(), key=lambda item: (item[1].due, item[1].status.group != 'scores')):
                 available = fast(name, job) or background_running < max(1, max_workers() - 1)

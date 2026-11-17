@@ -98,3 +98,20 @@ def test_paused_horse_lookup_never_fetches_and_paths_are_bounded(tmp_path, monke
         racing.horse_detail('../private')
     with pytest.raises(LookupError):
         racing.get_race('../private')
+
+
+def test_one_bounded_format_correction_then_revalidate(monkeypatch):
+    value = race()
+    bad = content()
+    bad['shortlist'] = ['HK_2023_J463'] * 4
+    calls = []
+    def reply(rules, context, tokens):
+        calls.append(context)
+        return bad if len(calls) == 1 else content()
+    monkeypatch.setattr(analysis, 'request_json', reply)
+    result = analysis.model_report({'phase': 'pre'}, value, 'pre')
+    assert result['shortlist'] == ['HK_2023_J463']
+    assert len(calls) == 2 and calls[1]['previousResponse'] == bad
+    monkeypatch.setattr(analysis, 'request_json', lambda *args: bad)
+    with pytest.raises(ValueError):
+        analysis.model_report({'phase': 'pre'}, value, 'pre')

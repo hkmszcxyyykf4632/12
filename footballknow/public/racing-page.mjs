@@ -48,7 +48,7 @@ export function renderRace(id){
   main.innerHTML=pageHeading('赛马详情','正在读取本场资料。','<a class="button secondary" href="#/racing">香港赛马</a>')+'<div id="race-content" class="loading">正在读取排位及赛果…</div>';
   async function analysis(generate=false){
     const button=main.querySelector('#race-generate'),msg=main.querySelector('#race-ai-message');if(!button)return;button.disabled=true;analyzing=true;
-    try{const value=await api('/api/racing/races/'+id+'/analysis'+(generate?'?phase='+(race.status==='finished'?'post':'pre'):''),{signal:controller.signal,timeout:90000,...(generate?{method:'POST'}:{})});if(controller.signal.aborted)return;main.querySelector('#race-analysis').innerHTML=evaluationHtml(value,race);msg.textContent=generate?'分析已保存。':'';}
+    try{const value=await api('/api/racing/races/'+id+'/analysis'+(generate?'?phase='+(race.status==='finished'?'post':'pre'):''),{signal:controller.signal,timeout:150000,...(generate?{method:'POST'}:{})});if(controller.signal.aborted)return;main.querySelector('#race-analysis').innerHTML=evaluationHtml(value,race);msg.textContent=generate?'分析已保存。':'';}
     catch(error){if(!controller.signal.aborted)msg.innerHTML=esc(error.message)+' <a href="#/admin">管理后台</a>';}
     finally{analyzing=false;if(!controller.signal.aborted)button.disabled=false;}
   }

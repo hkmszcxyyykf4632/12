@@ -82,6 +82,17 @@ def validate_content(value, race, phase):
     return report.model_dump()
 
 
+def model_report(context, race, phase):
+    value = request_json(RULES, context, 4500)
+    try:
+        return validate_content(value, race, phase)
+    except ValueError:
+        correction = {**context, 'previousResponse': value,
+                      'formatCorrection': '上次输出未通过检查。请保留事实依据，修正格式：关注名单最多三匹、必须含首选、不得有退出马或重复项；赛后 pick=null 且 shortlist=[]；摘要每段220字内；详情每项800字内。重新输出完整JSON。'}
+        repair_rules = RULES + '\n这一次只修正 previousResponse 的输出格式。必须逐项确认 shortlist 长度不超过3且包含首选；只保留两三段摘要，每段220字内；赛后 pick=null、shortlist=[]。事实和马匹身份仍只依据原始资料，输出通过规范的完整JSON。'
+        return validate_content(request_json(repair_rules, correction, 4500), race, phase)
+
+
 def outcome(report, race):
     if race.get('status') != 'finished':
         return {'status': 'pending'}
@@ -134,7 +145,7 @@ def generate(ident, phase: Literal['pre', 'post']):
         context = {'phase': phase, 'asOf': now(), 'race': race, 'horses': horses,
                    'profileCoverage': {'available': coverage, 'total': len(horses)},
                    'priorPrediction': prior['reports'].get('pre'), 'historicalEvaluation': prior['evaluation']}
-        content = validate_content(request_json(RULES, context, 4500), race, phase)
+        content = model_report(context, race, phase)
         # A model call can finish after the off time; that answer must never become a pre-race record.
         latest = get_race(ident)
         check_phase(latest, phase, datetime.now(timezone.utc))
