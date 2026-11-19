@@ -1,4 +1,4 @@
-footballknow.art, www.footballknow.art {
+footballknow.art, www.footballknow.art, inwesting.shop, www.inwesting.shop {
     root * /opt/footballknow/public
     encode zstd gzip
     header {
@@ -13,6 +13,10 @@ footballknow.art, www.footballknow.art {
     header @static Cache-Control "no-cache"
     request_body {
         max_size 64KB
+    }
+    redir /jingzang https://tripitaka.shop/ 308
+    handle_path /jingzang/* {
+        redir https://tripitaka.shop{uri} 308
     }
     reverse_proxy /api/* 127.0.0.1:8765
     file_server

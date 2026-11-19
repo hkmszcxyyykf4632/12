@@ -42,7 +42,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
-DEFAULT_ORIGINS = 'https://footballknow.art,https://www.footballknow.art'
+DEFAULT_ORIGINS = 'https://footballknow.art,https://www.footballknow.art,https://inwesting.shop,https://www.inwesting.shop'
 
 
 def allowed_origins() -> set[str]:

@@ -136,11 +136,14 @@ def test_roster_names_ignore_navigation_and_read_exact_english_identity():
     assert roster_names(markup)=={'jameshill':'占士·希爾'}
 
 
-def test_production_rejects_insecure_origin_and_sets_secure_cookie(client,monkeypatch):
+@pytest.mark.parametrize('origin', ['https://footballknow.art', 'https://www.footballknow.art', 'https://inwesting.shop', 'https://www.inwesting.shop'])
+def test_production_rejects_insecure_origin_and_sets_secure_cookie(client,monkeypatch,origin):
     monkeypatch.setenv('FOOTBALL_PRODUCTION','1')
+    monkeypatch.delenv('FOOTBALL_ALLOWED_ORIGINS',raising=False)
     payload={'username':'admin01','password':'test-pass-long-123'}
-    assert client.post('/api/auth/login',json=payload,headers={'Origin':'http://footballknow.art'}).status_code==403
-    response=client.post('/api/auth/login',json=payload,headers={'Origin':'https://footballknow.art'})
+    for rejected in ['http://footballknow.art', 'http://inwesting.shop', 'https://inwesting.shop.evil.example', 'https://tripitaka.shop']:
+        assert client.post('/api/auth/login',json=payload,headers={'Origin':rejected}).status_code==403
+    response=client.post('/api/auth/login',json=payload,headers={'Origin':origin})
     assert response.status_code==200 and 'Secure' in response.headers['set-cookie']
 
 
