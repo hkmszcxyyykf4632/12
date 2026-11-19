@@ -20,3 +20,15 @@ export function bindReplay(target,race){
     screen.replaceChildren(frame);
   },{once:true});
 }
+
+/** Race identity of one line in a horse's past record, or null when it has no Hong Kong replay (withdrawn, overseas, not yet run). */
+export function recordRace(record,today=new Date().toISOString().slice(0,10)){
+  const match=/^(\d{4}-\d{2}-\d{2})-(ST|HV)-(\d{1,2})$/.exec(String(record?.raceId||''));
+  if(!match||record.withdrawn||match[1]!==record.date||match[1]>today)return null;
+  return {date:match[1],course:match[2],raceNo:Number(match[3]),status:'finished'};
+}
+
+export function recordReplayUrl(record,today){
+  const race=recordRace(record,today);
+  return race?replayUrl(race):'';
+}

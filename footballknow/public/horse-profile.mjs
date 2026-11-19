@@ -3,6 +3,7 @@ import {pedigreeIntro,paceBlock,bindWorkouts,reviewRecord,hotWinner} from './hor
 import {main,esc,pageHeading} from './ui.mjs';
 import {portrait} from './portraits.mjs';
 import {table,val,stamp,placeBadge,racingNav,racingJson} from './racing-ui.mjs';
+import {recordRace,recordReplayUrl,replayBlock,bindReplay} from './racing-replay.mjs';
 
 export function renderHorseProfile(id){
   const controller=new AbortController();let retry,researchTimer,attempts=0;
@@ -34,18 +35,23 @@ export function renderHorseProfile(id){
         const filtered=records.map((r,i)=>({...r,index:i})).filter(r=>filters.every(key=>{const value=main.querySelector('#history-'+key).value;return !value||String(r[key])===value;}));
         const sample=filtered.filter(r=>!r.withdrawn),victories=sample.filter(r=>r.place===1).length;
         const pages=Math.max(1,Math.ceil(filtered.length/25));page=Math.min(page,pages-1);
-        main.querySelector('#history-summary').textContent=`筛选后 ${sample.length} 次出赛，${victories} 次头马，${sample.filter(r=>r.place>=1&&r.place<=3).length} 次前三。点击「本仗详情」直接查看完整记录。`;
-        main.querySelector('#history-table').innerHTML=table(['日期 / 场次','名次','马场 / 跑道','途程 / 场地','班次 / 评分','档位','骑师','负磅','独赢','距头马 / 时间','数据评语','详情'],filtered.slice(page*25,page*25+25).map(r=>[`${esc(r.date)}<small>${r.raceNo?'第 '+esc(r.raceNo)+' 场':''}</small>`,placeBadge(r)+(hotWinner(r)?'<span class="horse-hot" title="胜出且赛后独赢赔率为 2.0 或以下">大热</span>':''),`${esc(r.course)}<small>${esc(r.surface)}</small>`,`${val(r.distance)} 米<small>${esc(r.going)}</small>`,`${val(r.class)} / ${val(r.rating)}`,val(r.draw),esc(r.jockey),val(r.weight),`<strong class="race-price">${val(r.winOdds)}</strong>`,`${val(r.margin)}<small>${val(r.finishTime)}</small>`,`<span class="horse-review">${esc(reviewRecord(r))}</span>`,`<button class="button quiet compact" data-history-record="${r.index}">本仗详情</button>`]));
+        main.querySelector('#history-summary').textContent=`筛选后 ${sample.length} 次出赛，${victories} 次头马，${sample.filter(r=>r.place>=1&&r.place<=3).length} 次前三。点击「回放」观看该场赛事，点击「本仗详情」查看完整记录。`;
+        main.querySelector('#history-table').innerHTML=table(['日期 / 场次','名次','马场 / 跑道','途程 / 场地','班次 / 评分','档位','骑师','负磅','独赢','距头马 / 时间','数据评语','回放','详情'],filtered.slice(page*25,page*25+25).map(r=>[`${esc(r.date)}<small>${r.raceNo?'第 '+esc(r.raceNo)+' 场':''}</small>`,placeBadge(r)+(hotWinner(r)?'<span class="horse-hot" title="胜出且赛后独赢赔率为 2.0 或以下">大热</span>':''),`${esc(r.course)}<small>${esc(r.surface)}</small>`,`${val(r.distance)} 米<small>${esc(r.going)}</small>`,`${val(r.class)} / ${val(r.rating)}`,val(r.draw),esc(r.jockey),val(r.weight),`<strong class="race-price">${val(r.winOdds)}</strong>`,`${val(r.margin)}<small>${val(r.finishTime)}</small>`,`<span class="horse-review">${esc(reviewRecord(r))}</span>`,recordReplayUrl(r)?`<button class="button quiet compact" data-history-replay="${r.index}" aria-label="播放 ${esc(r.date)} 第 ${esc(r.raceNo)} 场赛事回放">▶ 回放</button>`:`<span class="note" title="${r.withdrawn?'退出比赛，没有出赛片段':'海外或未完成的赛事没有香港赛马会回放'}">—</span>`,`<button class="button quiet compact" data-history-record="${r.index}">本仗详情</button>`]));
         const pager=main.querySelector('#history-pagination');pager.innerHTML=`<span>第 ${page+1} / ${pages} 页</span><button class="button secondary compact" data-prev ${page===0?'disabled':''}>上一页</button><button class="button secondary compact" data-next ${page>=pages-1?'disabled':''}>下一页</button>`;
         pager.querySelector('[data-prev]').onclick=()=>{page--;paintHistory();};pager.querySelector('[data-next]').onclick=()=>{page++;paintHistory();};
-        main.querySelectorAll('[data-history-record]').forEach(button=>button.onclick=()=>{
-          const r=records[Number(button.dataset.historyRecord)],dialog=main.querySelector('#record-dialog');
-          main.querySelector('#record-content').innerHTML=`<span class="eyebrow">${esc(h.name)} · 本仗往绩</span><h2>${esc(r.date)} ${r.raceNo?'第 '+esc(r.raceNo)+' 场':''}</h2><p class="research-summary">${esc(reviewRecord(r))}${hotWinner(r)?' <span class="horse-hot">大热胜出</span>':''}</p><div class="record-result">${placeBadge(r)}<span>${esc(r.track)} · ${val(r.distance)} 米 · ${esc(r.going)}</span></div><dl class="identity-grid">${[['骑师',r.jockey],['练马师',r.trainer],['班次 / 评分',`${r.class} / ${r.rating??'—'}`],['档位',r.draw],['负磅',r.weight],['马匹体重',r.bodyWeight],['距头马',r.margin],['完成时间',r.finishTime],['沿途走位',r.running],['装备',r.equipment],['赛后独赢赔率',r.winOdds]].map(([k,v])=>`<div><dt>${k}</dt><dd>${val(v)}</dd></div>`).join('')}</dl>`;dialog.showModal();
-        });
+        const openRecord=(index,autoplay)=>{
+          const r=records[index],dialog=main.querySelector('#record-dialog'),content=main.querySelector('#record-content'),race=recordRace(r);
+          content.innerHTML=`<span class="eyebrow">${esc(h.name)} · 本仗往绩</span><h2>${esc(r.date)} ${r.raceNo?'第 '+esc(r.raceNo)+' 场':''}</h2><p class="research-summary">${esc(reviewRecord(r))}${hotWinner(r)?' <span class="horse-hot">大热胜出</span>':''}</p><div class="record-result">${placeBadge(r)}<span>${esc(r.track)} · ${val(r.distance)} 米 · ${esc(r.going)}</span></div><dl class="identity-grid">${[['骑师',r.jockey],['练马师',r.trainer],['班次 / 评分',`${r.class} / ${r.rating??'—'}`],['档位',r.draw],['负磅',r.weight],['马匹体重',r.bodyWeight],['距头马',r.margin],['完成时间',r.finishTime],['沿途走位',r.running],['装备',r.equipment],['赛后独赢赔率',r.winOdds]].map(([k,v])=>`<div><dt>${k}</dt><dd>${val(v)}</dd></div>`).join('')}</dl>${race?replayBlock(race):''}`;
+          if(race)bindReplay(content,race);dialog.showModal();
+          if(autoplay){content.querySelector('#play-race-replay')?.click();content.querySelector('#race-replay')?.scrollIntoView({block:'start'});}
+        };
+        main.querySelectorAll('[data-history-record]').forEach(button=>button.onclick=()=>openRecord(Number(button.dataset.historyRecord),false));
+        main.querySelectorAll('[data-history-replay]').forEach(button=>button.onclick=()=>openRecord(Number(button.dataset.historyReplay),true));
       }
       filters.forEach(key=>main.querySelector('#history-'+key).onchange=()=>{page=0;paintHistory();});
       main.querySelector('#history-reset').onclick=()=>{filters.forEach(key=>main.querySelector('#history-'+key).value='');page=0;paintHistory();};
       main.querySelector('#record-close').onclick=()=>main.querySelector('#record-dialog').close();
+      main.querySelector('#record-dialog').addEventListener('close',()=>main.querySelector('#record-content').replaceChildren());
       main.querySelectorAll('.racing-jumps a').forEach(a=>a.onclick=e=>{e.preventDefault();main.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});});
       paintHistory();
     }catch(error){if(!controller.signal.aborted)main.innerHTML=pageHeading('马匹档案','','<a href="#/horses">返回马匹资料</a>')+`<div class="empty">${esc(error.message)}</div>`;}
