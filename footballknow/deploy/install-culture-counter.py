@@ -73,6 +73,7 @@ def main():
     if old_unit is not None:
         (backup / UNIT.name).write_bytes(old_unit)
     ROOT.mkdir(parents=True, exist_ok=True, mode=0o755)
+    ROOT.chmod(0o755)
     try:
         for name, raw in files.items():
             (ROOT / name).write_bytes(raw)

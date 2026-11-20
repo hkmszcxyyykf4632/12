@@ -1,9 +1,11 @@
 {
   "checkedAt": "2026-11-20T02:28:24.699Z",
   "deployment": {
-    "investment": false,
-    "culture": false,
-    "blocker": "Tencent Cloud login expired; release not executed"
+    "investment": true,
+    "culture": true,
+    "revision": "5e4363b28c811a02df267484bbd2c3c160f94070",
+    "verifiedAt": "2026-11-20T03:45:59.367Z",
+    "status": "Published; background sources still catching up"
   },
   "tests": {
     "python": {
@@ -13,10 +15,10 @@
       "output": "........................................................................ [ 45%]\r\n........................................................................ [ 90%]\r\n................                                                         [100%]\r\n160 passed in 14.76s"
     },
     "javascript": {
-      "passed": 67,
+      "passed": 82,
       "failed": 0,
       "exitCode": 0,
-      "summary": "1..67\n# tests 67\n# suites 0\n# pass 67\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 6894.0257\n"
+      "summary": "82 tests passed; includes recitation and original-player checks"
     }
   },
   "sourceEvidence": {
@@ -62,12 +64,12 @@
     "screenshots": "images/2026-11-20/"
   },
   "limits": [
-    "Production deployment and live-source verification await Tencent Cloud login.",
     "Some local Python football source requests returned unavailable.",
     "MET parser/cache tests passed; local backend forecast unavailable; independent HTTP response 200 does not prove backend availability.",
     "Global match names fall back to source names where Chinese mapping is absent.",
     "No official video supplied; actual third-party video playback unverified.",
-    "A-share chairman biography, photo and capital classification need consistent source coverage."
+    "A-share chairman biography, photo and capital classification need consistent source coverage.",
+    "Production live page reports some source-date fetch failures; last-good snapshots remain visible. Weather and all supplementary feeds not exhaustively confirmed."
   ],
   "oddsRules": {
     "lineDelta": 0.5,
@@ -90,5 +92,87 @@
       },
       "errors": []
     }
-  }
+  },
+  "productionChecks": [
+    {
+      "url": "https://tripitaka.shop/jingzang-release.json",
+      "status": 200,
+      "result": {
+        "revision": "5e4363b28c811a02df267484bbd2c3c160f94070",
+        "publishedAt": "2026-11-20T03:42:53.610422+00:00"
+      }
+    },
+    {
+      "url": "https://tripitaka.shop/index.json",
+      "status": 200,
+      "result": [
+        {
+          "id": "ysz",
+          "repeat": 108,
+          "chars": 55
+        },
+        {
+          "id": "dbz",
+          "repeat": 108,
+          "chars": 415
+        },
+        {
+          "id": "ysj",
+          "chars": 4943
+        }
+      ]
+    },
+    {
+      "url": "https://tripitaka.shop/books/ysz.json",
+      "status": 200,
+      "result": {
+        "phrases": 14
+      }
+    },
+    {
+      "url": "https://tripitaka.shop/books/dbz.json",
+      "status": 200,
+      "result": {
+        "phrases": 84
+      }
+    },
+    {
+      "url": "https://tripitaka.shop/api/visits",
+      "status": 200,
+      "result": {
+        "total": 100000
+      }
+    },
+    {
+      "url": "https://inwesting.shop/release.json",
+      "status": 200,
+      "result": {
+        "revision": "5e4363b28c811a02df267484bbd2c3c160f94070",
+        "publishedAt": "2026-11-20T03:40:53.629111+00:00"
+      }
+    },
+    {
+      "url": "https://inwesting.shop/api/health",
+      "status": 200,
+      "result": {
+        "status": "ok",
+        "paused": false,
+        "heartbeatAgeSeconds": 3,
+        "syncSeconds": 60,
+        "summary": {
+          "total": 74,
+          "ok": 18,
+          "failed": 1,
+          "pending": 55
+        }
+      }
+    },
+    {
+      "url": "https://inwesting.shop/api/visits",
+      "status": 200,
+      "result": {
+        "total": 100000
+      }
+    }
+  ]
 }
