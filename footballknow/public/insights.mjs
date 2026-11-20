@@ -53,9 +53,11 @@ const KINDS={live:['比分与赛程','scores'],catalogue:['球队与球员','cat
 
 /** Readable name and category for a synchronizer job id such as "laliga-standings". */
 export function describeJob(name,group='') {
+  if(name==='daily-football')return {league:'全球足球',label:'每日赛程、即场赛果与战意复核',group:GROUPS.scores};
+  if(name==='daily-research')return {league:'全球足球',label:'赛前阵容、天气与赛后验证',group:GROUPS.scores};
   if(name==='portal-news')return {league:'首页',label:'财经、足球与赛马中文新闻',group:'即时资讯'};
   if(name.startsWith('racing-'))return {league:'香港赛马',label:({meetings:'排位与正式赛果',catalogue:'现役马匹目录',horses:'血统与完整往绩',directory:'马房、马主与评分分组',people:'骑练排行榜与照片',live:'即时赛果与独赢、位置、连赢'})[name.slice(7)]||name,group:'赛马资料'};
-  if(name.startsWith('finance-'))return {league:'市场',label:({quotes:'港股报价',assets:'黄金、原油与比特币',companies:'公司与财务',history:'历史价格',evaluation:'预测验证',catalogue:'全港股目录'})[name.slice(8)]||name,group:'市场资料'};
+  if(name.startsWith('finance-'))return {league:'市场',label:({quotes:'港股报价',assets:'黄金、原油与比特币',companies:'公司与财务',history:'历史价格',evaluation:'预测验证',catalogue:'全港股目录',cn:'沪深 A 股目录与报价',us:'精选美股参考',volume:'低成交分类与放量提醒'})[name.slice(8)]||name,group:'市场资料'};
   if(name==='odds-official-checks')return {league:'全部赛事',label:'书商官网可访问性检查',group:GROUPS.odds};
   const parts=name.split('-'),prefixed=['epl','laliga','ucl','seriea','bundesliga'].includes(parts[0])&&parts.length>1;
   const [label,kind]=KINDS[prefixed?parts.slice(1).join('-'):name]||[name,group];

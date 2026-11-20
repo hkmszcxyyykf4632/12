@@ -1,4 +1,5 @@
 import {data,history} from './repository.mjs';
+import {playerResearch} from './player-research.mjs';
 import {valuationHtml} from './player-values.mjs';
 import {main,esc,dateText,monogram,sourceLink,cn} from './ui.mjs';
 import {localized} from './football-components.mjs';
@@ -43,7 +44,7 @@ export function renderPlayer(id,otherId) {
     <div class="page-heading"><div class="team-title">${playerPortrait(p,league.id,true)}<div><h1>${esc(name?.mandarin||p.web_name)}</h1><p class="lede">${name?.cantonese&&name.cantonese!==name.mandarin?`粤 ${esc(name.cantonese)} · `:''}${esc(playerOriginal(p))}${name?.status==='draft'?' · 中文为暂用音译':''}</p>${club?`<a href="#/team/${club.id}">${esc(club.cn)}</a>`:''}</div></div><button class="button secondary compact" type="button" data-share>分享链接</button></div>
     <dl class="team-summary" id="player-profile"></dl>
     <div class="section-head"><h2>${esc(data.season)} ${league.name}数据</h2></div><dl class="stat-grid" id="player-stats"></dl><p class="note" id="player-basis"></p>
-    <div class="section-head"><h2>与另一名球员对比</h2></div>
+    <div id="player-research">${playerResearch(p)}</div><div class="section-head"><h2>与另一名球员对比</h2></div>
     <div class="toolbar"><label class="search"><span class="sr-only">选择对比球员</span><input id="compare-player" type="search" list="compare-options" placeholder="输入球员名称后从列表选择" value="${other?esc(label(other)):''}"></label><datalist id="compare-options">${candidates.slice(0,900).map(row=>`<option value="${esc(label(row))}"></option>`).join('')}</datalist></div>
     <div id="player-compare"></div>
     <div class="section-head"><h2>转会记录</h2></div><div id="player-transfers"></div>`;
@@ -57,6 +58,7 @@ export function renderPlayer(id,otherId) {
     main.querySelector('#player-basis').innerHTML=`${p.news?`${esc(p.news)}。`:''}“—”表示来源没有提供这项数据，不等于 0。${league.id==='epl'?'分钟、进球、助攻、纪律与预期数据取自英超公开数据，出场次数与替补进球由比赛名单汇总。':'全部由已收录的比赛名单汇总，未收录的比赛不计入。'}身价为 FotMob 公开估值，币种为欧元，资料日期为采集时间；与实际转会成交价分开。`;
     main.querySelector('#player-compare').innerHTML=other?radar(p,other):'<div class="empty">选择一名球员，逐项比较本赛季数据。</div>';
     main.querySelector('#player-transfers').innerHTML=transfers(p);
+    main.querySelector('#player-research').innerHTML=playerResearch(p);
   };
   const choosePlayer=event=>{
     const found=candidates.find(row=>label(row)===event.target.value);

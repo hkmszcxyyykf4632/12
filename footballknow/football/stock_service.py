@@ -24,12 +24,13 @@ def viewed_quotes(codes):
     if not codes or len(codes) > 50 or any(code != 'HSI' and not stock(code) for code in codes):
         raise ValueError('报价请求仅限名单内的 1 至 50 只股票。')
     base = load(FOLDER / 'quotes.json').get('quotes', {})
+    base = {**base, **load(FOLDER / 'cn-quotes.json').get('quotes', {})}
     rows = {code: base[code] for code in codes if code in base}
     for code in codes:
         cached = load(FOLDER / 'quote-cache' / (code + '.json'))
         if cached.get('code') == code and age(cached.get('fetchedAt')) < age(rows.get(code, {}).get('fetchedAt')):
             rows[code] = cached
-    stale = [code for code in codes if age(rows.get(code, {}).get('fetchedAt')) > 55]
+    stale = [code for code in codes if len(code) != 6 and age(rows.get(code, {}).get('fetchedAt')) > 55]
     if stale and read_control()['enabled'] and QUOTE_LOCK.acquire(blocking=False):
         try:
             stamp = now()
@@ -46,7 +47,7 @@ def viewed_quotes(codes):
         finally:
             QUOTE_LOCK.release()
     return {'version': 1, 'updatedAt': now(), 'quotes': rows,
-            'failedCodes': [code for code in codes if age(rows.get(code, {}).get('fetchedAt')) > 180],
+            'failedCodes': [code for code in codes if age(rows.get(code, {}).get('fetchedAt')) > (600 if len(code) == 6 else 180)],
             'paused': not read_control()['enabled']}
 
 
@@ -59,7 +60,7 @@ def detail(code, kind):
     path = FOLDER / kind / (code + '.json')
     cached = load(path)
     ttl = 86400 if kind == 'companies' else 3600
-    if age(cached.get('checkedAt') or cached.get('updatedAt')) <= ttl and (kind != 'companies' or cached.get('leadership') or 'leadership' in cached.get('failedSections', [])):
+    if age(cached.get('checkedAt') or cached.get('updatedAt')) <= ttl and (kind != 'companies' or len(code) == 6 or cached.get('leadership') or 'leadership' in cached.get('failedSections', [])):
         return cached
     if not read_control()['enabled']:
         return {**item, **cached, 'paused': True, 'message': '同步已暂停，正在显示已保存的资料。'}

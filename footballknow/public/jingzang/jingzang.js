@@ -236,9 +236,11 @@ function yiPage(){
 }
 const CARDS=list=>`${list.map(b=>`<a class="book" href="${href(b,0)}"><div class="cover"><div class="slip ${b.name.length>4?'long':''}">${esc(b.name)}</div>${b.plain?'<span class="badge">白话</span>':''}</div><div class="book-meta"><b>${esc(b.full)}</b>${esc(b.by)}<br>${b.ch.length} 章 · ${b.chars.toLocaleString()} 字</div></a>`).join('')}`;
 function shelf(){
+  queueMicrotask(()=>window.jingzangCountVisit(document.querySelector('#culture-visits')));
   state.book=null;document.title='经藏 · 经、史、医书与四大名著';
   const last=store.get('last',null),lb=last&&byId[last.book];
   $('#app').innerHTML=`<div class="wrap"><header class="site"><h1>经藏</h1><p>中华文化的根，在这些书里。这里把道、佛、儒三家的经典，连同正史、医书与四大名著放在一处，不收费，没有广告，可以读，也可以听，愿更多人翻开它们。</p><p>原文逐句朗读，国语粤语可选；已译的经文附白话对照。</p>
+    <p class="site-visits">访问次数 <strong id="culture-visits" aria-live="polite">—</strong></p>
     <a class="side-door" href="#yi">医书：黄帝内经、本草纲目</a><a class="side-door" href="#zang">藏传佛教与唐卡</a><a class="side-door" href="#cha">茶</a><a class="side-door" href="#video">视频区</a><button class="side-door" data-fan>${prefs.fan?'简体':'繁體'}</button>
     ${lb?`<a class="resume" href="${href(lb,Math.min(last.ch,lb.ch.length-1))}">接着上次读：${esc(lb.name)} · ${esc(lb.ch[Math.min(last.ch,lb.ch.length-1)].t)}</a>`:''}</header>
     <div class="shelf-title"><h2>从这里读起</h2><span>第一次来，不妨先翻这几篇</span></div><ul class="starts">${[['xj',1,'心经','二百六十字，三分钟读完，汉传佛教最常念诵的一部经。附白话。'],['ddj',1,'道德经 · 第一章','“道可道，非常道。”八十一章都很短，每章附白话。'],['ly',1,'论语 · 学而第一','孔子怎样谈学习、交友和做人。附白话。'],['dx',1,'大学','一千七百多字，讲从修身到平天下的次第。附白话。'],['sgyy',1,'三国演义 · 第一回','桃园三结义。章回小说适合用听的。'],['s01',7,'史记 · 项羽本纪','鸿门宴、垓下之围，司马迁最有名的一篇。']].filter(x=>byId[x[0]]).map(([id,n,t,d])=>`<li><a href="#b-${id}-${n}">${t}</a><span>${d}</span></li>`).join('')}</ul>

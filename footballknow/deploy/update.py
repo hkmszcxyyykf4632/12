@@ -42,6 +42,7 @@ def load_archive(path, digest, revision):
                 raise ValueError('Private or generated state in source archive')
             allowed = (len(parts) == 1 and (relative.endswith('.py') or relative in {'requirements.txt', 'analysis-rules.txt'}))
             allowed |= parts[0] == 'football' and relative.endswith('.py')
+            allowed |= relative == 'football/cities.json'
             allowed |= relative.startswith('football/hkjc_queries/') and relative.endswith('.graphql')
             allowed |= parts[0] == 'public' and Path(relative).suffix in {'.html', '.css', '.js', '.mjs', '.json', '.svg', '.png', '.webp', '.ico'}
             allowed |= relative in {f'deploy/{name}' for name in UNITS} | {'deploy/update.py', 'deploy/Caddyfile'}
@@ -149,7 +150,7 @@ def main():
             temporary.chmod(0o644)
             os.chown(temporary, owner.st_uid, owner.st_gid)
             os.replace(temporary, target)
-        for folder in ['public/match-details', 'public/laliga/match-details', 'public/ucl/match-details', 'public/seriea/match-details', 'public/bundesliga/match-details', 'public/finance/history', 'public/finance/companies', 'public/finance/quote-cache', 'public/racing/horses']:
+        for folder in ['public/match-details', 'public/laliga/match-details', 'public/ucl/match-details', 'public/seriea/match-details', 'public/bundesliga/match-details', 'public/finance/history', 'public/finance/companies', 'public/finance/quote-cache', 'public/racing/horses', 'public/daily-research', 'public/finance/commodity-history', 'public/finance/us-history']:
             path = ROOT / folder
             path.mkdir(parents=True, exist_ok=True)
             path.chmod(0o755)

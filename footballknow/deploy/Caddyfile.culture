@@ -11,5 +11,6 @@ tripitaka.shop, www.tripitaka.shop {
     request_body {
         max_size 64KB
     }
+    reverse_proxy /api/visits 127.0.0.1:8766
     file_server
 }

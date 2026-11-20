@@ -1,5 +1,5 @@
 export const STOCK_FOLLOWING_KEY='footballknow.stock-following.v1';
-const validCode=code=>typeof code==='string'&&/^\d{5}$/.test(code);
+const validCode=code=>typeof code==='string'&&/^\d{5,6}$/.test(code);
 
 export function readStockFollowing(storage){
   try{

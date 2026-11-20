@@ -7,6 +7,7 @@ import {standingsPreview} from './rankings-page.mjs';
 import {impliedProbabilities,seasonStats,leadMatch,countdownText,statusSummary} from './insights.mjs';
 import {readStatus} from './status-page.mjs';
 import {paintPortalNews} from './portal-news.mjs';
+import {mountVisitCounter} from './visit-counter.mjs';
 
 const percent=value=>`${Math.round(value*100)}%`;
 
@@ -71,5 +72,7 @@ export function renderHome() {
     main.querySelector('#home-recent').innerHTML=matchTable(data.matches.filter(m=>m.finished&&m.season===data.season&&m.competition===league.name).slice(0,6));
     paintMarketPreview(main.querySelector('#home-markets'));paintSync();paintPortalNews(main.querySelector('#home-news'));
   };
+  main.querySelector('.portal-masthead').insertAdjacentHTML('afterend','<div class="visit-counter" id="home-visits" aria-live="polite"></div>');
+  mountVisitCounter(main.querySelector('#home-visits'));
   update();return update;
 }

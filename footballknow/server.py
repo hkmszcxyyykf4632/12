@@ -371,4 +371,82 @@ def create_racing_analysis(ident: str, phase: str, account: auth.Administrator =
         raise HTTPException(status_code=502, detail='赛马分析暂时无法连接，请稍后重试。') from None
 
 
+from football import videos, visits
+from football import us_reference
+
+
+@app.get('/api/reference/us/{ticker}/history')
+def us_history(ticker: str):
+    try:
+        return us_reference.history(ticker)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+class VisitInput(BaseModel):
+    event: str = Field(pattern=r'^[a-fA-F0-9-]{36}$')
+
+
+@app.get('/api/visits')
+def get_visits():
+    return {'total': visits.counter()['total']}
+
+
+@app.post('/api/visits')
+def add_visit(value: VisitInput):
+    try:
+        return {'total': visits.counter(value.event)['total']}
+    except ValueError:
+        raise HTTPException(status_code=422, detail='访问编号不正确。') from None
+
+
+@app.get('/api/admin/visits')
+def admin_visits(account: auth.Administrator = Depends(administrator)):
+    return visits.counter()
+
+
+@app.get('/api/videos')
+def get_videos():
+    return videos.catalogue()
+
+
+@app.get('/api/admin/videos')
+def admin_videos(account: auth.Administrator = Depends(administrator)):
+    return videos.catalogue(True)
+
+
+@app.post('/api/admin/videos')
+def add_video(value: videos.VideoInput, account: auth.Administrator = Depends(administrator)):
+    try:
+        return videos.save(value)
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from None
+
+
+@app.put('/api/admin/videos/{ident}')
+def edit_video(ident: str, value: videos.VideoInput, account: auth.Administrator = Depends(administrator)):
+    try:
+        return videos.save(value, ident)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/daily-football/{ident}/research')
+def daily_match_research(ident: str):
+    from football.match_research import research
+    try:
+        return research(ident)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/commodities/{ident}/history')
+def commodity_history(ident: str):
+    from football.commodity_history import history
+    try:
+        return history(ident)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
 app.mount('/',StaticFiles(directory=str(PUBLIC),html=True),name='website')

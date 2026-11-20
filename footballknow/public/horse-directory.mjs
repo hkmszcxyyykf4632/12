@@ -7,6 +7,7 @@ export function renderHorseDirectory(mode='trainer',selected=''){
   try{selected=decodeURIComponent(selected);}catch{selected='';}
   let data={},query='',group='0',page=0;
   main.innerHTML=pageHeading('马匹资料','按练马师或马主浏览，查看评分、血统、照片与历季往绩。')+racingNav('horses')+'<div id="horse-directory" class="loading">正在读取马匹目录…</div>';
+  main.querySelector('#horse-directory').insertAdjacentHTML('beforebegin','<p><a class="button secondary" href="#/horse-going">按场地表现分类：黏地、软烂地、湿泥地 →</a></p>');
   function paint(){
     const container=main.querySelector('#horse-directory');if(!container)return;
     const all=data.horses||[],key=h=>mode==='owner'?h.owner||'待更新':h.trainer?.id||'pending';

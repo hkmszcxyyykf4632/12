@@ -21,6 +21,7 @@ button{cursor:pointer}
 header.site{padding:44px 0 20px}
 header.site h1{font:600 40px/1.2 var(--song);margin:0;letter-spacing:.12em}
 header.site p{margin:10px 0 0;color:var(--soft);max-width:44em}
+.site-visits{display:flex;align-items:baseline;gap:9px;font-size:13px;font-variant-numeric:tabular-nums}.site-visits strong{color:var(--indigo);font-size:18px}:root[data-theme=dark] .site-visits strong{color:var(--azure)}
 .resume{display:inline-flex;gap:8px;align-items:center;margin-top:18px;padding:9px 16px;border:1px solid var(--seal);border-radius:4px;color:var(--seal);text-decoration:none;font-weight:600}
 .resume:hover{background:var(--seal);color:#fff}
 .shelf-title{display:flex;align-items:baseline;gap:14px;margin:34px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
@@ -149,6 +150,7 @@ audio{width:100%;margin-top:6px}
 <body>
 <div class="wrap"><a class="back" href="https://inwesting.shop/">← 峰弈科技</a></div>
 <div id="app"><p class="loading">正在打开经藏…</p></div>
+<script src="./counter.js"></script>
 <script src="./jingzang.js"></script>
 </body>
 </html>

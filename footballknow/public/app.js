@@ -3,7 +3,8 @@ import {storeProblem,STORAGE_KEY,reloadStore,reconcile} from './personal-store.m
 import {main,esc,toast} from './ui.mjs';
 import {renderTeams,renderSources} from './pages.mjs';
 import {renderHome} from './dashboard.mjs';
-import {renderLive} from './live-page.mjs';
+import {renderCoaches} from './coaches-page.mjs';
+import {renderLive} from './daily-page.mjs';
 import {renderNews} from './news-page.mjs';
 import {renderPortalNews} from './portal-news.mjs';
 import {renderSponsors} from './sponsors-page.mjs';
@@ -11,6 +12,9 @@ import {renderRace} from './racing-page.mjs';
 import {renderRacingHub,renderRacingDay} from './racing-day.mjs';
 import {renderHorseDirectory} from './horse-directory.mjs';
 import {renderHorseProfile} from './horse-profile.mjs';
+import {renderHorseGoing} from './horse-going.mjs';
+import {renderVideos,renderVideoAdmin} from './videos-page.mjs';
+import {renderCNMarkets,renderVolume,renderUSReference} from './equity-page.mjs';
 import {renderRacingRankings} from './racing-rankings.mjs';
 import {bindPortraits,hydratePlayerPortraits} from './portraits.mjs';
 import {renderMarkets,renderStock,renderAsset} from './finance-page.mjs';
@@ -60,18 +64,22 @@ export function updateView() {
 function render() {
  disposePage();disposePage=()=>{};updatePage=()=>{};
  const [current,id,second]=route(),page=current||'home';closeDrawer();
- const racingPages=['racing','race','horse','horses','racing-day','racing-rankings'];
- document.documentElement.dataset.section=racingPages.includes(page)?'racing':['markets','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset'].includes(page)?'finance':['home','portal-news','sponsors','admin','status'].includes(page)?'portal':'football';
+ const racingPages=['racing','race','horse','horses','horse-going','racing-day','racing-rankings'];
+ document.documentElement.dataset.section=racingPages.includes(page)?'racing':['markets','cn-markets','us-stocks','stock-volume','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset'].includes(page)?'finance':['home','portal-news','sponsors','admin','status','videos','video-admin'].includes(page)?'portal':'football';
  const active=['race','racing-day'].includes(page)?'racing':page==='horse'?'horses':['stock','asset'].includes(page)?'markets':['team','analysis','player'].includes(page)?'teams':page==='match'?'matches':page;
  document.querySelectorAll('[data-nav]').forEach(nav=>{nav.classList.toggle('active',nav.dataset.nav===active);if(nav.dataset.nav===active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');});
- document.querySelector('#breadcrumb').textContent=({home:'峰弈科技 / 首页',racing:'香港赛马 / 赛事与马匹',race:'香港赛马 / 赛事研究',horse:'香港赛马 / 马匹档案',sponsors:'峰弈科技 / 赞助商',markets:'市场 / 港股与报价',stock:'市场 / 股票详情',asset:'市场 / 品种走势',live:'五项赛事 / 即场比赛',news:'五项赛事 / 球队新闻',status:'系统 / 同步监控',quality:'系统 / 数据质量',player:`${league.name} / 球员档案`,compare:`${league.name} / 球队对比`,teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'峰弈科技 / 管理后台'})[page]||'足球资料库';
+ document.querySelector('#breadcrumb').textContent=({home:'峰弈科技 / 首页',racing:'香港赛马 / 赛事与马匹',race:'香港赛马 / 赛事研究',horse:'香港赛马 / 马匹档案',sponsors:'峰弈科技 / 赞助商',markets:'市场 / 港股与报价',stock:'市场 / 股票详情',asset:'市场 / 品种走势',live:'全球足球 / 每日赛事与即场赛果',news:'五项赛事 / 球队新闻',status:'系统 / 同步监控',quality:'系统 / 数据质量',player:`${league.name} / 球员档案`,compare:`${league.name} / 球队对比`,teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'峰弈科技 / 管理后台'})[page]||'足球资料库';
  if(page==='racing'){disposePage=renderRacingHub();return;}
  if(page==='horses'){document.querySelector('#breadcrumb').textContent='香港赛马 / 马匹资料';disposePage=renderHorseDirectory(id,second);return;}
  if(page==='racing-day'){document.querySelector('#breadcrumb').textContent='香港赛马 / 赛马日';disposePage=renderRacingDay(id,second);return;}
  if(page==='racing-rankings'){document.querySelector('#breadcrumb').textContent='香港赛马 / 骑练排行榜';disposePage=renderRacingRankings(id);return;}
  if(page==='race'){disposePage=renderRace(id);return;}
  if(page==='horse'){disposePage=renderHorseProfile(id);return;}
+ if(page==='coaches'){document.querySelector('#breadcrumb').textContent='足球 / 教练与换帅观察';disposePage=renderCoaches();return;}
+ if(page==='horse-going'){document.documentElement.dataset.section='racing';document.querySelector('#breadcrumb').textContent='香港赛马 / 场地表现';disposePage=renderHorseGoing();return;}
  if(page==='markets'){disposePage=renderMarkets();return;}
+ if(['cn-markets','us-stocks','stock-volume'].includes(page)){document.querySelector('#breadcrumb').textContent='市场 / '+({'cn-markets':'沪深 A 股','us-stocks':'精选美股','stock-volume':'成交量观察'})[page];disposePage=({'cn-markets':renderCNMarkets,'us-stocks':renderUSReference,'stock-volume':renderVolume})[page]();return;}
+ if(page==='videos'||page==='video-admin'){document.querySelector('#breadcrumb').textContent='峰弈科技 / 分析视频';disposePage=page==='videos'?renderVideos(id):renderVideoAdmin();return;}
  if(['global-indices','commodities','forex'].includes(page)){document.querySelector('#breadcrumb').textContent='市场 / '+({'global-indices':'全球股票指数',commodities:'贵金属与原油',forex:'主要货币兑美元'})[page];disposePage=renderGlobalMarkets(page);return;}
  if(page==='stock-rankings'){document.querySelector('#breadcrumb').textContent='市场 / 每日涨跌榜';disposePage=renderStockRankings(main);return;}
  if(page==='stock-following'){document.querySelector('#breadcrumb').textContent='市场 / 我的关注';disposePage=renderMarkets(true);return;}
@@ -80,7 +88,7 @@ function render() {
  if(page==='sponsors'){renderSponsors();return;}
  if(page==='admin'){disposePage=renderAdmin();updateStatus();return;}
  if(page==='status'){disposePage=renderStatus();updateStatus();return;}
- if(page==='live'){disposePage=renderLive();return;}
+ if(page==='live'){document.querySelector('#breadcrumb').textContent='全球足球 / 每日赛事与即场赛果';disposePage=renderLive();return;}
  if(page==='news'){disposePage=renderNews(id||'');return;}
  if(page==='portal-news'){document.querySelector('#breadcrumb').textContent='峰弈科技 / 即时资讯';disposePage=renderPortalNews(id);return;}
  if(!data)return;
@@ -141,7 +149,7 @@ window.addEventListener('pagehide',()=>{stopPolling();stopIndicator();disposePag
 async function start() {
  try {await refresh(true);reconcile(data.matches);render();stopPolling=startPolling(updateView);stopIndicator=startSyncIndicator(()=>stopPolling.now?.());}
  catch(error) {
-   if(['admin','status','live','news','portal-news','sponsors','markets','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset','racing','race','horse','horses','racing-day','racing-rankings'].includes(route()[0])){render();return;}
+   if(['coaches','horse-going','videos','video-admin','cn-markets','us-stocks','stock-volume','admin','status','live','news','portal-news','sponsors','markets','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset','racing','race','horse','horses','racing-day','racing-rankings'].includes(route()[0])){render();return;}
    main.innerHTML=`<div class="error-box"><h2>暂时无法载入球队资料</h2><p>${esc(error.message)}。已有个人记录仍保存在本浏览器。</p><button class="button" id="reload">重新载入</button> <a class="button secondary" href="#/admin">管理后台</a></div>`;
    main.querySelector('#reload').addEventListener('click',()=>location.reload());
  }

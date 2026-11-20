@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from .files import fetch_text, publish
 from .racing import BASE, FOLDER, age, horse_identity, load, now, number, official, text
 from .sync_control import read_control
+from .horse_going import going_performance, METHOD as GOING_METHOD, SOURCE as GOING_SOURCE
 
 
 def rating_class(value):
@@ -68,11 +69,13 @@ def build_directory():
         horses.append({**h, 'trainer': trainer, 'owner': profile.get('馬主') or None,
                        'rating': rating, 'classGroup': rating_class(rating), 'photo': detail.get('photo'),
                        'pedigree': detail.get('pedigree', {}),
+                       'goingPerformance': going_performance(detail.get('records', [])),
                        'profileUpdatedAt': detail.get('updatedAt'), 'recordCount': len(detail.get('records', [])),
                        'recent': [r['position'] for r in detail.get('records', []) if not r.get('withdrawn')][:6]})
     if not horses:
         return 0
     publish(FOLDER / 'directory.json', {'horses': horses, 'updatedAt': now(), 'stableUpdatedAt': stable.get('updatedAt'),
+            'goingMethod': GOING_METHOD, 'goingSource': GOING_SOURCE,
             'ownersKnown': sum(bool(h['owner']) for h in horses), 'source': BASE + 'selecthorse',
             'classMethod': '按现时评分分组：第一班 101 分以上、第二班 81–100、第三班 61–80、第四班 41–60、第五班 0–40。实际参赛班次以各场条件为准。'})
     return len(horses)

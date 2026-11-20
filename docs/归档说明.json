@@ -1,9 +1,9 @@
 {
-  "exportedAt": "2026-11-19T11:03:42.113698+00:00",
-  "messages": 527,
+  "exportedAt": "2026-11-20T02:28:41.888303+00:00",
+  "messages": 601,
   "roles": {
-    "user": 155,
-    "assistant": 372
+    "user": 187,
+    "assistant": 414
   },
   "redactions": {
     "api_key": 0,
@@ -11,7 +11,7 @@
     "password_line": 0,
     "known_credential": 1
   },
-  "sourceFiles": 3844,
+  "sourceFiles": 3890,
   "excluded": [
     "private state",
     "credentials",

@@ -132,7 +132,7 @@ def closed_bars(history, at):
         updated = datetime.fromisoformat(history.get('updatedAt', '')).astimezone(HK)
     except ValueError:
         updated = None
-    cutoff = time(16, 15)
+    cutoff = time(15, 20) if history.get('market') == 'cn' else time(16, 15)
     today = local.date().isoformat()
     current_complete = local.time() >= cutoff and updated and updated.date() == local.date() and updated.time() >= cutoff
     return sorted([b for b in history.get('bars', [])
@@ -153,7 +153,7 @@ def stock_review(code, generate=False, at=None):
     if not bars:
         return {**base, 'message': '尚无已确认的收盘资料。'}
     close = bars[-1]
-    close_at = datetime.combine(datetime.fromisoformat(close['date']).date(), time(16, 15), HK)
+    close_at = datetime.combine(datetime.fromisoformat(close['date']).date(), time(15, 20) if history.get('market') == 'cn' else time(16, 15), HK)
     forecasts = public_status(code)['forecasts']
     original = next((f for f in forecasts if datetime.fromisoformat(f['issuedAt']) < close_at), None)
     if not original:

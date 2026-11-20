@@ -3,7 +3,7 @@ export const figure=(value,digits=2)=>finite(value)?value.toLocaleString('zh-CN'
 export const signed=(value,digits=2)=>finite(value)?(value>0?'+':'')+figure(value,digits):'—';
 export const direction=value=>!finite(value)||value===0?'neutral':value>0?'positive':'negative';
 export const forecastLabel={up:'上涨',flat:'横盘',down:'下跌'};
-export function validQuotes(value){return value?.version===1&&value.quotes&&typeof value.quotes==='object'&&Object.values(value.quotes).every(q=>finite(q.price)&&q.price>0&&Number.isFinite(Date.parse(q.quotedAt)));}
+export function validQuotes(value){return value?.version===1&&value.quotes&&typeof value.quotes==='object'&&Object.values(value.quotes).every(q=>finite(q.price)&&q.price>0&&(Number.isFinite(Date.parse(q.quotedAt))||Number.isFinite(Date.parse(q.barAt))&&Number.isFinite(Date.parse(q.fetchedAt))));}
 export function chartPoints(bars,limit=90){
   const rows=(bars||[]).filter(b=>finite(b.close)&&b.close>0&&typeof b.date==='string').slice(-limit);
   if(rows.length<2)return null;

@@ -9,6 +9,7 @@ Group=footballknow
 WorkingDirectory=/opt/footballknow
 Environment=FOOTBALL_STATE_DIR=/var/lib/footballknow
 Environment=FOOTBALL_PRODUCTION=1
+Environment=FOOTBALL_MET_TERMS_ACCEPTED=1
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=PYTHONUNBUFFERED=1
 ExecStart=/opt/footballknow/.venv/bin/python -m uvicorn server:app --host 127.0.0.1 --port 8765 --workers 1
@@ -23,6 +24,7 @@ ReadWritePaths=/opt/footballknow/public/match-details /opt/footballknow/public/l
 ReadWritePaths=/opt/footballknow/public/seriea/match-details /opt/footballknow/public/bundesliga/match-details
 ReadWritePaths=/opt/footballknow/public/finance/history /opt/footballknow/public/finance/companies /opt/footballknow/public/finance/quote-cache
 ReadWritePaths=/opt/footballknow/public/racing/horses
+ReadWritePaths=/opt/footballknow/public/daily-research /opt/footballknow/public/finance/commodity-history /opt/footballknow/public/finance/us-history
 UMask=0077
 
 [Install]

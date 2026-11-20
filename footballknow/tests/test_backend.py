@@ -193,3 +193,24 @@ def test_stock_analysis_public_get_is_unrated_and_post_requires_admin(client):
     assert result.status_code == 200 and result.json()['evaluation']['week']['successRate'] is None
     assert client.post('/api/stocks/00700/analysis').status_code == 401
     assert client.get('/api/stocks/abc/analysis').status_code == 404
+
+
+def test_video_admin_drafts_and_publication(client, tmp_path, monkeypatch):
+    from football import videos
+    monkeypatch.setattr(videos, 'PATH', tmp_path / 'videos.json')
+    draft = {'title': 'Research video', 'url': 'https://example.com/research.mp4', 'published': False}
+    assert client.get('/api/admin/videos').status_code == 401
+    assert client.post('/api/admin/videos', json=draft).status_code == 401
+    assert client.get('/api/videos').json()['videos'] == []
+    sign_in(client)
+    assert client.post('/api/admin/videos', json=draft, headers={'Origin': 'https://evil.example'}).status_code == 403
+    saved = client.post('/api/admin/videos', json=draft)
+    assert saved.status_code == 200
+    ident = saved.json()['id']
+    assert client.get('/api/videos').json()['videos'] == []
+    assert len(client.get('/api/admin/videos').json()['videos']) == 1
+    assert client.put('/api/admin/videos/' + ident, json={**draft, 'published': True}).status_code == 200
+    assert client.get('/api/videos').json()['videos'][0]['id'] == ident
+    assert client.put('/api/admin/videos/' + ident, json=draft).status_code == 200
+    assert client.get('/api/videos').json()['videos'] == []
+    assert client.post('/api/admin/videos', json={**draft, 'url': 'javascript:alert(1)'}).status_code == 422

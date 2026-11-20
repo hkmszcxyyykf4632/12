@@ -13,6 +13,8 @@ FOLDER = PUBLIC / 'finance'
 HK = timezone(timedelta(hours=8))
 _STOCK_VERSION = None
 _STOCK_INDEX = {}
+_CN_STOCK_VERSION = None
+_CN_STOCK_INDEX = {}
 EASTMONEY = 'https://datacenter.eastmoney.com/securities/api/data/v1/get'
 ASSETS = {
     'gold': ('GC=F', 'COMEX 黄金期货', '美元/金衡盎司'),
@@ -70,7 +72,14 @@ def constituents():
 
 
 def stock(code):
-    global _STOCK_VERSION, _STOCK_INDEX
+    global _STOCK_VERSION, _STOCK_INDEX, _CN_STOCK_VERSION, _CN_STOCK_INDEX
+    if isinstance(code, str) and re.fullmatch(r'\d{6}', code):
+        cn_path = FOLDER / 'cn-stocks.json'
+        cn_version = (str(cn_path), cn_path.stat().st_mtime_ns if cn_path.exists() else None)
+        if cn_version != _CN_STOCK_VERSION:
+            _CN_STOCK_INDEX = {row['code']: row for row in load(cn_path).get('stocks', [])}
+            _CN_STOCK_VERSION = cn_version
+        return _CN_STOCK_INDEX.get(code)
     path = FOLDER / 'stocks.json'
     version = (str(path), path.stat().st_mtime_ns if path.exists() else None)
     if version != _STOCK_VERSION:
@@ -225,6 +234,9 @@ def refresh_history(code):
     item = stock(code)
     if not item:
         raise LookupError('Unknown constituent')
+    if item.get('market') == 'cn':
+        from .equity_markets import refresh_cn_history
+        return refresh_cn_history(item)
     currency = item.get('currency', 'HKD')
     try:
         query = {'secid': '116.' + code, 'klt': '101', 'fqt': '1', 'lmt': '320', 'end': '20500101',
@@ -269,6 +281,9 @@ def refresh_company(code):
     item = stock(code)
     if not item:
         raise LookupError('Unknown constituent')
+    if item.get('market') == 'cn':
+        from .equity_markets import refresh_cn_company
+        return refresh_cn_company(item)
     path = FOLDER / 'companies' / (code + '.json')
     old = load(path)
     result = {**old, **item, 'version': 1, 'checkedAt': now(), 'failedSections': [],

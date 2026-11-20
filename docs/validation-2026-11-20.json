@@ -1,0 +1,94 @@
+{
+  "checkedAt": "2026-11-20T02:28:24.699Z",
+  "deployment": {
+    "investment": false,
+    "culture": false,
+    "blocker": "Tencent Cloud login expired; release not executed"
+  },
+  "tests": {
+    "python": {
+      "passed": 160,
+      "failed": 0,
+      "exitCode": 0,
+      "output": "........................................................................ [ 45%]\r\n........................................................................ [ 90%]\r\n................                                                         [100%]\r\n160 passed in 14.76s"
+    },
+    "javascript": {
+      "passed": 67,
+      "failed": 0,
+      "exitCode": 0,
+      "summary": "1..67\n# tests 67\n# suites 0\n# pass 67\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 6894.0257\n"
+    }
+  },
+  "sourceEvidence": {
+    "dailyFixtures": 278,
+    "byHongKongDate": {
+      "2026-11-19": 35,
+      "2026-11-20": 48,
+      "2026-11-21": 195
+    },
+    "originalCaptureTimePreserved": true,
+    "cnDirectory": 5220,
+    "usReference": 10,
+    "volumeCoverage": 7794,
+    "companySample": "600519",
+    "majorShareholders": 10,
+    "cnHistoryBars": 320,
+    "usHistoryBars": 250,
+    "goldHistoryBars": 252
+  },
+  "browser": {
+    "desktop": [
+      "global daily fixtures and date/status filters",
+      "generic 1X2 and total price alerts",
+      "handicap alerts and evidence",
+      "A-share profile, history and watchlist",
+      "US reference",
+      "commodities charts",
+      "volume screen",
+      "coach changes",
+      "new player usage",
+      "horse going classifications",
+      "video publish/unpublish with isolated local account",
+      "investment and culture counters increment on reload"
+    ],
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "documentClientWidth": 375,
+      "documentScrollWidth": 375,
+      "navigationPassed": true
+    },
+    "consoleErrors": [],
+    "screenshots": "images/2026-11-20/"
+  },
+  "limits": [
+    "Production deployment and live-source verification await Tencent Cloud login.",
+    "Some local Python football source requests returned unavailable.",
+    "MET parser/cache tests passed; local backend forecast unavailable; independent HTTP response 200 does not prove backend availability.",
+    "Global match names fall back to source names where Chinese mapping is absent.",
+    "No official video supplied; actual third-party video playback unverified.",
+    "A-share chairman biography, photo and capital classification need consistent source coverage."
+  ],
+  "oddsRules": {
+    "lineDelta": 0.5,
+    "relativePriceChange": 0.15,
+    "directionReversal": true,
+    "historicalMinSamples": 2,
+    "historicalMaxSamples": 5,
+    "comparableProviderSourceMarket": true,
+    "sameHomeAwayCompetition": true,
+    "pregameSnapshotRetainedAfterKickoff": true
+  },
+  "sourceReseed": {
+    "exitCode": 0,
+    "result": {
+      "matches": 278,
+      "days": {
+        "2026-11-19": 35,
+        "2026-11-20": 48,
+        "2026-11-21": 195
+      },
+      "errors": []
+    }
+  }
+}
