@@ -72,11 +72,28 @@ const isTalk=m=>['评论','节目','纪录'].includes(m.lang)||/讲解|浅谈/.t
 
 const $=(s,r=document)=>r.querySelector(s);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const store={get(k,d){try{const v=localStorage.getItem('jz-'+k);return v==null?d:JSON.parse(v);}catch{return d;}},set(k,v){try{localStorage.setItem('jz-'+k,JSON.stringify(v));}catch{}}};
+const store={get(k,d){try{const v=localStorage.getItem('jz-'+k);return v==null?d:JSON.parse(v);}catch{return d;}},set(k,v){try{localStorage.setItem('jz-'+k,JSON.stringify(v));return true;}catch{return false;}}};
 const GROUPS=[['道','道家经典'],['佛','佛家经典'],['四书','四书'],['五经','五经'],['史','史传'],['正史','二十四史'],['小说','四大名著'],['注','古注']];
 const FOUR=['dx','zy','ly','mz'];
 let BOOKS=[],byId={},state={book:null,ch:0},prefs=Object.assign({mode:'orig',size:20,theme:'',lang:'zh-CN',rate:0.9,chain:true},store.get('prefs',{}));
 const synth=window.speechSynthesis||null;let speaking=false,queue=[],at=0,token=0;
+let recitation=null;
+function loadRecitation(b){
+  const saved=store.get('recitation-'+b.id,null);
+  recitation=b.repeat===108?{id:b.id,target:108,completed:saved?.version===1&&Number.isInteger(saved.completed)&&saved.completed>=0&&saved.completed<=108?saved.completed:0,fullRound:false,status:'ready',saved:true}:null;
+}
+function recitationPanel(){
+  if(!recitation)return '';
+  return `<section class="wrap recitation" aria-label="一百零八遍诵读"><div class="recitation-head"><div><h2>一百零八遍诵读</h2><div class="recitation-count"><strong id="recitation-count">${recitation.completed}</strong><small> / 108 遍已完成</small></div></div><button class="ctl" id="recitation-reset">重新计数</button></div><progress id="recitation-progress" max="108" value="${recitation.completed}" aria-label="已完成诵读遍数"></progress><p id="recitation-status" role="status"></p><p>读完整篇才计一遍，满 108 遍自动停止。进度保存在这台设备；重新打开时从下一遍的开头继续。点击中间句子可试听，不计为完整一遍。</p><p id="recitation-storage"></p><p>使用设备的国语或粤语合成语音。咒文音译字的读音依所选声音，唱诵版本可在「诵经影音」查找。</p></section>`;
+}
+function updateRecitation(){
+  if(!recitation||!$('#recitation-count'))return;
+  const r=recitation,complete=r.completed===r.target;
+  $('#recitation-count').textContent=r.completed;$('#recitation-progress').value=r.completed;
+  $('#recitation-status').textContent=complete?'已完成 108 遍。可重新计数开始下一轮。':r.status==='running'?(r.fullRound?`正在诵读第 ${r.completed+1} 遍`:'正在试听片段，本次不计数'):r.status==='paused'?'已暂停，继续后从当前句开始。':`准备诵读第 ${r.completed+1} 遍`;
+  $('#recitation-storage').textContent=r.saved?'':'浏览器未能保存进度，请保留此页；关闭页面后本次计数可能丢失。';
+  const p=$('#play');p.disabled=complete||!synth;if(complete)p.textContent='已完成 108 遍';else if(!speaking)p.textContent=r.status==='paused'?'▶ 继续':'▶ 开始诵读';
+}
 
 let FAN=null,fanLoading=false;
 function toFan(s){if(!FAN)return s;let out='';for(let i=0;i<s.length;){let hit=0;for(let n=Math.min(4,s.length-i);n>=2;n--){const v=FAN.p[s.substr(i,n)];if(v){out+=v;hit=n;break;}}if(hit){i+=hit;continue;}const c=s[i],v=FAN.m.get(c);out+=v||c;i++;}return out.replace(/雲(?=[：:])/g,'云');}
@@ -88,7 +105,7 @@ document.addEventListener('click',e=>{const t=e.target;if(t.dataset&&t.dataset.v
   else if(t.id==='vexport'){const out={};BOOKS.forEach(b=>{const l=store.get('media-'+b.id,[]);if(l.length)out[b.id]=l.map(m=>({label:m.label,url:m.url,lang:m.lang||'评论'}));});const text=JSON.stringify(out,null,1),msg=$('#vmsg');if(!Object.keys(out).length){msg.textContent='还没有自己加的视频。';return;}(navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(()=>{msg.textContent='已复制，共 '+Object.values(out).reduce((n,l)=>n+l.length,0)+' 支。';}).catch(()=>{msg.textContent=text;});}});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-fan]');if(!b)return;prefs.fan=!prefs.fan;store.set('prefs',prefs);stop();if(prefs.fan)loadFan(route);else route();});
 function applyPrefs(){document.documentElement.dataset.theme=prefs.theme;document.documentElement.style.setProperty('--size',prefs.size+'px');store.set('prefs',prefs);}
-function route(){const m=/^#b-(.+)-(\d+)$/.exec(location.hash);stop();if(location.hash==='#yi')yiPage();else if(location.hash==='#video')videoPage();else if(location.hash==='#zang')zangPage();else if(location.hash==='#cha')chaPage();else if(m&&byId[m[1]])reader(byId[m[1]],Math.min(byId[m[1]].ch.length,Math.max(1,+m[2]))-1);else shelf();window.scrollTo(0,0);}
+function route(){window.RecordedReading?.stop();const m=/^#b-(.+)-(\d+)$/.exec(location.hash);stop();if(location.hash==='#yi')yiPage();else if(location.hash==='#video')videoPage();else if(location.hash==='#zang')zangPage();else if(location.hash==='#cha')chaPage();else if(m&&byId[m[1]])reader(byId[m[1]],Math.min(byId[m[1]].ch.length,Math.max(1,+m[2]))-1);else shelf();window.scrollTo(0,0);}
 const href=(b,i)=>`#b-${b.id}-${i+1}`;
 const shelfOf=b=>b.cat==='儒'?(FOUR.includes(b.id)?'四书':'五经'):b.cat;
 
@@ -241,7 +258,7 @@ function shelf(){
   const last=store.get('last',null),lb=last&&byId[last.book];
   $('#app').innerHTML=`<div class="wrap"><header class="site"><h1>经藏</h1><p>中华文化的根，在这些书里。这里把道、佛、儒三家的经典，连同正史、医书与四大名著放在一处，不收费，没有广告，可以读，也可以听，愿更多人翻开它们。</p><p>原文逐句朗读，国语粤语可选；已译的经文附白话对照。</p>
     <p class="site-visits">访问次数 <strong id="culture-visits" aria-live="polite">—</strong></p>
-    <a class="side-door" href="#yi">医书：黄帝内经、本草纲目</a><a class="side-door" href="#zang">藏传佛教与唐卡</a><a class="side-door" href="#cha">茶</a><a class="side-door" href="#video">视频区</a><button class="side-door" data-fan>${prefs.fan?'简体':'繁體'}</button>
+    <a class="side-door" href="#b-ysz-1">药师咒 · 108 遍</a><a class="side-door" href="#b-dbz-1">大悲咒 · 108 遍</a><a class="side-door" href="#yi">医书：黄帝内经、本草纲目</a><a class="side-door" href="#zang">藏传佛教与唐卡</a><a class="side-door" href="#cha">茶</a><a class="side-door" href="#video">视频区</a><button class="side-door" data-fan>${prefs.fan?'简体':'繁體'}</button>
     ${lb?`<a class="resume" href="${href(lb,Math.min(last.ch,lb.ch.length-1))}">接着上次读：${esc(lb.name)} · ${esc(lb.ch[Math.min(last.ch,lb.ch.length-1)].t)}</a>`:''}</header>
     <div class="shelf-title"><h2>从这里读起</h2><span>第一次来，不妨先翻这几篇</span></div><ul class="starts">${[['xj',1,'心经','二百六十字，三分钟读完，汉传佛教最常念诵的一部经。附白话。'],['ddj',1,'道德经 · 第一章','“道可道，非常道。”八十一章都很短，每章附白话。'],['ly',1,'论语 · 学而第一','孔子怎样谈学习、交友和做人。附白话。'],['dx',1,'大学','一千七百多字，讲从修身到平天下的次第。附白话。'],['sgyy',1,'三国演义 · 第一回','桃园三结义。章回小说适合用听的。'],['s01',7,'史记 · 项羽本纪','鸿门宴、垓下之围，司马迁最有名的一篇。']].filter(x=>byId[x[0]]).map(([id,n,t,d])=>`<li><a href="#b-${id}-${n}">${t}</a><span>${d}</span></li>`).join('')}</ul>
     <div class="shelf-title"><h2>三家源流</h2><span>道教、佛教与儒家经典的来历</span></div><div class="origins"><section><h3>道教</h3><p>道教是中国本土生长出来的宗教。思想源头是先秦的老子、庄子，东汉时结合神仙方术与民间信仰成为有组织的教团，尊老子为太上老君，奉《道德经》为根本经典，讲清静无为、修身养性。</p><details><summary>道教简史</summary><dl><dt>先秦</dt><dd>老子作《道德经》五千言，庄子继之，是为道家。此时只有思想学派，还没有宗教组织；民间另有神仙方术与长生之说流传。</dd><dt>东汉</dt><dd>顺帝时张陵在蜀地创立五斗米道（后称天师道），奉老子为太上老君，以《道德经》教人；同时张角的太平道奉《太平经》。道教作为有组织的宗教由此开始。</dd><dt>魏晋南北朝</dt><dd>葛洪著《抱朴子》，总结炼养之说；上清、灵宝两系经典相继出现。北魏寇谦之、南朝陆修静整顿教规与斋仪，陶弘景居茅山传上清之学。</dd><dt>唐</dt><dd>李唐皇室认老子为先祖，道教极盛，科举一度设“道举”，以《道德经》等取士。《清静经》也在这一时期通行。</dd><dt>宋、金、元</dt><dd>宋真宗、徽宗崇道。金代王重阳在北方创立全真道，主张出家清修、三教合一；弟子丘处机西行见成吉思汗。南方以龙虎山张天师为首的各符箓派合为正一道。此后道教分全真、正一两大派。</dd><dt>明、清</dt><dd>明正统十年（1445）编成《正统道藏》，万历年间又有续藏，本站所收道经即出于此。清代以后官方扶持减少，道教更多融入民间信仰与日常习俗。</dd><dt>今日</dt><dd>全真、正一两派并存，宫观遍及华人社会。</dd></dl></details></section><section><h3>佛教</h3><p>佛教起于古印度，创始人释迦牟尼生活在约二千五百年前，教人认识苦的由来、以智慧与慈悲求解脱。两汉之际传入中国，经数百年译经与讲习，同儒、道相互影响，成为中国文化的一部分。</p><details><summary>佛教简史</summary><dl><dt>公元前六至五世纪</dt><dd>释迦牟尼生于蓝毗尼（今尼泊尔南部），出家修行，在菩提伽耶觉悟，于鹿野苑初次说法，此后在恒河流域传道四十余年。</dd><dt>佛灭度后</dt><dd>弟子多次集会，诵出并整理佛所说的教法与戒律。公元前三世纪阿育王护持佛教，派人向四方传布。约公元前后大乘佛教兴起，般若、法华、净土等经典陆续出现。</dd><dt>两汉之际</dt><dd>佛教经西域传入中国，传统说法是东汉明帝永平年间。东汉末安世高、支娄迦谶在洛阳译经。</dd><dt>魏晋南北朝</dt><dd>鸠摩罗什于公元 401 年到长安，译出《金刚经》《法华经》《阿弥陀经》等，文字流畅，通行至今。道安、慧远等人奠定了僧团制度与净土信仰；菩提达摩来华，后世尊为禅宗初祖。</dd><dt>隋、唐</dt><dd>中国佛教的高峰，天台、华严、法相、律、净土、禅、密等宗派先后成立。玄奘西行求法十七年，回国后译经一千三百余卷，《心经》《药师经》通行本即出其手；《地藏经》题为实叉难陀译。六祖惠能之后，禅宗大盛。</dd><dt>唐末至宋</dt><dd>唐武宗会昌年间（845）大规模毁佛，义理诸宗受创，禅宗与净土宗成为主流，此后逐渐禅净合流。北宋开宝年间开始雕印大藏经。</dd><dt>向外传播</dt><dd>汉传佛教传到朝鲜、日本、越南；南传佛教经斯里兰卡传入东南亚；七世纪起佛教传入西藏，形成藏传佛教。</dd><dt>明、清至今</dt><dd>明清多次官刻大藏经，清雍正、乾隆年间刻成《乾隆大藏经》（龙藏）。今天汉传、南传、藏传三系并存。</dd></dl></details></section><section><h3>儒家与四书五经</h3><p>儒家由孔子开创，讲仁义礼智、修身齐家治国，是学问与教化，不是宗教。五经是孔子用来教学的古代典籍，四书是南宋朱熹选定的四部入门书，两者合起来是古代读书人的基本功课。</p><details><summary>四书五经简史</summary><dl><dt>春秋</dt><dd>孔子（公元前 551—479）在鲁国讲学，整理《诗》《书》《礼》《易》《春秋》等古代典籍，用来教弟子。弟子与再传弟子把他的言行辑成《论语》。</dd><dt>战国</dt><dd>孟子、荀子发扬孔子之学；《孟子》七篇成书。相传《大学》出于曾子一系，《中庸》为孔子之孙子思所作，两篇后来都收在《礼记》里。</dd><dt>秦、汉</dt><dd>秦始皇焚书，典籍散失，汉初靠老儒口授与民间藏本重新写定。汉武帝建元五年（前 136）立五经博士，《诗》《书》《礼》《易》《春秋》成为官学。原有《乐经》，已失传，所以称五经而不称六经。</dd><dt>唐</dt><dd>孔颖达等奉诏撰《五经正义》，统一解释，作为科举标准。经书的范围此后逐步扩大，到宋代定为十三经。</dd><dt>南宋</dt><dd>朱熹把《大学》《中庸》从《礼记》中抽出，与《论语》《孟子》合为“四书”，作《四书章句集注》，主张先读四书、再读五经。</dd><dt>元、明、清</dt><dd>元仁宗延祐年间恢复科举，规定从四书出题、以朱熹注为准，明清沿用，直到 1905 年废除科举。六百年间，四书五经是读书人的必读书。</dd><dt>五经各是什么</dt><dd>《诗经》是三百零五篇诗歌；《尚书》是上古的政事文献；《礼记》讲礼制与修身；《周易》讲阴阳变化，原是占筮之书；《春秋》是鲁国的编年史，本站所收为附《左传》的本子。</dd></dl></details></section></div><p class="origins-note">以上是通行史述的简要整理，年代从常见说法；各家自身的传承记载或有不同。</p>
@@ -297,6 +314,7 @@ function readerPart(b,ci){
   }).catch(()=>{if(location.hash===wanted)$('#app').innerHTML=`<p class="loading">《${esc(b.name)}》没有载入成功。<a href="${href(b,ci)}" id="retry">再试一次</a>，或<a href="#">回到经藏</a>。</p>`;});
 }
 function draw(b,ci){
+  stop();loadRecitation(b);
   state={book:b,ch:ci};store.set('last',{book:b.id,ch:ci});
   const c=b.ch[ci],notes=BOOKS.filter(x=>x.of===b.id),base=b.of&&byId[b.of];
   document.title=`${b.name} · ${c.t} · 经藏`;
@@ -307,43 +325,58 @@ function draw(b,ci){
       <span class="seg" role="group" aria-label="字号"><button class="ctl" data-size="-2" aria-label="缩小字号">小</button><button class="ctl" data-size="2" aria-label="放大字号">大</button></span>
       <button class="ctl" data-fan>${prefs.fan?'简体':'繁體'}</button>
       <button class="ctl" id="theme" aria-pressed="${prefs.theme==='dark'}">夜间</button></div></div>
-    <div class="player"><div class="wrap"><button class="ctl play" id="play">▶ 朗读</button><button class="ctl" id="stop" disabled>停止</button>
+    ${window.RecordedReading?.panel(b.id,c)||''}${window.RecordedReading?.has(b.id)?'<details class="wrap device-reader"><summary>设备朗读 · 国语 / 粤语合成声音</summary>':''}<div class="player"><div class="wrap"><button class="ctl play" id="play">▶ 朗读</button><button class="ctl" id="stop" disabled>停止</button>
       <label>语言<select class="ctl" id="lang"><option value="zh-CN">国语</option><option value="zh-HK">粤语</option></select></label>
       <label>声音<select class="ctl" id="voice" style="max-width:11em"></select></label>
       <label>语速<select class="ctl" id="rate">${[[0.6,'很慢'],[0.75,'慢'],[0.9,'稍慢'],[1,'正常'],[1.2,'快']].map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label>
-      <label><input type="checkbox" id="chain"> 读完自动接下一章</label><span id="voice-note" role="status"></span></div></div>
-    <div class="wrap layout"><article><h1>${esc(c.t)}</h1><p class="by">${esc(b.full)} · ${esc(b.by)}</p><div class="text" id="text">${body(c,ci)}</div>
-      ${c.v?'':`<p class="none">${b.cat==='注'?'这是古人的注解原文。':'这一章的白话还没有译出。'}${notes.length?`可以先参看古注：${notes.map(n=>`<a href="${href(n,0)}">${esc(n.name)}</a>`).join('、')}。`:''}</p>`}
+      ${recitation?'':'<label><input type="checkbox" id="chain"> 读完自动接下一章</label>'}<span id="voice-note" role="status"></span></div></div>${window.RecordedReading?.has(b.id)?'</details>':''}
+    ${recitationPanel()}<div class="wrap layout"><article><h1>${esc(c.t)}</h1><p class="by">${esc(b.full)} · ${esc(b.by)}</p><div class="text${recitation?' chant-text':''}" id="text">${body(c,ci)}</div>
+      ${c.v||recitation?'':`<p class="none">${b.cat==='注'?'这是古人的注解原文。':'这一章的白话还没有译出。'}${notes.length?`可以先参看古注：${notes.map(n=>`<a href="${href(n,0)}">${esc(n.name)}</a>`).join('、')}。`:''}</p>`}
       <div class="pager"><button class="ctl" id="prev2" ${ci?'':'disabled'}>← 上一章</button><button class="ctl" id="next2" ${ci<b.ch.length-1?'':'disabled'}>下一章 →</button></div></article>
-    <aside><section><h2>关于这部经</h2><p>${esc(b.intro)}</p><p>版本：${esc(b.src)}</p>${b.plain?`<p>白话：本站自译，已完成 ${b.plain} / ${b.ch.length} 章。</p>`:''}
+    <aside><section><h2>关于这部经</h2><p>${esc(b.intro)}</p><p>版本：${esc(b.src)}</p>${b.sourceUrl?`<p><a href="${esc(b.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看咒文来源</a></p>`:''}${b.plain?`<p>白话：本站自译，已完成 ${b.plain} / ${b.ch.length} 章。</p>`:''}
         ${notes.length?`<p>古注：${notes.map(n=>`<a href="${href(n,0)}" style="color:var(--azure)">${esc(n.name)}</a>（${esc(n.by)}）`).join('；')}</p>`:''}${base?`<p>所注经文：<a href="${href(base,0)}" style="color:var(--azure)">${esc(base.name)}</a></p>`:''}</section>
       <section><h2>在本书中查找</h2><input id="find" type="search" placeholder="输入字词，如：上善若水" aria-label="在本书中查找"><div id="hits"></div></section>${mediaPanel(b)}</aside></div>`;
-  $('#lang').value=prefs.lang;$('#rate').value=String(prefs.rate);fillVoices();$('#chain').checked=prefs.chain;
+  $('#lang').value=prefs.lang;$('#rate').value=String(prefs.rate);fillVoices();if($('#chain'))$('#chain').checked=prefs.chain;updateRecitation();
   if(!synth){$('#play').disabled=true;$('#voice-note').textContent='这个浏览器不支持语音朗读，可以改用 Chrome、Edge 或 Safari。';}else voiceNote();
 }
 const go=i=>{location.hash=href(state.book,i);};
 
 /* ---- 朗读 ---- */
-function voicesFor(lang){const all=synth?synth.getVoices():[];const want=lang==='zh-HK'?/^(zh[-_]HK|yue)/i:/^zh[-_](CN|Hans)|^zh$|cmn/i;const rank=v=>/natural|neural|online|premium|enhanced/i.test(v.name)?0:/google|siri/i.test(v.name)?1:2;return all.filter(v=>want.test(v.lang)).sort((a,b)=>rank(a)-rank(b));}
+function voicesFor(lang){const all=synth?synth.getVoices():[];const want=lang==='zh-HK'?/^(zh[-_]HK|yue)/i:/^zh[-_](CN|TW|SG|Hans|Hant)|^zh$|^cmn/i;const rank=v=>/natural|neural|online|premium|enhanced/i.test(v.name)?0:/google|siri/i.test(v.name)?1:2;return all.filter(v=>want.test(v.lang)).sort((a,b)=>rank(a)-rank(b));}
 function voiceFor(lang){const list=voicesFor(lang);const saved=(prefs.voice||{})[lang];return list.find(v=>v.name===saved)||list[0]||null;}
 function fillVoices(){const sel=$('#voice');if(!sel)return;const list=voicesFor(prefs.lang);const cur=voiceFor(prefs.lang);sel.innerHTML=list.length?list.map(v=>`<option value="${esc(v.name)}"${cur&&v.name===cur.name?' selected':''}>${esc(v.name.replace(/Microsoft |Google | - Chinese.*$/g,''))}</option>`).join(''):'<option value="">无可用声音</option>';sel.disabled=list.length<2;}
 if(synth)synth.addEventListener&&synth.addEventListener('voiceschanged',()=>{fillVoices();});
 function voiceNote(){const note=$('#voice-note');if(!note||!synth)return;const any=synth.getVoices().length;
-  note.textContent=!any?'':voiceFor(prefs.lang)?'':prefs.lang==='zh-HK'?'这台设备没有安装粤语语音，暂时无法用粤语朗读。可在系统设置的“语音／朗读”里添加粤语（香港）语音，或在右侧查找粤语诵读影音。':'这台设备没有安装国语语音，请在系统设置里添加中文（普通话）语音。';}
+  note.textContent=!any?'语音尚未准备好，请稍后再按播放，或在设备设置中添加中文语音。':voiceFor(prefs.lang)?'':prefs.lang==='zh-HK'?'这台设备没有安装粤语语音，暂时无法用粤语朗读。可在系统设置的“语音／朗读”里添加粤语（香港）语音，或在右侧查找粤语诵读影音。':'这台设备没有安装国语语音，请在系统设置里添加中文（普通话）语音。';}
 function build(){const kind=(state.book.ch[state.ch].v&&prefs.mode==='plain')?'v':'o';queue=[...document.querySelectorAll(`#text .s[data-k="${kind}"]`)];}
 function speak(){
-  if(!synth||at>=queue.length){
+  if(!synth||!speaking||!queue.length){stop();return;}
+  if(at>=queue.length){
+    if(recitation){
+      if(!recitation.fullRound){stop();return;}
+      recitation.completed=Math.min(recitation.target,recitation.completed+1);
+      recitation.saved=store.set('recitation-'+recitation.id,{version:1,completed:recitation.completed});
+      if(recitation.completed===recitation.target){stop();return;}
+      at=0;updateRecitation();
+    }else{
     if(speaking&&prefs.chain&&state.ch<state.book.ch.length-1){const again=++token;go(state.ch+1);setTimeout(()=>{if(again===token)start(0);},350);return;}
-    stop();return;}
+    stop();return;}}
   const el=queue[at],my=token;document.querySelectorAll('.s.now').forEach(e=>e.classList.remove('now'));el.classList.add('now');el.scrollIntoView({block:'center',behavior:'smooth'});
-  const u=new SpeechSynthesisUtterance(el.textContent.replace(/[【】□]/g,''));const v=voiceFor(prefs.lang);if(v)u.voice=v;u.lang=prefs.lang;u.rate=prefs.rate;
-  u.onend=()=>{if(my===token&&speaking){at++;speak();}};u.onerror=e=>{if(my===token&&speaking&&e.error!=='interrupted'&&e.error!=='canceled'){stop();const note=$('#voice-note');if(note)note.textContent='朗读没有成功：这台设备或这个浏览器目前没有可用的中文语音。可以换用 Chrome、Edge 或 Safari，或在系统设置里添加中文语音。';}};
+  const u=new SpeechSynthesisUtterance(el.textContent.replace(/[【】□]/g,''));const v=voiceFor(prefs.lang);if(!v){stop();voiceNote();return;}u.voice=v;u.lang=v.lang;u.rate=prefs.rate;let ended=false;
+  u.onend=()=>{if(!ended&&my===token&&speaking){ended=true;at++;speak();}};u.onerror=()=>{if(!ended&&my===token&&speaking){ended=true;pause();const note=$('#voice-note');if(note)note.textContent='本句朗读中断，未计入完成遍数。请检查声音和网络，再按继续。';}};
   synth.speak(u);
 }
-function start(from){if(!synth)return;if(!synth.getVoices().length){const note=$('#voice-note');if(!start.waited){start.waited=true;if(note)note.textContent='正在准备语音…';setTimeout(()=>start(from),900);return;}}
-  if(!voiceFor(prefs.lang)&&synth.getVoices().length){voiceNote();return;}const ready=$('#voice-note');if(ready&&ready.textContent==='正在准备语音…')ready.textContent='';synth.cancel();token++;build();at=from;speaking=true;const p=$('#play'),s=$('#stop');if(p)p.textContent='❚❚ 暂停';if(s)s.disabled=false;speak();}
-function stop(){token++;speaking=false;if(synth)synth.cancel();document.querySelectorAll('.s.now').forEach(e=>e.classList.remove('now'));const p=$('#play'),s=$('#stop');if(p)p.textContent='▶ 朗读';if(s)s.disabled=true;}
-function pause(){speaking=false;token++;synth.cancel();const p=$('#play');if(p)p.textContent='▶ 继续';}
+function start(from,continuing=false){
+  if(!synth||!state.book||(recitation&&recitation.completed===recitation.target))return;
+  window.RecordedReading?.stop();
+  token++;speaking=false;synth.cancel();build();at=Number.isInteger(from)&&from>=0&&from<queue.length?from:0;
+  if(recitation&&!continuing)recitation.fullRound=at===0;
+  if(!voiceFor(prefs.lang)){if(recitation)recitation.status=continuing?'paused':'ready';const p=$('#play');if(p)p.textContent=continuing?'▶ 继续':'▶ 朗读';updateRecitation();voiceNote();return;}
+  voiceNote();speaking=true;if(recitation){recitation.status='running';updateRecitation();}
+  const p=$('#play'),s=$('#stop');if(p)p.textContent='❚❚ 暂停';if(s)s.disabled=false;speak();
+}
+function stop(){token++;speaking=false;if(synth)synth.cancel();at=0;if(recitation){recitation.fullRound=false;recitation.status='ready';}document.querySelectorAll('.s.now').forEach(e=>e.classList.remove('now'));const p=$('#play'),s=$('#stop');if(p)p.textContent='▶ 朗读';if(s)s.disabled=true;updateRecitation();}
+function pause(){speaking=false;token++;synth.cancel();if(recitation)recitation.status='paused';const p=$('#play');if(p)p.textContent='▶ 继续';updateRecitation();}
 
 function find(q){
   const box=$('#hits');q=q.trim();if(!q){box.innerHTML='';return;}
@@ -357,8 +390,9 @@ document.addEventListener('click',e=>{
   if(t.classList.contains('s')){build();const i=queue.indexOf(t);if(i>=0)start(i);return;}
   if(t.id==='prev'||t.id==='prev2')go(state.ch-1);
   else if(t.id==='next'||t.id==='next2')go(state.ch+1);
-  else if(t.id==='play'){if(speaking)pause();else start(at<queue.length&&$('#play').textContent.includes('继续')?at:0);}
+  else if(t.id==='play'){if(speaking)pause();else{const continuing=at<queue.length&&$('#play').textContent.includes('继续');start(continuing?at:0,continuing);}}
   else if(t.id==='stop'){stop();at=0;}
+  else if(t.id==='recitation-reset'&&recitation){stop();recitation.completed=0;recitation.saved=store.set('recitation-'+recitation.id,{version:1,completed:0});updateRecitation();}
   else if(t.id==='theme'){prefs.theme=prefs.theme==='dark'?'':'dark';applyPrefs();t.setAttribute('aria-pressed',prefs.theme==='dark');}
   else if(t.dataset.size){prefs.size=Math.min(34,Math.max(15,prefs.size+Number(t.dataset.size)));applyPrefs();}
   else if(t.dataset.mode){stop();at=0;prefs.mode=t.dataset.mode;applyPrefs();document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===prefs.mode));$('#text').innerHTML=body(state.book.ch[state.ch],state.ch);}
@@ -367,9 +401,9 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('change',e=>{
   if(e.target.id==='chapter')go(Number(e.target.value));
-  else if(e.target.id==='lang'){prefs.lang=e.target.value;applyPrefs();fillVoices();voiceNote();if(speaking)start(at);}
-  else if(e.target.id==='voice'){prefs.voice=Object.assign({},prefs.voice,{[prefs.lang]:e.target.value});applyPrefs();if(speaking)start(at);}
-  else if(e.target.id==='rate'){prefs.rate=Number(e.target.value);applyPrefs();if(speaking)start(at);}
+  else if(e.target.id==='lang'){prefs.lang=e.target.value;applyPrefs();fillVoices();voiceNote();if(speaking)start(at,true);}
+  else if(e.target.id==='voice'){prefs.voice=Object.assign({},prefs.voice,{[prefs.lang]:e.target.value});applyPrefs();if(speaking)start(at,true);}
+  else if(e.target.id==='rate'){prefs.rate=Number(e.target.value);applyPrefs();if(speaking)start(at,true);}
   else if(e.target.id==='chain'){prefs.chain=e.target.checked;applyPrefs();}
 });
 document.addEventListener('input',e=>{if(e.target.id==='find')find(e.target.value);});
@@ -381,7 +415,8 @@ document.addEventListener('submit',e=>{
 });
 window.addEventListener('hashchange',route);
 document.addEventListener('click',e=>{if(e.target.id==='retry'){e.preventDefault();route();}});
-window.addEventListener('pagehide',()=>{if(synth)synth.cancel();});
+window.addEventListener('pagehide',stop);
+window.addEventListener('jingzang:recorded-play',stop);
 if(synth)synth.onvoiceschanged=voiceNote;
 
 applyPrefs();

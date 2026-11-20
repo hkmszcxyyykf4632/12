@@ -1,0 +1,42 @@
+{
+  "checkedAt": "2026-11-20T03:38:34.546Z",
+  "tests": {
+    "passed": 82,
+    "failed": 0,
+    "artifact": "culture-reading-tests-2026-11-20.txt"
+  },
+  "originalPlayback": {
+    "book": "ysj",
+    "actualRate": 2,
+    "verifiedBy": "YouTube playback-rate event shown in browser"
+  },
+  "mantras": {
+    "ysz": {
+      "phrases": 14,
+      "target": 108
+    },
+    "dbz": {
+      "phrases": 84,
+      "target": 108
+    },
+    "completeLoopsVerified": true,
+    "pauseAndCancelVerified": true
+  },
+  "dedication": {
+    "verifiedAgainst": "https://www.youtube.com/watch?v=MthStAd4YKI&t=2565s",
+    "appendedAfterCanonicalText": true
+  },
+  "browser": {
+    "mandarinAndCantonesePlaybackObserved": true,
+    "deviceVoices": [
+      "Hanhan",
+      "Yating",
+      "Zhiwei",
+      "Tracy",
+      "Danny"
+    ],
+    "mobileDocumentWidth": 390,
+    "mobileScrollWidth": 390
+  },
+  "deployment": "prepared"
+}
