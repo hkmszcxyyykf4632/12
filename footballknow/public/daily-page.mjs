@@ -7,10 +7,11 @@ import {selectQuote} from './settlement.mjs';
 import {dailyRows,hkDay,hkTime,shiftDay,validDaily} from './daily-core.mjs';
 import {handicapAlerts,lineText,quotePhase} from './odds-alerts.mjs';
 import {motivationHtml,alertsHtml,globalEventsHtml} from './daily-research.mjs';
+import {forecastsHtml} from './football-forecasts.mjs';
 
 export function renderLive(){
   let disposed=false,busy=false,feeds=[],snapshot=null,failed=false,paused=false,rows=[],competition='all',state='all',date=hkDay(Date.now()),region='all',search='',limit=80;
-  const opened=new Set(),events=new Map();
+  const opened=new Set(),events=new Map();let forecasts={};
   main.innerHTML=`${pageHeading('每日赛事与即场赛果','全球主要联赛、杯赛与国家队赛事 · 按开球时间排列','<button id="live-refresh" class="button secondary">检查更新</button>')}
     <div class="daily-date-nav"><button class="button secondary compact" id="daily-prev" aria-label="前一天">← 前一天</button><label>香港日期<input type="date" id="live-date" value="${date}"></label><button class="button secondary compact" id="daily-next" aria-label="后一天">后一天 →</button><button class="button quiet compact" id="daily-today">今天</button></div>
     <div class="toolbar match-filters"><label>赛事<select id="live-league"><option value="all">全球全部赛事</option><option value="five">原有五项赛事</option></select></label><label>状态<select id="live-state"><option value="all">全部状态</option><option value="live">正在进行</option><option value="scheduled">未开赛</option><option value="finished">已完场</option><option value="alerts">赔率提醒</option></select></label><label>球队或赛事<input id="daily-search" type="search" placeholder="搜索球队、联赛"></label><label>观看地区<select id="live-region"><option value="all">全部地区</option><option value="mo">澳门 · MPLUS</option><option value="hk">香港</option><option value="cn">中国内地</option></select></label></div>
@@ -18,7 +19,7 @@ export function renderLive(){
   const list=main.querySelector('#combined-fixtures'),href=m=>`./?league=${m.league}#/match/${encodeURIComponent(m.id)}`;
   function options(){
     const select=main.querySelector('#live-league'),extras=new Map((snapshot?.matches||[]).filter(m=>!m.league).map(m=>[m.competitionId,m.competition]));
-    select.innerHTML='<option value="all">全球全部赛事</option><option value="five">原有五项赛事</option>'+Object.values(LEAGUES).map(l=>`<option value="league:${l.id}">${l.name}</option>`).join('')+[...extras].sort((a,b)=>a[1].localeCompare(b[1],'zh')).map(([id,name])=>`<option value="competition:${esc(id)}">${esc(name)}</option>`).join('');
+    select.innerHTML='<option value="all">全球全部赛事</option><option value="major">五大联赛 · 自动预测</option><option value="five">原有五项赛事</option>'+Object.values(LEAGUES).map(l=>`<option value="league:${l.id}">${l.name}</option>`).join('')+[...extras].sort((a,b)=>a[1].localeCompare(b[1],'zh')).map(([id,name])=>`<option value="competition:${esc(id)}">${esc(name)}</option>`).join('');
     if([...select.options].some(o=>o.value===competition))select.value=competition;else competition='all';
   }
   function draw(){
@@ -36,6 +37,7 @@ export function renderLive(){
       return `<article class="live-match ${m.state==='live'?'is-live':''}" data-live-key="${esc(m.key)}"><div class="live-match-top"><time>${esc(hkTime(m.kickoff))}</time><span class="tag">${esc(m.competition)}</span><strong class="${m.state==='live'?'profit':''}">${esc(m.status)} ${esc(m.clock||'')}</strong>${m.delayed?'<span class="attention">比分待更新</span>':''}${m.alerts.length?`<span class="daily-alert-tag">赔率提醒 ${m.alerts.length}</span>`:''}</div>
       <${m.local?'a':'div'} class="live-match-pair" ${m.local?`href="${href(m)}"`:''}><strong>${esc(m.homeLabel)}</strong><b>${m.started||m.finished?`${m.homeGoals??'—'} : ${m.awayGoals??'—'}`:'VS'}</b><strong>${esc(m.awayLabel)}</strong></${m.local?'a':'div'}>
       <div class="live-handicap"><strong>亚洲让球盘</strong>${q?`<span>主队${lineText(q.line)} <b>${q.prices.H.toFixed(2)}</b></span><span>客队${lineText(-q.line)} <b>${q.prices.A.toFixed(2)}</b></span><small>${esc(q.provider)} · ${quotePhase(q)} · 采集 ${esc(timeText(q.fetchedAt))}${m.started&&!q.lastPregame?' · 来源未确认滚球':''}</small>`:'<span class="subtle">暂未取得可核对盘口</span>'}</div>
+      ${forecastsHtml(m,forecasts[m.dailyId])}
       <div class="daily-intent-strip">${m.motivation?.original?Object.values(m.motivation.original.teams).map(t=>`<span>${esc(t.team)} <strong>${esc(t.tendency)}</strong></span>`).join(''):`<span class="subtle">${m.started?'无有效赛前战意记录':'战意资料待收录'}</span>`}</div>
       <div class="toolbar">${toggle('intent',m.finished?'战意分析与赛后验证':'战意分析与依据')}${toggle('odds','赔率提醒与原因')}${toggle('events','进球 · 换人 · 红黄牌')}${m.dailyId?toggle('research','阵容 · 天气 · 走势'):''}${m.local?`<a class="button quiet compact" href="${href(m)}">比赛详情 →</a>`:''}</div>
       <div class="daily-panel" ${panel('intent')?'':'hidden'}>${panel('intent')?motivationHtml(m):''}</div><div class="daily-panel" ${panel('odds')?'':'hidden'}>${panel('odds')?alertsHtml(m,m.alerts):''}</div><div class="daily-panel" ${panel('events')?'':'hidden'}>${panel('events')?events.get(m.key)||globalEventsHtml(m):''}</div><div class="daily-panel" data-research="${esc(m.key)}" ${panel('research')?'':'hidden'}>${panel('research')?events.get(m.key+'|research')||'<p class="note">正在读取阵容、天气与近期走势…</p>':''}</div>
@@ -65,7 +67,8 @@ export function renderLive(){
   main.querySelector('#daily-more').onclick=()=>{limit+=80;draw();};
   async function refresh(){
     if(disposed||busy)return;busy=true;const b=main.querySelector('#live-refresh');b.disabled=true;
-    try{const result=await Promise.allSettled([competitionFeeds(),fetch('./daily-football.json',{cache:'no-cache',signal:AbortSignal.timeout(15000)}).then(async r=>{if(!r.ok)throw Error();const data=await r.json();if(!validDaily(data))throw Error();return data;}),fetch('./sync-status.json',{cache:'no-cache',signal:AbortSignal.timeout(12000)}).then(r=>r.json())]);
+    try{const result=await Promise.allSettled([competitionFeeds(),fetch('./daily-football.json',{cache:'no-cache',signal:AbortSignal.timeout(15000)}).then(async r=>{if(!r.ok)throw Error();const data=await r.json();if(!validDaily(data))throw Error();return data;}),fetch('./sync-status.json',{cache:'no-cache',signal:AbortSignal.timeout(12000)}).then(r=>r.json()),fetch('/api/football-forecasts',{cache:'no-store',signal:AbortSignal.timeout(15000)}).then(async r=>{if(!r.ok)throw Error();return r.json();})]);
+      if(result[3].status==='fulfilled')forecasts=result[3].value.matches||{};
       if(disposed)return;if(result[0].status==='fulfilled')feeds=result[0].value;failed=result[1].status!=='fulfilled';if(!failed)snapshot=result[1].value;if(result[2].status==='fulfilled')paused=Boolean(result[2].value.paused);options();draw();
       for(const m of rows.filter(m=>m.state==='live'&&opened.has(m.key+'|events')))await loadEvents(m);
       for(const m of rows.filter(m=>m.dailyId&&opened.has(m.key+'|research')))await loadResearch(m);

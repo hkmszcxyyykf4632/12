@@ -12,11 +12,13 @@ export function dailyRows(snapshot,feeds,{date=hkDay(Date.now()),competition='al
   const consumed=new Set(),rows=[];
   for(const global of snapshot?.matches||[]){
     const h=global.teams.home,a=global.teams.away;
-    const match=locals.find(m=>m.league===global.league&&m.home===h.name&&m.away===a.name&&Math.abs(Date.parse(m.kickoff)-Date.parse(global.kickoff))<86400000);
+    const candidates=locals.filter(m=>m.league===global.league&&Date.parse(m.kickoff)===Date.parse(global.kickoff)
+      &&['home','away'].every(s=>m[s]===global.teams[s].name||Boolean(global.teams[s].label&&m[s+'Label']===global.teams[s].label)));
+    const match=candidates.length===1?candidates[0]:null;
     if(match)consumed.add(match.league+'|'+match.id);
     const feed=feeds.find(f=>f.league===global.league);
     rows.push({...match,...global,id:match?.id||global.id,dailyId:global.id,local:match||null,
-      key:'daily:'+global.id,home:h.name,away:a.name,homeLabel:h.label,awayLabel:a.label,
+      key:'daily:'+global.id,home:match?.home||h.name,away:match?.away||a.name,homeLabel:h.label,awayLabel:a.label,
       homeGoals:h.goals,awayGoals:a.goals,quotes:[...(global.quotes||[]),...(match?quotesForMatch(feed?.markets,match):[])],
       delayed:!Number.isFinite(Date.parse(global.updatedAt))||now-Date.parse(global.updatedAt)>180000});
   }
@@ -27,7 +29,7 @@ export function dailyRows(snapshot,feeds,{date=hkDay(Date.now()),competition='al
       quotes:quotesForMatch(feeds.find(f=>f.league===m.league)?.markets,m)});
   }
   const q=search.trim().toLocaleLowerCase();
-  return rows.filter(m=>m.day===date&&(competition==='all'||competition==='five'&&Boolean(m.league)||competition==='league:'+m.league||competition==='competition:'+m.competitionId)
+  return rows.filter(m=>m.day===date&&(competition==='all'||competition==='major'&&(['700','710','720','730','740'].includes(String(m.competitionId))||['epl','laliga','seriea','bundesliga'].includes(m.league))||competition==='five'&&Boolean(m.league)||competition==='league:'+m.league||competition==='competition:'+m.competitionId)
     &&(!q||[m.home,m.away,m.homeLabel,m.awayLabel,m.competition].join(' ').toLocaleLowerCase().includes(q)))
     .sort((a,b)=>Date.parse(a.kickoff)-Date.parse(b.kickoff)||a.key.localeCompare(b.key));
 }

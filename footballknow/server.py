@@ -336,7 +336,12 @@ def get_horse(ident: str):
 @app.get('/api/racing/horses/{ident}/research')
 def get_horse_research(ident: str):
     try:
-        return horse_research.get_research(ident)
+        from datetime import datetime, timezone
+        from football.racing_preparation import runner
+        research = horse_research.get_research(ident)
+        horse = racing.load(racing.FOLDER / 'horses' / (ident + '.json'))
+        return {**research, 'preparation': runner({'id': ident, 'name': horse.get('name')}, horse,
+                                                research, datetime.now(timezone.utc))}
     except LookupError as error:
         raise HTTPException(status_code=404, detail=str(error)) from None
 
@@ -362,6 +367,15 @@ def get_racing_pace(ident: str):
     from football.racing_pace import simulation
     try:
         return simulation(ident)
+    except (LookupError, ValueError) as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/racing/races/{ident}/preparation')
+def get_racing_preparation(ident: str):
+    from football.racing_preparation import assessment
+    try:
+        return assessment(ident, refresh=True)
     except (LookupError, ValueError) as error:
         raise HTTPException(status_code=404, detail=str(error)) from None
 
@@ -436,6 +450,21 @@ def add_video(value: videos.VideoInput, account: auth.Administrator = Depends(ad
 def edit_video(ident: str, value: videos.VideoInput, account: auth.Administrator = Depends(administrator)):
     try:
         return videos.save(value, ident)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/football-forecasts')
+def football_forecast_index():
+    from football.football_forecasts import read_index
+    return read_index()
+
+
+@app.get('/api/daily-football/{ident}/forecast')
+def daily_football_forecast(ident: str):
+    from football.football_forecasts import current_row, status
+    try:
+        return status(current_row(ident))
     except LookupError as error:
         raise HTTPException(status_code=404, detail=str(error)) from None
 

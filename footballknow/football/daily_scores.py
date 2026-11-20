@@ -15,6 +15,12 @@ HK = timezone(timedelta(hours=8))
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard'
 OUTPUT = PUBLIC / 'daily-football.json'
 LOCAL_IDS = {'700': 'epl', '740': 'laliga', '730': 'seriea', '720': 'bundesliga', '775': 'ucl'}
+FRENCH_NAMES = {'Paris Saint-Germain': '巴黎圣日耳曼', 'Nice': '尼斯', 'AS Monaco': '摩纳哥',
+                'AJ Auxerre': '欧塞尔', 'Toulouse': '图卢兹', 'Lens': '朗斯', 'Lyon': '里昂',
+                'Lille': '里尔', 'Brest': '布雷斯特', 'Strasbourg': '斯特拉斯堡',
+                'Marseille': '马赛', 'Rennes': '雷恩', 'Nantes': '南特', 'Le Havre AC': '勒阿弗尔',
+                'Angers': '昂热', 'Paris FC': '巴黎FC', 'Metz': '梅斯', 'Lorient': '洛里昂',
+                'Saint-Etienne': '圣埃蒂安', 'Reims': '兰斯', 'Montpellier': '蒙彼利埃'}
 COMPETITIONS = {
     'English Premier League': '英超', 'Premier League': '英超', 'LALIGA': '西甲',
     'Italian Serie A': '意甲', 'Serie A': '意甲', 'Bundesliga': '德甲', 'Ligue 1': '法甲',
@@ -201,7 +207,7 @@ def parse_event(event, source_day, stamp, names):
         stats = {s['name']: number(s.get('displayValue', s.get('value'))) for s in c.get('statistics', []) if s.get('name')}
         goals = number(c.get('score')) if started else None
         teams[side] = {'id': code, 'name': known.get('name', team['displayName']),
-                       'label': known.get('label', team['displayName']), 'originalName': team['displayName'],
+                       'label': known.get('label', FRENCH_NAMES.get(team['displayName'], team['displayName']) if competition_id == '710' else team['displayName']), 'originalName': team['displayName'],
                        'form': c.get('form') if re.fullmatch('[WDL]{1,10}', c.get('form') or '') else '',
                        'goals': int(goals) if goals is not None and goals.is_integer() and goals <= 99 else None,
                        'shots': stats.get('totalShots'), 'shotsOnTarget': stats.get('shotsOnTarget'),

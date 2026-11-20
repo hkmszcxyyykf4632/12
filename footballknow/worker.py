@@ -33,6 +33,7 @@ LEAGUES = ['epl', 'laliga', 'ucl', 'seriea', 'bundesliga']
 
 # name, script, group shown on the status page
 JOBS: list[tuple[str, str, str]] = [
+    ('football-forecasts', 'sync_football_forecasts.py', 'lineups'),
     ('daily-football', 'sync_daily_football.py', 'scores'),
     ('daily-research', 'sync_match_research.py', 'lineups'),
     ('finance-cn', 'sync_equities.py cn', 'finance'),
@@ -245,9 +246,11 @@ def main() -> None:
                     settle(job, name, clock, stamp)
                     changed = True
             slots = max_workers() - sum(job.future is not None for job in jobs.values())
-            fast = lambda name, job: job.status.group in {'scores', 'odds'} or name in {'finance-quotes', 'finance-assets', 'racing-meetings', 'racing-live', 'portal-news'}
+            fast = lambda name, job: job.status.group in {'scores', 'odds'} or name in {'football-forecasts', 'finance-quotes', 'finance-assets', 'racing-meetings', 'racing-live', 'portal-news'}
             background_running = sum(job.future is not None and not fast(name, job) for name, job in jobs.items())
-            for name, job in sorted(jobs.items(), key=lambda item: (item[1].due, item[1].status.group != 'scores')):
+            for name, job in sorted(jobs.items(), key=lambda item: (
+                    not (item[0] == 'football-forecasts' and clock >= item[1].due),
+                    item[1].due, item[1].status.group != 'scores')):
                 available = fast(name, job) or background_running < max(1, max_workers() - 1)
                 if not paused and slots > 0 and available and job.future is None and clock >= job.due:
                     job.status.running = True

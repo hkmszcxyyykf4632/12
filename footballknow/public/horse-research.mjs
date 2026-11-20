@@ -1,5 +1,6 @@
 import {esc,sourceLink} from './ui.mjs';
 import {table,val,stamp,horseLink} from './racing-ui.mjs';
+import {preparationDetails} from './racing-preparation.mjs';
 
 const known=v=>typeof v==='string'&&v.trim()&&!/^(?:-|—|未知|unknown|n\/a)$/i.test(v.trim());
 const normal=v=>String(v||'').trim().replace(/\s+/g,' ').toLowerCase();
@@ -55,6 +56,7 @@ export function bindWorkouts(target,research={}){
     const pager=target.querySelector('#workout-pagination');pager.innerHTML=`<span>第 ${page+1} / ${pages} 页</span><button class="button secondary compact" data-prev ${page===0?'disabled':''}>上一页</button><button class="button secondary compact" data-next ${page===pages-1?'disabled':''}>下一页</button>`;
     pager.querySelector('[data-prev]').onclick=()=>{page--;paint();};pager.querySelector('[data-next]').onclick=()=>{page++;paint();};
   }
+  if(research.preparation)target.insertAdjacentHTML('afterbegin',preparationDetails(research.preparation));
   target.querySelector('#workout-days').onchange=e=>{days=e.target.value;page=0;paint();};
   target.querySelector('#workout-type').onchange=e=>{type=e.target.value;page=0;paint();};paint();
 }

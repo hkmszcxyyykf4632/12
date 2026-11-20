@@ -38,6 +38,19 @@ test('global fixtures sort chronologically within the Hong Kong calendar day',()
   assert.equal(dailyRows({matches:result},[],{date:'2026-11-21'}).length,0);
 });
 
+test('matching Chinese labels merge source name aliases only at the exact kickoff',()=>{
+  const local={id:'local-city',home:'Man City',away:'Fulham',kickoff:'2026-11-21T12:30:00Z',competition:'英超'};
+  const feed={league:'epl',data:{teams:[{name:'Man City',cn:'曼城'},{name:'Fulham',cn:'富勒姆'}]},live:{matches:[local]}};
+  const global={id:'123',league:'epl',kickoff:local.kickoff,day:'2026-11-21',teams:{home:{id:'1',name:'Manchester City',label:'曼城'},away:{id:'2',name:'Fulham',label:'富勒姆'}}};
+  const options={date:'2026-11-21',now:Date.parse('2026-11-21T00:00:00Z')};
+  const rows=dailyRows({matches:[global]},[feed],options);
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].id,'local-city');
+  assert.equal(rows[0].dailyId,'123');
+  assert.equal(rows[0].home,'Man City');
+  assert.equal(dailyRows({matches:[{...global,kickoff:'2026-11-21T13:30:00Z'}]},[feed],options).length,2);
+});
+
 test('alerts cover retreat, direction reversal and price movements with an unchanged line',()=>{
   const run=(a,b)=>handicapAlerts({quotes:[a,b]},null);
   assert.equal(run(quote('opening',-2),quote('latest',-1))[0].type,'本场退盘');

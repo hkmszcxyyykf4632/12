@@ -53,6 +53,7 @@ const KINDS={live:['比分与赛程','scores'],catalogue:['球队与球员','cat
 
 /** Readable name and category for a synchronizer job id such as "laliga-standings". */
 export function describeJob(name,group='') {
+  if(name==='football-forecasts')return {league:'五大联赛',label:'初步预测、首发确认后预测与赛后对照',group:'自动预测'};
   if(name==='daily-football')return {league:'全球足球',label:'每日赛程、即场赛果与战意复核',group:GROUPS.scores};
   if(name==='daily-research')return {league:'全球足球',label:'赛前阵容、天气与赛后验证',group:GROUPS.scores};
   if(name==='portal-news')return {league:'首页',label:'财经、足球与赛马中文新闻',group:'即时资讯'};

@@ -24,6 +24,7 @@ export function renderHorseProfile(id){
       main.querySelector('#horse-pedigree')?.insertAdjacentHTML('afterbegin',bloodlineLinks(h));
       main.querySelector('#horse-suitability').insertAdjacentHTML('afterbegin',`<h2>场地分类</h2><p><a href="#/horse-going">查看黏地、软烂地表现较好的马匹 →</a></p>${goingBlock(entry)}<p class="note">${esc(directory.goingMethod||'')}</p>`);
       bindWorkouts(main.querySelector('#horse-workouts-content'),{pending:true});
+      main.querySelector('#horse-workouts h2').textContent='晨操备战与降班观察';
       let researchAttempts=0;
       async function loadResearch(){
         try{const data=await api('/api/racing/horses/'+encodeURIComponent(id)+'/research',{signal:controller.signal,timeout:15000});if(controller.signal.aborted)return;

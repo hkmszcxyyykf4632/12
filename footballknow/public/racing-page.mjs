@@ -5,6 +5,7 @@ import {poolsHtml,dividendsHtml} from './racing-pools.mjs';
 import {racingNav} from './racing-ui.mjs';
 import {replayBlock,bindReplay} from './racing-replay.mjs';
 import {mountPaceSimulation} from './racing-pace.mjs';
+import {mountPreparation} from './racing-preparation.mjs';
 
 const val=x=>x==null||x===''?'—':esc(String(x));
 const stamp=x=>x?new Date(x).toLocaleString('zh-CN',{timeZone:'Asia/Hong_Kong',hour12:false}):'—';
@@ -27,7 +28,7 @@ function evaluationHtml(state,race){
 }
 
 export function renderRace(id){
-  const controller=new AbortController();let race,analyzing=false,pace=null;
+  const controller=new AbortController();let race,analyzing=false,pace=null,preparation=null;
   main.innerHTML=pageHeading('赛马详情','正在读取本场资料。','<a class="button secondary" href="#/racing">香港赛马</a>')+'<div id="race-content" class="loading">正在读取排位及赛果…</div>';
   async function analysis(generate=false){
     const button=main.querySelector('#race-generate'),msg=main.querySelector('#race-ai-message');if(!button)return;button.disabled=true;analyzing=true;
@@ -39,6 +40,7 @@ export function renderRace(id){
     try{
       race=await api('/api/racing/races/'+id,{signal:controller.signal});if(controller.signal.aborted)return;
       pace?.dispose();pace=null;
+      preparation?.dispose();preparation=null;
       if(race.status==='cancelled'){main.innerHTML=pageHeading(`${race.date} · ${race.courseName} 第 ${race.raceNo} 场`,'马会已公布取消本场赛事。')+racingNav('racing')+'<div class="empty">赛事取消。独赢、位置及连赢退款，不纳入预测命中率及骑练赛果统计。</div>'+dividendsHtml(race)+`<a class="button secondary" href="#/racing-day/${race.id.replace(/-\d+$/,'')}">返回赛马日</a>`;return;}
       const provisional=race.status==='provisional',finished=race.status==='finished'||provisional,winner=race.entries.filter(e=>e.place===1);
       main.innerHTML=pageHeading(`${race.courseName} · 第 ${race.raceNo} 场`,race.date+' · '+race.name,'<a class="button secondary" href="#/racing">香港赛马</a>')+
@@ -49,6 +51,8 @@ export function renderRace(id){
       main.insertAdjacentHTML('afterbegin',racingNav('racing'));
       main.querySelector('.racing-race-head').insertAdjacentHTML('afterend','<section id="race-pace"></section>');
       pace=mountPaceSimulation(main.querySelector('#race-pace'),race);
+      main.querySelector('#race-generate').closest('section').insertAdjacentHTML('beforebegin','<section id="race-preparation"></section>');
+      preparation=mountPreparation(main.querySelector('#race-preparation'),race);
       if(!finished)main.querySelector('.racing-race-head').insertAdjacentHTML('afterend',racingLiveBlock());
       if(finished){main.querySelector('.racing-race-head').insertAdjacentHTML('afterend',replayBlock(race));bindReplay(main,race);}
       main.querySelector('#race-generate').closest('section').insertAdjacentHTML('beforebegin',poolsHtml(race));
@@ -58,5 +62,5 @@ export function renderRace(id){
       analysis();
     }catch(error){if(!controller.signal.aborted)main.innerHTML=pageHeading('赛马详情','','<a href="#/racing">返回香港赛马</a>')+'<div class="empty">'+esc(error.message)+'</div>';}
   }
-  load();const timer=setInterval(()=>{if(!document.hidden&&!analyzing&&race&&!['finished','cancelled'].includes(race.status))load();},60000);return()=>{controller.abort();clearInterval(timer);pace?.dispose();};
+  load();const timer=setInterval(()=>{if(!document.hidden&&!analyzing&&race&&!['finished','cancelled'].includes(race.status))load();},60000);return()=>{controller.abort();clearInterval(timer);pace?.dispose();preparation?.dispose();};
 }
