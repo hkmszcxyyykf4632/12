@@ -2,6 +2,8 @@
    lang 用 "国语" 或 "粤语"；type 用 "audio"（mp3 等音频地址，在页面内播放）或 "video"（打开原网页）。
    例：ddj:[{type:'audio',lang:'粤语',label:'道德经全文诵读',url:'https://你的网站/audio/ddj-yue.mp3'}] */
 const MEDIA={
+  ysz:[{type:'video',lang:'粤语',label:'观成法师 ·《药师经》中的药师咒原声片段',url:'https://www.youtube.com/watch?v=MthStAd4YKI&t=1180s'},
+       {type:'video',lang:'国语',label:'法鼓山安和分院 · 药师咒（完整108遍）',url:'https://www.youtube.com/watch?v=JWNB9wODEHg'}],
   jgj:[{type:'video',lang:'粤语',label:'观成法师 · 跟观成法师一起诵经《金刚经》（国际佛教观音寺）',url:'https://www.youtube.com/watch?v=DgI1TFjxUBQ'},
        {type:'video',lang:'粤语',label:'观成法师 · 《金刚般若波罗蜜经》粤语恭诵',url:'https://www.youtube.com/watch?v=f_6ahQgYL5Q'},
        {type:'video',lang:'粤语',label:'观成法师讲解 · 《金刚经》全十一讲（播放清单）',url:'https://www.youtube.com/playlist?list=PLqhBSEbituts8vk90Me_bixX7sZ5YT80a'}],
@@ -67,7 +69,7 @@ const VIDEOS={
   'nj-ls':[{type:'video',lang:'评论',label:'百家讲坛 · 了不起的《黄帝内经》（1）生命百科全书',url:'https://www.youtube.com/watch?v=XYYWjiO3gU4'},{type:'video',lang:'评论',label:'百家讲坛 · 翟双庆解读《黄帝内经》（1）神秘的经典',url:'https://www.youtube.com/watch?v=-wsyhr870W4'}],
 };
 for(const k in VIDEOS)MEDIA[k]=(MEDIA[k]||[]).concat(VIDEOS[k]);
-for(const k in MEDIA){const b=k.replace(/-(hsg|ldc|zl)$/,'');if(!['ddj','qjj','xj','jgj','ysj','dzj','fhj','amtj','dx','zy','ly','mz','sj','ss','lj','zyi','cq'].includes(b))delete MEDIA[k];}
+for(const k in MEDIA){const b=k.replace(/-(hsg|ldc|zl)$/,'');if(!['ddj','qjj','xj','jgj','ysj','ysz','dzj','fhj','amtj','dx','zy','ly','mz','sj','ss','lj','zyi','cq'].includes(b))delete MEDIA[k];}
 const isTalk=m=>['评论','节目','纪录'].includes(m.lang)||/讲解|浅谈/.test(m.label);
 
 const $=(s,r=document)=>r.querySelector(s);
@@ -84,16 +86,21 @@ function loadRecitation(b){
 }
 function recitationPanel(){
   if(!recitation)return '';
-  return `<section class="wrap recitation" aria-label="一百零八遍诵读"><div class="recitation-head"><div><h2>一百零八遍诵读</h2><div class="recitation-count"><strong id="recitation-count">${recitation.completed}</strong><small> / 108 遍已完成</small></div></div><button class="ctl" id="recitation-reset">重新计数</button></div><progress id="recitation-progress" max="108" value="${recitation.completed}" aria-label="已完成诵读遍数"></progress><p id="recitation-status" role="status"></p><p>读完整篇才计一遍，满 108 遍自动停止。进度保存在这台设备；重新打开时从下一遍的开头继续。点击中间句子可试听，不计为完整一遍。</p><p id="recitation-storage"></p><p>使用设备的国语或粤语合成语音。咒文音译字的读音依所选声音，唱诵版本可在「诵经影音」查找。</p></section>`;
+  return `<section class="wrap recitation" aria-label="一百零八遍诵读"><div class="recitation-head"><div><h2>一百零八遍诵读</h2><div class="recitation-count"><strong id="recitation-count">${recitation.completed}</strong><small> / 108 遍已完成</small></div></div><button class="ctl" id="recitation-reset">重新计数</button></div><progress id="recitation-progress" max="108" value="${recitation.completed}" aria-label="已完成诵读遍数"></progress><p id="recitation-status" role="status"></p><p>${recitation.id==='ysz'?'粤语原声逐遍计数，累计 108 遍自动停止；国语原片自带 108 遍，整段播完才确认完成。暂停可继续，停止或重新打开后从未完成片段的开头播放。':'读完整篇才计一遍，满 108 遍自动停止。进度保存在这台设备；重新打开时从下一遍的开头继续。点击中间句子可试听，不计为完整一遍。'}</p><p id="recitation-storage"></p><p>${recitation.id==='ysz'?'切换语言保留已完成次数。国语整段播放不估算中途遍数；跳过内容的片段不计数，结束后会重新播放。':'使用设备的国语或粤语合成语音。咒文音译字的读音依所选声音，唱诵版本可在「诵经影音」查找。'}</p></section>`;
 }
 function updateRecitation(){
   if(!recitation||!$('#recitation-count'))return;
   const r=recitation,complete=r.completed===r.target;
   $('#recitation-count').textContent=r.completed;$('#recitation-progress').value=r.completed;
-  $('#recitation-status').textContent=complete?'已完成 108 遍。可重新计数开始下一轮。':r.status==='running'?(r.fullRound?`正在诵读第 ${r.completed+1} 遍`:'正在试听片段，本次不计数'):r.status==='paused'?'已暂停，继续后从当前句开始。':`准备诵读第 ${r.completed+1} 遍`;
+  $('#recitation-status').textContent=complete?'已完成 108 遍。可重新计数开始下一轮。':r.status==='running'?(r.program===108?'正在播放国语 108 遍原版，整段播完后确认完成。':r.fullRound?`正在诵读第 ${r.completed+1} 遍`:'正在试听片段，本次不计数'):r.status==='paused'?(r.recorded?'原声已暂停，点击原声播放器的「继续」。':'已暂停，继续后从当前句开始。'):`准备诵读第 ${r.completed+1} 遍`;
   $('#recitation-storage').textContent=r.saved?'':'浏览器未能保存进度，请保留此页；关闭页面后本次计数可能丢失。';
   const p=$('#play');p.disabled=complete||!synth;if(complete)p.textContent='已完成 108 遍';else if(!speaking)p.textContent=r.status==='paused'?'▶ 继续':'▶ 开始诵读';
 }
+window.JingzangRecitation={
+  getCompleted:()=>recitation?.completed||0,
+  recordingStatus(status,units=1){if(recitation?.id!=='ysz')return;recitation.recorded=true;recitation.program=units;recitation.fullRound=status==='running';recitation.status=status;updateRecitation();},
+  completeRecordingRound(units=1){if(recitation?.id!=='ysz')return 108;recitation.completed=Math.min(108,recitation.completed+(units===108?108:1));recitation.saved=store.set('recitation-ysz',{version:1,completed:recitation.completed});updateRecitation();return recitation.completed;},
+};
 
 let FAN=null,fanLoading=false;
 function toFan(s){if(!FAN)return s;let out='';for(let i=0;i<s.length;){let hit=0;for(let n=Math.min(4,s.length-i);n>=2;n--){const v=FAN.p[s.substr(i,n)];if(v){out+=v;hit=n;break;}}if(hit){i+=hit;continue;}const c=s[i],v=FAN.m.get(c);out+=v||c;i++;}return out.replace(/雲(?=[：:])/g,'云');}
@@ -370,7 +377,7 @@ function start(from,continuing=false){
   if(!synth||!state.book||(recitation&&recitation.completed===recitation.target))return;
   window.RecordedReading?.stop();
   token++;speaking=false;synth.cancel();build();at=Number.isInteger(from)&&from>=0&&from<queue.length?from:0;
-  if(recitation&&!continuing)recitation.fullRound=at===0;
+  if(recitation){recitation.recorded=false;recitation.program=1;if(!continuing)recitation.fullRound=at===0;}
   if(!voiceFor(prefs.lang)){if(recitation)recitation.status=continuing?'paused':'ready';const p=$('#play');if(p)p.textContent=continuing?'▶ 继续':'▶ 朗读';updateRecitation();voiceNote();return;}
   voiceNote();speaking=true;if(recitation){recitation.status='running';updateRecitation();}
   const p=$('#play'),s=$('#stop');if(p)p.textContent='❚❚ 暂停';if(s)s.disabled=false;speak();
@@ -392,7 +399,7 @@ document.addEventListener('click',e=>{
   else if(t.id==='next'||t.id==='next2')go(state.ch+1);
   else if(t.id==='play'){if(speaking)pause();else{const continuing=at<queue.length&&$('#play').textContent.includes('继续');start(continuing?at:0,continuing);}}
   else if(t.id==='stop'){stop();at=0;}
-  else if(t.id==='recitation-reset'&&recitation){stop();recitation.completed=0;recitation.saved=store.set('recitation-'+recitation.id,{version:1,completed:0});updateRecitation();}
+  else if(t.id==='recitation-reset'&&recitation){window.RecordedReading?.stop();stop();recitation.completed=0;recitation.saved=store.set('recitation-'+recitation.id,{version:1,completed:0});updateRecitation();}
   else if(t.id==='theme'){prefs.theme=prefs.theme==='dark'?'':'dark';applyPrefs();t.setAttribute('aria-pressed',prefs.theme==='dark');}
   else if(t.dataset.size){prefs.size=Math.min(34,Math.max(15,prefs.size+Number(t.dataset.size)));applyPrefs();}
   else if(t.dataset.mode){stop();at=0;prefs.mode=t.dataset.mode;applyPrefs();document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===prefs.mode));$('#text').innerHTML=body(state.book.ch[state.ch],state.ch);}
