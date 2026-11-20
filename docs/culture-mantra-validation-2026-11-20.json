@@ -1,0 +1,68 @@
+{
+  "checkedAt": "2026-11-20T05:10:20.263Z",
+  "revision": "2461c0c3b21c583c21874911c2683cb2d5b53d5c",
+  "archiveSha256": "a8f86f0051a85fabc86a226a31e1f3ff17e386cba4a549988ed85f918118a3d5",
+  "tests": {
+    "total": 89,
+    "passed": 89,
+    "failed": 0,
+    "method": "node --test (all browser-side tests)"
+  },
+  "localBrowser": {
+    "cantonese": {
+      "videoId": "MthStAd4YKI",
+      "startSeconds": 1180,
+      "endSeconds": 1221,
+      "rate": 2,
+      "completedRoundsObserved": 3,
+      "pauseVerified": true
+    },
+    "mandarin": {
+      "videoId": "JWNB9wODEHg",
+      "durationSeconds": 1486.761,
+      "rate": 1,
+      "playbackObserved": true,
+      "pauseAndResumeVerified": true,
+      "full108Completion": "simulated player test; not a full live listen"
+    },
+    "deviceSpeechRequired": false
+  },
+  "production": {
+    "status": "deployed and verified",
+    "url": "https://tripitaka.shop/#b-ysz-1",
+    "publishedAt": "2026-11-20T05:08:12Z",
+    "backup": "/var/backups/jingzang/20261120T050811",
+    "cultureFiles": 179,
+    "sourceChecks": [
+      {
+        "file": "recorded-reading.js",
+        "status": 200,
+        "sourceMatches": true,
+        "cache": "no-cache"
+      },
+      {
+        "file": "jingzang.js",
+        "status": 200,
+        "sourceMatches": true,
+        "cache": "no-cache"
+      }
+    ],
+    "mandarin": {
+      "playbackObservedSeconds": 13.303621,
+      "durationSeconds": 1486.761,
+      "pauseVerified": true,
+      "partialProgrammeCount": 0
+    },
+    "cantonese": {
+      "fullRoundObserved": true,
+      "completedCount": 1,
+      "rate": 2,
+      "nextRoundPlaybackObservedSeconds": 1188.935722,
+      "pauseVerified": true
+    },
+    "screenshots": [
+      "images/2026-11-20/mantra-cantonese-production.jpg",
+      "images/2026-11-20/mantra-mandarin-production.jpg"
+    ]
+  }
+}
