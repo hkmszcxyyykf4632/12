@@ -27,7 +27,12 @@ def cached_json(url, path, seconds, at):
     old = load(path)
     if dt(old.get('updatedAt')) and timedelta(0) <= at - dt(old['updatedAt']) < timedelta(seconds=seconds):
         return old.get('raw', {})
-    raw = json.loads(fetch_text(url))
+    try:
+        raw = json.loads(fetch_text(url))
+    except (OSError, ValueError):
+        if isinstance(old.get('raw'), dict) and old['raw']:
+            return {**old['raw'], '_cachedSourceAt': old.get('updatedAt')}
+        raise
     publish(path, {'updatedAt': at.isoformat(), 'raw': raw})
     return raw
 
@@ -149,10 +154,17 @@ def prior_lineup(reference, team_id, at, translations=None):
     if not reference:
         return {'status': '未收录此前比赛'}
     try:
+        if not reference.get('id'):
+            from .match_details import resolve_event
+            event_id = resolve_event(reference['catalogueMatch'], reference['catalogueLeague'])
+            if not event_id:
+                return {'status': '此前比赛阵容暂未取得', 'match': reference}
+            reference = {**reference, 'id': event_id}
         raw = cached_json(f'{BASE}/summary?event={reference["id"]}', STATE / 'match-summaries' / (reference['id'] + '.json'), 604800, at)
         game = game_of(raw, reference['id'])
         ids = {str(c['team']['id']) for c in game['competitors']}
-        if ids != {team_id, reference['opponentId']} or dt(game['date']) != dt(reference['date']):
+        same_time = (dt(game['date']).date() == dt(reference['date']).date()) if reference.get('dateOnly') else dt(game['date']) == dt(reference['date'])
+        if ids != {team_id, reference['opponentId']} or not same_time:
             raise ValueError('Previous match identity mismatch')
         return {'status': 'available', 'match': reference, 'lineup': lineup(raw, team_id, translations)}
     except (OSError, ValueError, TypeError, KeyError, IndexError):
@@ -177,6 +189,14 @@ def build(row, at):
             rows = history_rows(events, own['id'], before)
             if len(rows) >= 10 and any(r['opponentId'] == opponent['id'] for r in rows):
                 break
+        if errors:
+            from .local_match_history import local_history
+            local_rows = local_history(own['id'], before, load)
+            merged = {(r['date'][:10], r['homeAway'], r['opponentId']): r for r in local_rows}
+            merged.update({(r['date'][:10], r['homeAway'], r['opponentId']): r for r in rows})
+            rows = sorted(merged.values(), key=lambda r: r['date'], reverse=True)
+            if local_rows:
+                errors.append('已补入本站收录的完场往绩，各场保留原始来源')
         prior = rows[0] if rows else None
         h2h = next((r for r in rows if r['opponentId'] == opponent['id']), None)
         comparisons = {}
@@ -192,7 +212,7 @@ def build(row, at):
     if pre and (pre.get('eventId') != row['id'] or pre.get('kickoff') != row['kickoff'] or
                 pre.get('hash') != digest({k: v for k, v in pre.items() if k != 'hash'}) or not dt(pre.get('capturedAt')) or dt(pre['capturedAt']) >= before):
         pre = {}
-    if not row['started'] and at < before and game.get('status', {}).get('type', {}).get('state') == 'pre':
+    if not row['started'] and at < before and game.get('status', {}).get('type', {}).get('state') == 'pre' and not raw.get('_cachedSourceAt'):
         weather = forecast(raw.get('gameInfo', {}).get('venue') or row.get('venue', {}), before, at)
         pre = {'eventId': row['id'], 'kickoff': row['kickoff'], 'capturedAt': at.isoformat(), 'teams': teams, 'weather': weather}
         pre['hash'] = digest(pre)
@@ -200,6 +220,7 @@ def build(row, at):
     else:
         weather = pre.get('weather') or {'status': '没有留存赛前天气预报'}
     return {'eventId': row['id'], 'kickoff': row['kickoff'], 'updatedAt': at.isoformat(), 'teams': teams, 'weather': weather,
+            'message': f'本场来源暂未更新，阵容等资料沿用 {raw["_cachedSourceAt"]} 的来源快照。' if raw.get('_cachedSourceAt') else '',
             'source': row['source'], 'pregame': {'capturedAt': pre.get('capturedAt'), 'hash': pre.get('hash')},
             'review': {'status': '赛后对照' if row['finished'] else '待完场', 'score': [row['teams'][s]['goals'] for s in ['home', 'away']],
                        'summary': '赛前阵容和天气记录已保留，可与赛后比赛表现对照。天气预报不等于实测，也不能单独解释赛果。' if pre else '没有有效赛前补充分析记录，不补写事前判断。'},
@@ -210,8 +231,18 @@ def research(ident):
     row = next((r for r in load(PUBLIC / 'daily-football.json').get('matches', []) if r.get('id') == ident), None)
     if not row or not re.fullmatch(r'\d{1,16}', ident):
         raise LookupError('未收录这场每日赛事')
+    return research_row(row)
+
+
+def research_row(row):
+    ident = row['id']
+    if not re.fullmatch(r'\d{1,16}', ident):
+        raise LookupError('赛事编号不正确')
     path = PUBLIC / 'daily-research' / (ident + '.json')
     old = load(path)
+    if old and (old.get('eventId') != ident or dt(old.get('kickoff')) != dt(row.get('kickoff')) or
+                any(old.get('teams', {}).get(s, {}).get('teamId') != row['teams'][s]['id'] for s in ('home', 'away'))):
+        old = {}
     at = datetime.now(timezone.utc)
     ttl = 120 if row['started'] and not row['finished'] else 300
     if dt(old.get('updatedAt')) and timedelta(0) <= at - dt(old['updatedAt']) < timedelta(seconds=ttl):

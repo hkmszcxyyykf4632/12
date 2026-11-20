@@ -1,0 +1,17 @@
+.match-row-actions{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:12px}
+#match-research{scroll-margin-top:80px}.pace-summary{display:flex;gap:28px;align-items:center;padding:20px;background:var(--brand);color:var(--on-brand)}
+.pace-summary strong{display:block;font-size:28px;white-space:nowrap}.pace-summary p{margin:0;line-height:1.8}
+.pace-controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:20px 0}.pace-controls label{display:grid;gap:6px}.pace-controls strong{padding:10px;color:var(--brand)}
+.pace-track{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.pace-lane{display:grid;grid-template-columns:160px 1fr;min-height:57px;border-bottom:1px solid var(--line)}
+.pace-name{padding:10px 12px;font-size:13px;line-height:1.5;color:var(--ink)}.pace-name small{display:block;color:var(--muted);padding-left:20px}
+.pace-lane-path{position:relative;background:var(--brand-soft);overflow:hidden;border-left:1px solid var(--line)}
+.pace-lane:nth-child(even) .pace-lane-path{background:var(--surface-2)}
+.pace-runner{position:absolute;top:6px;display:flex;align-items:center;gap:5px;color:var(--brand-strong);white-space:nowrap;font-size:11px}
+.pace-runner b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--brand);color:var(--on-brand);font-size:16px;border:2px solid var(--section-accent,var(--focus))}
+.pace-direction{text-align:right;padding:10px 16px;color:var(--muted);font-size:12px}.pace-scrubber{display:grid;gap:8px;margin:16px 0}.pace-scrubber input{width:100%;accent-color:var(--brand)}
+.pace-connection{padding:16px 20px;background:var(--surface);border-left:4px solid var(--section-accent,var(--focus));margin:24px 0}.pace-connection h3{margin-top:0}
+.bloodline-intro{max-width:850px;font-size:16px;line-height:1.9}.bloodline-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0}.bloodline-tabs button[aria-pressed=true]{background:var(--brand);color:var(--on-brand)}
+.bloodline-chain{display:flex;gap:6px;align-items:center;flex-wrap:wrap;line-height:1.8}.bloodline-chain a{font-weight:600}.bloodline-identity{display:flex;gap:10px;align-items:center}.bloodline-identity img{width:60px;height:48px;object-fit:cover;border-radius:var(--radius-sm)}
+.bloodline-stats{display:flex;gap:32px;flex-wrap:wrap;margin:20px 0;color:var(--muted)}.bloodline-stats strong{font-size:24px;color:var(--brand);margin-right:6px}
+@media(max-width:600px){.pace-lane{grid-template-columns:110px 1fr}.pace-name{font-size:12px;padding:8px}.pace-name small{padding:0}.pace-runner{gap:2px}.pace-runner small{display:none}.pace-summary{gap:16px;padding:16px}.pace-summary p{font-size:13px}.pace-controls{gap:8px}.pace-controls select{min-width:90px}.match-row-actions{align-items:start;flex-direction:row;align-items:center}.bloodline-intro{font-size:15px}}

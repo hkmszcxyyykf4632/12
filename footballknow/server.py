@@ -357,6 +357,15 @@ def get_racing_analysis(ident: str):
         raise HTTPException(status_code=404, detail=str(error)) from None
 
 
+@app.get('/api/racing/races/{ident}/pace')
+def get_racing_pace(ident: str):
+    from football.racing_pace import simulation
+    try:
+        return simulation(ident)
+    except (LookupError, ValueError) as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
 @app.post('/api/racing/races/{ident}/analysis')
 def create_racing_analysis(ident: str, phase: str, account: auth.Administrator = Depends(administrator)):
     try:
@@ -438,6 +447,19 @@ def daily_match_research(ident: str):
         return research(ident)
     except LookupError as error:
         raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/match/research')
+def centre_match_research(match_id: str, league: LeagueId = 'epl', include_detail: bool = False):
+    from football.match_centre_research import get_research
+    if len(match_id) > 200:
+        raise HTTPException(status_code=422, detail='比赛编号格式不正确。')
+    try:
+        return get_research(match_id, league, include_detail)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+    except (OSError, ValueError, KeyError, TypeError, http.client.HTTPException):
+        raise HTTPException(status_code=502, detail='本场分析资料暂时无法更新，请稍后重试。') from None
 
 
 @app.get('/api/commodities/{ident}/history')

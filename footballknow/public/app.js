@@ -9,6 +9,7 @@ import {renderNews} from './news-page.mjs';
 import {renderPortalNews} from './portal-news.mjs';
 import {renderSponsors} from './sponsors-page.mjs';
 import {renderRace} from './racing-page.mjs';
+import {renderBloodlines} from './bloodlines-page.mjs';
 import {renderRacingHub,renderRacingDay} from './racing-day.mjs';
 import {renderHorseDirectory} from './horse-directory.mjs';
 import {renderHorseProfile} from './horse-profile.mjs';
@@ -64,7 +65,7 @@ export function updateView() {
 function render() {
  disposePage();disposePage=()=>{};updatePage=()=>{};
  const [current,id,second]=route(),page=current||'home';closeDrawer();
- const racingPages=['racing','race','horse','horses','horse-going','racing-day','racing-rankings'];
+ const racingPages=['racing','race','horse','horses','horse-going','bloodlines','racing-day','racing-rankings'];
  document.documentElement.dataset.section=racingPages.includes(page)?'racing':['markets','cn-markets','us-stocks','stock-volume','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset'].includes(page)?'finance':['home','portal-news','sponsors','admin','status','videos','video-admin'].includes(page)?'portal':'football';
  const active=['race','racing-day'].includes(page)?'racing':page==='horse'?'horses':['stock','asset'].includes(page)?'markets':['team','analysis','player'].includes(page)?'teams':page==='match'?'matches':page;
  document.querySelectorAll('[data-nav]').forEach(nav=>{nav.classList.toggle('active',nav.dataset.nav===active);if(nav.dataset.nav===active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');});
@@ -74,6 +75,7 @@ function render() {
  if(page==='racing-day'){document.querySelector('#breadcrumb').textContent='香港赛马 / 赛马日';disposePage=renderRacingDay(id,second);return;}
  if(page==='racing-rankings'){document.querySelector('#breadcrumb').textContent='香港赛马 / 骑练排行榜';disposePage=renderRacingRankings(id);return;}
  if(page==='race'){disposePage=renderRace(id);return;}
+ if(page==='bloodlines'){document.querySelector('#breadcrumb').textContent='香港赛马 / 著名血统';disposePage=renderBloodlines(id);return;}
  if(page==='horse'){disposePage=renderHorseProfile(id);return;}
  if(page==='coaches'){document.querySelector('#breadcrumb').textContent='足球 / 教练与换帅观察';disposePage=renderCoaches();return;}
  if(page==='horse-going'){document.documentElement.dataset.section='racing';document.querySelector('#breadcrumb').textContent='香港赛马 / 场地表现';disposePage=renderHorseGoing();return;}
@@ -99,7 +101,7 @@ function render() {
  else if(page==='quality')updatePage=renderQuality();
  else if(page==='matches')updatePage=renderMatches();
  else if(page==='following'){updatePage=renderMatches(true);mountAlertPanel(main);}
- else if(page==='match')disposePage=renderMatch(id);
+ else if(page==='match')disposePage=renderMatch(id,second);
  else if(page==='teams')renderTeams();
  else if(page==='team')updatePage=renderTeam(id);
  else if(page==='analysis')disposePage=renderAnalysis(id);
@@ -149,7 +151,7 @@ window.addEventListener('pagehide',()=>{stopPolling();stopIndicator();disposePag
 async function start() {
  try {await refresh(true);reconcile(data.matches);render();stopPolling=startPolling(updateView);stopIndicator=startSyncIndicator(()=>stopPolling.now?.());}
  catch(error) {
-   if(['coaches','horse-going','videos','video-admin','cn-markets','us-stocks','stock-volume','admin','status','live','news','portal-news','sponsors','markets','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset','racing','race','horse','horses','racing-day','racing-rankings'].includes(route()[0])){render();return;}
+   if(['coaches','bloodlines','horse-going','videos','video-admin','cn-markets','us-stocks','stock-volume','admin','status','live','news','portal-news','sponsors','markets','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset','racing','race','horse','horses','racing-day','racing-rankings'].includes(route()[0])){render();return;}
    main.innerHTML=`<div class="error-box"><h2>暂时无法载入球队资料</h2><p>${esc(error.message)}。已有个人记录仍保存在本浏览器。</p><button class="button" id="reload">重新载入</button> <a class="button secondary" href="#/admin">管理后台</a></div>`;
    main.querySelector('#reload').addEventListener('click',()=>location.reload());
  }
