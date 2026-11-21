@@ -175,13 +175,30 @@ function zangPage(){
   </div>
   <footer>以上是通行说法的简要整理，各教派自身的传承记载或有不同。</footer></div>`;
 }
-/* 茶的照片：把照片放进 images/cha/ 目录，在这里登记 {key:'lvcha',file:'xxx.jpg',credit:'茗是观 提供'}，对应的虚线框就会换成照片。 */
-const CHAPICS=[];
-const chaSlots=list=>`<div class="tangka cha-pics">${list.map(([k,n])=>{const t=CHAPICS.find(x=>x.key===k);return t?`<figure><img src="./images/cha/${esc(t.file)}" alt="${n}" loading="lazy"><figcaption>${n}${t.credit?`<small>${esc(t.credit)}</small>`:''}</figcaption></figure>`:`<div class="slot">${n}<small>照片待补</small></div>`;}).join('')}</div>`;
+const CHAPICS=[
+  {key:'msg-tray',file:'msg-tea-tray.png',name:'古树茶小饼',kind:'product'},
+  {key:'msg-cakes',file:'msg-tea-cakes.png',name:'茶饼与茶席',kind:'product'},
+  {key:'msg-balls',file:'msg-tea-balls.png',name:'茶丸与茶汤',kind:'product'},
+  {key:'msg-box',file:'msg-tea-gift-box.png',name:'茶饼礼盒',kind:'product contain'},
+  {key:'msg-taste',file:'msg-taste-award-2022.png',name:'2022 风味绝佳奖 · 三星',kind:'badge'},
+  {key:'msg-gold',file:'msg-monde-gold-2022.png',name:'2022 Monde Selection · 金奖',kind:'badge'},
+  {key:'msg-certificate',file:'msg-monde-grand-gold-2025.png',name:'2025 野生古树白茶 · 特金奖证书',kind:'document'},
+  {key:'msg-timeline',file:'msg-awards-2022-2025.png',name:'茗是观获奖年表 · 2022—2025',kind:'document'}
+];
+const chaGallery=(keys,style='')=>`<div class="tangka cha-pics ${style}">${keys.map(key=>CHAPICS.find(pic=>pic.key===key)).filter(Boolean).map(pic=>`<figure class="tea-${pic.kind}"><a href="./images/cha/${pic.file}" target="_blank" rel="noopener" aria-label="查看原图：${esc(pic.name)}（新窗口）"><img src="./images/cha/${pic.file}" alt="${esc(pic.name)}" loading="lazy" decoding="async"></a><figcaption>${esc(pic.name)}<a class="tea-original" href="./images/cha/${pic.file}" target="_blank" rel="noopener" aria-label="查看原图：${esc(pic.name)}（新窗口）">查看原图 ↗</a></figcaption></figure>`).join('')}</div>`;
 function chaPage(){
   state.book=null;document.title='茶 · 经藏';
   $('#app').innerHTML=`<div class="wrap"><header class="site"><a class="back" href="#">← 经藏</a><h1>茶</h1><p>中国是茶的故乡。一片树叶，从药用、食用到品饮，走了几千年，也把儒、释、道三家的心思都泡了进去。</p></header>
   <div class="essay">
+  <h2>茗是观的茶</h2>
+  <p>本站的赞助者茗是观（MSG Ltd.）2021 年在台湾成立，以古树茶为主：野生古树白茶、古树普洱生茶、古树红茶，另有乌龙茶。旗下的自在堂从事唐卡的收藏与推广。</p>
+  ${chaGallery(['msg-tray','msg-cakes','msg-balls','msg-box'],'tea-products')}
+  <h3>国际评鉴与获奖记录</h3>
+  <p>从茶席到国际评鉴，留下每一年的记录。下方展示茗是观提供的奖章、证书及 2022—2025 年获奖年表；点选图片可查看完整原图。</p>
+  ${chaGallery(['msg-taste','msg-gold'],'tea-badges')}
+  <p>2025 年 Monde Selection 证书列明，MSG Ltd. 的 Wild Old Tree White Tea（野生古树白茶）获 Grand Gold Quality Award（特金奖）。其他茶款与年份见获奖年表。</p>
+  ${chaGallery(['msg-certificate','msg-timeline'],'tea-documents')}
+  <p class="tea-credit">茶品照片及获奖资料由茗是观提供。<a href="https://www.msgbev.com.tw/" target="_blank" rel="noopener">走进茗是观官网 ↗</a></p>
   <h2>茶的来历</h2>
   <dl><dt>上古至汉</dt><dd>传说神农尝百草，遇毒，得茶而解。可靠的记载里，茶最早出在巴蜀一带。西汉王褒的《僮约》写到“烹茶”“武阳买茶”，说明那时四川已有茶的买卖和饮用。</dd>
   <dt>魏晋南北朝</dt><dd>饮茶从西南沿长江传到江南，士人以茶待客，僧人用茶提神坐禅。</dd>
@@ -200,11 +217,9 @@ function chaPage(){
   <tr><td>红茶</td><td>揉捻后充分氧化</td><td>红汤红叶，甜醇</td><td>正山小种、祁门红茶、滇红</td></tr>
   <tr><td>黑茶</td><td>渥堆，在湿热和微生物作用下后发酵</td><td>汤色深红褐，陈醇</td><td>普洱熟茶、安化黑茶、六堡茶</td></tr>
   </tbody></table>
-  ${chaSlots([['lvcha','绿茶'],['baicha','白茶'],['huangcha','黄茶'],['wulong','乌龙茶'],['hongcha','红茶'],['heicha','黑茶']])}
   <p>普洱茶分生茶和熟茶。熟茶用渥堆工艺制成，属于黑茶；生茶不经渥堆，靠存放慢慢转化，它该归入哪一类，茶界有不同的看法。</p>
   <h2>古树茶</h2>
   <p>茶树原产于中国西南。云南澜沧江两岸的山里，至今保存着成片的古茶园。这里的茶树是乔木型的大叶种，不修剪的话能长到几米甚至十几米高，采茶要爬到树上。树龄一百年以上的，习惯上称为古树；这个说法是茶界的约定，并没有全国统一的标准。</p>
-  ${chaSlots([['gushu','古茶树'],['chashan','云南的茶山'],['caicha','上树采茶']])}
   <h3>同茶园茶有什么不同</h3>
   <p>上世纪八十年代起，云南大量开辟密植的新式茶园，茶树修剪成齐腰高，成行成垄，产量高，当地叫“台地茶”。古茶园正好相反：茶树稀稀落落长在森林里，同樟树、杂木混生，靠落叶做肥，不打药、不施化肥，一棵树一年只采得出很少的茶。</p>
   <p>茶人普遍认为，古树根扎得深，叶子里的内含物多，所以滋味厚，苦涩化得快，回甘长，十几泡之后还有味道。</p>
@@ -221,18 +236,9 @@ function chaPage(){
   <li>鲜叶摊晾后下锅杀青，趁热揉捻成条。</li>
   <li>摊在竹席上用太阳晒干，这就是“晒青毛茶”。晒干而不是烘干，是普洱茶日后能继续转化的关键。</li>
   <li>毛茶用蒸汽蒸软，装进布袋压成饼。传统的一饼重三百五十七克，七饼一筒，叫“七子饼”。</li></ol>
-  ${chaSlots([['shaiqing','晒青'],['yabing','压饼'],['qizibing','七子饼']])}
   <p>这样做出来的是生茶，新茶清香、有苦涩，存放几年到几十年，汤色由黄转红，滋味变得醇厚，所以有“越陈越香”的说法。存放要干燥、通风、避光，远离有气味的东西。</p>
   <h3>买茶时留意</h3>
   <p>古树茶产量少、价格高，市面上树龄和山头被夸大的情况很常见，也没有统一的鉴定办法。树龄几百年、上千年的说法多半出自估计。可靠的做法是找信得过的茶商，多试喝，以自己喝到的滋味为准。</p>
-  <h2>茗是观的茶</h2>
-  <p>本站的赞助者茗是观（MSG Ltd.）2021 年在台湾成立，做的就是古树茶：野生古树白茶、古树普洱生茶、古树红茶，另有乌龙茶。旗下的自在堂从事唐卡的收藏与推广。</p>
-  ${chaSlots([['msg-bai','野生古树白茶'],['msg-sheng','古树普洱生茶'],['msg-hong','古树红茶'],['msg-jiang','获奖证书']])}
-  <p>据茗是观官网介绍，他们的茶自 2022 年起在几项国际食品评鉴中得奖：</p>
-  <ul><li>比利时国际风味暨品质评鉴所（ITQI，现称 International Taste Institute）的风味绝佳奖三星，并因连续三年获得三星而得到水晶奖。这项评鉴由各国主厨与侍酒师盲测评分，常被称为“食品界的米其林”，同《米其林指南》本身并无关系。</li>
-  <li>世界品质评鉴大赏（Monde Selection）特金奖，连续三年。</li>
-  <li>全球纯粹风味评鉴（A.A. Taste Awards）三星。</li></ul>
-  <p>各奖对应的是哪一款茶、哪一年，官网首页没有逐项列出，可以向茗是观查询。<a href="https://www.msgbev.com.tw/" target="_blank" rel="noopener">茗是观官网 msgbev.com.tw</a></p>
   <h2>怎样泡</h2>
   <table class="cha"><thead><tr><th>茶类</th><th>水温</th><th>要点</th></tr></thead><tbody>
   <tr><td>绿茶、黄茶</td><td>80 至 85 度</td><td>水太烫会把嫩芽烫熟，发苦</td></tr>
