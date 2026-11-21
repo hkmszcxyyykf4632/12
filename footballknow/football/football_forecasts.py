@@ -16,6 +16,7 @@ from .motivation import digest, dt
 from .professional_prompts import professional_rules
 from .sync_control import read_control
 from .text_ai import request_json
+from .forecast_reference import initial_reference
 
 COMPETITIONS = {'700': '英超', '740': '西甲', '730': '意甲', '720': '德甲', '710': '法甲'}
 HK = timezone(timedelta(hours=8))
@@ -259,13 +260,22 @@ def generate(row, stage):
     if stage not in {'initial', 'final'} or not read_control()['enabled'] or not pregame(row, at) or not claim(row, stage, at):
         return False
     try:
-        if not fresh(row.get('updatedAt'), at, 10):
+        fallback = None
+        if stage == 'final' and not fresh(row.get('updatedAt'), at, 10):
             defer(row, stage, '等待赛程和盘口来源更新')
             return False
-        research = research_row(row)
+        research = research_row(row) if fresh(row.get('updatedAt'), at, 10) else {}
         valid = (research.get('eventId') == row['id'] and dt(research.get('kickoff')) == dt(row['kickoff'])
                  and all(str(research.get('teams', {}).get(s, {}).get('teamId')) == str(row['teams'][s]['id']) for s in ['home', 'away'])
                  and not research.get('message') and fresh(research.get('pregame', {}).get('capturedAt'), now(), 10))
+        if not valid and stage == 'initial':
+            try:
+                fallback = initial_reference(row, now())
+                research = fallback['research']
+                valid = True
+            except (OSError, ValueError, KeyError, TypeError):
+                defer(row, stage, '等待可核对的赛程、往绩和报价来源更新')
+                return False
         if not valid or stage == 'final' and not confirmed(research, row, now()):
             defer(row, stage, '等待双方正式首发及最新资料' if stage == 'final' else '等待双方赛前往绩资料更新')
             return False
@@ -277,12 +287,14 @@ def generate(row, stage):
         if not config.apiKey.get_secret_value():
             defer(row, stage, '请管理员配置 DeepSeek，配置后自动重试', True)
             return False
-        quote = quote_for(row, now())
+        quote = fallback['quote'] if fallback else quote_for(row, now())
         with connect() as db:
             previous = reports_for(row, db).get('initial')
         snapshot = {'stage': stage, 'capturedAt': now().isoformat(), 'match': row, 'research': research,
-                    'quote': quote, 'baseline': stats, 'initialPrediction': previous}
-        content = validate(request_json(professional_rules('football', RULES), snapshot, 2800), quote)
+                    'quote': quote, 'baseline': stats, 'initialPrediction': previous,
+                    'reference': {k: v for k, v in fallback.items() if k not in {'research', 'quote'}} if fallback else None}
+        rules = RULES + '\n若reference存在，本版是备用赛前资料初版，summary必须说明使用赛前参考盘口而非即时盘口，引用文件更新时间；仅用quote的盘口，不用match中旧quotes推断即时变化。备用资料没有正式首发、天气、伤停及杯赛往绩，不得编造这些资料。'
+        content = validate(request_json(professional_rules('football', rules), snapshot, 2800), quote)
         finished = now()
         latest = current_row(row['id'])
         if not read_control()['enabled'] or not pregame(latest, finished) or identity(latest) != identity(row):
@@ -294,6 +306,8 @@ def generate(row, stage):
         content.update({'issuedAt': finished.isoformat(), 'model': config.model, 'stage': stage,
                         'quote': quote, 'snapshotHash': digest(snapshot), 'researchAt': research.get('pregame', {}).get('capturedAt'),
                         'lineupsConfirmed': confirmed(research, row, finished), 'baseline': stats})
+        if fallback:
+            content['reference'] = snapshot['reference']
         with connect() as db:
             db.execute('INSERT OR IGNORE INTO forecasts VALUES (?,?,?,?,?,?)',
                        (identity(row), stage, row['id'], finished.isoformat(), json.dumps(content, ensure_ascii=False), json.dumps(snapshot, ensure_ascii=False)))

@@ -31,3 +31,10 @@ test('five major league filter includes France and excludes Champions League',()
   const matches=[row,{...row,id:'124',competitionId:'775',league:'ucl'}];
   assert.deepEqual(dailyRows({matches},[],{date:'2026-11-22',competition:'major',now}).map(m=>m.dailyId),['123']);
 });
+test('dated fallback quotes are visibly distinguished from live quotes',()=>{
+  const v=structuredClone(value);
+  v.stages.initial.report={score:[2,1],asianSide:'pass',issuedAt:'2026-11-21T09:00:00Z',summary:['结论','依据'],details:[],reference:{sourceUpdatedAt:'2026-11-20T10:23:08Z',source:'https://www.football-data.co.uk/fixtures.csv'}};
+  document.querySelector('main').innerHTML=forecastsHtml(row,v,now);
+  assert.match(document.querySelector('.forecast-reference').textContent,/赛前参考版.*非即时盘口/);
+  assert.equal(document.querySelector('.forecast-reference a').href,'https://www.football-data.co.uk/fixtures.csv');
+});
