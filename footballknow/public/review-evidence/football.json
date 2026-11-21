@@ -1,0 +1,24 @@
+{
+  "updatedAt": "2026-11-21T09:39:36+00:00",
+  "cases": [{
+    "identity": {"league":"bundesliga","id":"espn:401884736","kickoff":"2026-11-20T19:30Z","home":"Bayern Munich","away":"FC Koln","homeGoals":1,"awayGoals":1},
+    "sources": [
+      {"id":"club-report","url":"https://fcbayern.com/en/news/matchreports/2026/11/match-report-bundesliga-fc-bayern-v-1.-fc-koeln-201126","title":"拜仁官方：拜仁对科隆比赛战报与换人记录","updatedAt":"2026-11-21T09:39:36+00:00"},
+      {"id":"league-report","url":"https://www.bundesliga.com/en/bundesliga/news/bayern-munich-cologne-match-report-highlights-matchday-10-40058","title":"德甲官方：拜仁对科隆战报与预期进球数据","updatedAt":"2026-11-21T09:39:36+00:00"},
+      {"id":"club-analysis","url":"https://fcbayern.com/de/news/2026/11/nachbericht-bundesliga-fc-bayern-1-fc-koeln","title":"拜仁官方赛后分析：控球优势与进攻穿透力","updatedAt":"2026-11-21T09:39:36+00:00"}
+    ],
+    "facts": [
+      {"text":"科隆抢回球权后反击，埃尔马拉脚后跟传球，迈基·摩尔绕过门将打入0:1。","time":"12′","sourceIds":["club-report","league-report"],"category":"observation","beforeEvent":false,"timeline":true},
+      {"text":"凯恩受伤离场，比朔夫替补上场。此次换人由伤情触发，不能单凭换人推断教练主动放弃中锋打法。","time":"20′","sourceIds":["club-report","league-report"],"category":"injury","beforeEvent":false,"timeline":true},
+      {"text":"比朔夫传球后，纳撒尼尔·布朗低射扳成1:1；半场比分1:1。","time":"37′","sourceIds":["club-report","league-report"],"category":"observation","beforeEvent":false,"timeline":true},
+      {"text":"奥利塞半场被换下，蒂姆·宾德出场。拜仁赛后说明奥利塞受到脚部挫伤；伤情说明是赛后信息。","time":"46′","sourceIds":["club-report","club-analysis"],"category":"injury","beforeEvent":false,"timeline":true},
+      {"text":"穆西亚拉换下莱默尔，金玟哉换下于帕梅卡诺；这两次换人时仍是1:1。","time":"70′","sourceIds":["club-report"],"category":"lineup","beforeEvent":false,"timeline":true},
+      {"text":"科乔-埃沃拉换下帕夫洛维奇。此后没有再进球，比赛以1:1结束；这不等于证明换人没有任何积极作用。","time":"88′","sourceIds":["club-report"],"category":"lineup","beforeEvent":false,"timeline":true},
+      {"text":"下半场乌尔比希连续扑出埃尔马拉和迈纳的射门；埃尔马拉末段另一次近距离机会未入。科隆在扳平之后仍制造威胁。","time":"下半场","sourceIds":["league-report"],"category":"observation","beforeEvent":false},
+      {"text":"德甲官方预期进球（xG）为拜仁1.10、科隆2.07。这是该来源对本场机会质量的估计，不是实际进球，也不是本站赛前模型值。","time":"全场","sourceIds":["league-report"],"category":"statistics","beforeEvent":false},
+      {"text":"拜仁官方赛后分析描述科隆使用紧凑的三后卫/五后卫防守，拜仁虽然控球占优，却难以持续进入关键空间。这是俱乐部战报的场面分析。","time":"赛后","sourceIds":["club-analysis"],"category":"observation","beforeEvent":false},
+      {"text":"塔在赛后谈到球队某些时刻不够耐心，同时肯定科隆在低位防守中的主动性。公开发言不能替代逐次进攻与换人效果的测量。","time":"赛后","sourceIds":["club-analysis"],"category":"observation","beforeEvent":false}
+    ],
+    "gaps": ["尚未找到本场完整的赛前预测原文，不能倒写当时曾经考虑或漏看了哪项因素。", "引用战报可解释具体进球和伤退，但没有每次换人前后统一口径的分时技术统计，不能精确量化换人的因果效果。", "这份补充战报没有本场亚洲盘、大小球或比分赔率的连续采样；赔率变化原因须以另外留存的报价时间线核验。"]
+  }]
+}
