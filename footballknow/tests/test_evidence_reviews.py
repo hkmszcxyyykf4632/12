@@ -93,6 +93,31 @@ def test_post_event_injury_alone_cannot_prove_a_pregame_omission():
         reviews.validate_analysis(a, d)
 
 
+def test_correction_receives_all_semantic_errors_with_exact_locations(monkeypatch):
+    d = dossier()
+    calls = []
+
+    def model(rules, context, tokens):
+        calls.append(context)
+        value = answer(context if len(calls) == 1 else context['dossier'])
+        if len(calls) == 1:
+            value['lessons'][0]['category'] = 'method'
+            value['lessons'].append({**copy.deepcopy(value['lessons'][0]),
+                                     'category': 'unresolved', 'evidenceIds': ['f1']})
+            value['marketReview'] = [{'title': '无效来源', 'explanation': '待核对', 'evidenceIds': ['missing']}]
+        return value
+
+    monkeypatch.setattr(reviews, 'request_json', model)
+    result = reviews._generate_analysis(d)
+    assert len(calls) == 2
+    errors = calls[1]['validationErrors']
+    assert 'lessons 第1项：方法遗漏' in errors
+    assert 'lessons 第2项：仅有赛果' in errors
+    assert 'marketReview 第1项引用了不存在' in errors
+    assert result['lessons'][0]['category'] == 'unexpected'
+    assert result['lessons'][0]['evidenceIds'] == [d['facts'][1]['id']]
+
+
 def test_hypothesis_cannot_be_labelled_as_observed_fact():
     d = dossier()
     a = answer(d)

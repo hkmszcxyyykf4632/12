@@ -122,25 +122,31 @@ def validate_analysis(value, dossier):
     audited = [a['claimId'] for a in result['claimAudits']]
     if len(audited) != len(set(audited)) or set(audited) != claims:
         raise ValueError('原预测必须逐条审查，不能遗漏或补造原判断。')
+    issues = []
     for section in ('claimAudits', 'drivers', 'lessons', 'marketReview'):
         for index, item in enumerate(result[section]):
+            location = f'{section} 第{index + 1}项'
             unknown = [e for e in item['evidenceIds'] if e not in facts]
             if unknown:
-                raise ValueError(f'{section} 第{index + 1}项引用了不存在的证据：{unknown}。请从 facts.id 精确选择，不能猜测。')
+                issues.append(f'{location}引用了不存在的证据：{unknown}。请从 facts.id 精确选择，不能猜测。')
+                continue
             if section == 'claimAudits' and item['verdict'] != 'unresolved' and not item['evidenceIds']:
-                raise ValueError('支持或反驳原判断需要证据。')
+                issues.append(f'{location}：支持或反驳原判断需要证据。')
             if section in ('drivers', 'lessons', 'marketReview') and not any(facts[e]['category'] != 'result' for e in item['evidenceIds']):
-                raise ValueError('仅有赛果不能解释原因。')
+                issues.append(f'{location}：仅有赛果不能解释原因。')
             if section == 'drivers' and item['kind'] == 'observed' and any(
                     word in item['explanation'] for word in ('可能', '替代解释', '推测', '假设')):
-                raise ValueError('包含可能解释或假设的原因段落必须标为 inference，不能标为已核实事实。')
+                issues.append(f'{location}：包含可能解释或假设的原因段落必须标为 inference，不能标为已核实事实。')
             if section == 'lessons':
                 if any(c not in claims for c in item['claimIds']) or (item['category'] == 'method' and not item['claimIds']):
-                    raise ValueError('方法遗漏必须对应已保存的原判断。')
+                    issues.append(f'{location}：方法遗漏必须对应已保存的原判断。')
                 if item['category'] == 'unexpected' and not any(facts[e].get('beforeEvent') is False for e in item['evidenceIds']):
-                    raise ValueError('意外归因需要事件发生时点证据。')
+                    issues.append(f'{location}：意外归因需要事件发生时点证据。')
                 if item['category'] == 'method' and not any(facts[e].get('beforeEvent') is True for e in item['evidenceIds']):
-                    raise ValueError('方法遗漏需要至少一项赛前已知证据，不能只用赛后结果推定。')
+                    issues.append(f'{location}：方法遗漏需要至少一项赛前已知证据，不能只用赛后结果推定。'
+                                  '若没有相关赛前事实，须删除该项或将结论和分类一并改为 unresolved；不能只改标签保留漏看断言。')
+    if issues:
+        raise ValueError('\n'.join(issues))
     return result
 
 
