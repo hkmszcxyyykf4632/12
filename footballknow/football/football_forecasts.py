@@ -170,12 +170,14 @@ def review(report, row):
     if not row.get('finished') or row.get('state') != 'finished':
         return {'status': 'pending'}
     score = [row['teams'][s].get('goals') for s in ['home', 'away']]
-    if any(type(x) is not int or x < 0 for x in score) or row.get('scoreScope') != '90分钟含补时':
+    if any(type(x) is not int or x < 0 for x in score) or str(row.get('scoreScope', '')).replace(' ', '') != '90分钟含补时':
         return {'status': 'pending', 'text': '等待可核对的90分钟赛果'}
     direction = lambda v: (v[0] > v[1]) - (v[0] < v[1])
     q = report.get('quote')
     ah = settlement(score, q['line'], report['asianSide']) if q and report['asianSide'] != 'pass' else '未选边'
-    return {'status': 'evaluated', 'score': score, 'exactScore': score == report['score'],
+    from .reviews import football_forecast_review
+    audit = football_forecast_review(row, report)
+    return {'status': 'evaluated', 'score': score, 'exactScore': score == report['score'], 'analysis': audit,
             'resultHit': direction(score) == direction(report['score']), 'asianResult': ah,
             'text': f'完场{score[0]}:{score[1]}；比分' + ('命中' if score == report['score'] else '未命中') + f'；亚洲盘{ah}。',
             'source': row.get('source')}
@@ -212,11 +214,32 @@ def current_row(ident):
     row = next((r for r in load(PUBLIC / 'daily-football.json').get('matches', []) if r.get('id') == ident), None)
     if not row:
         raise LookupError('每日赛事尚未收录本场比赛')
-    return row
+    return resolved_result(row)
+
+
+def resolved_result(row, catalogues=None):
+    """A validated league final result can advance an older daily scoreboard."""
+    from .match_details import match_catalogue
+    from .match_centre_research import same_fixture
+    league = row.get('league') or {'700': 'epl', '720': 'bundesliga', '730': 'seriea', '740': 'laliga'}.get(str(row.get('competitionId')))
+    if league not in {'epl', 'bundesliga', 'seriea', 'laliga', 'ucl'}:
+        return row
+    if catalogues is None:
+        _, matches = match_catalogue(league)
+    else:
+        if league not in catalogues:
+            catalogues[league] = match_catalogue(league)[1]
+        matches = catalogues[league]
+    match = next((m for m in matches if same_fixture({**row, 'league': league}, m, league) and m.get('finished')), None)
+    if not match or not all(type(match.get(s + 'Goals')) is int for s in ('home', 'away')):
+        return row
+    return {**row, 'finished': True, 'started': True, 'state': 'finished', 'scoreScope': match.get('scoreScope', row.get('scoreScope')),
+            'teams': {s: {**row['teams'][s], 'goals': match[s + 'Goals']} for s in ('home', 'away')}}
 
 
 def read_index():
-    rows = [r for r in load(PUBLIC / 'daily-football.json').get('matches', []) if supported(r)]
+    catalogues = {}
+    rows = [resolved_result(r, catalogues) for r in load(PUBLIC / 'daily-football.json').get('matches', []) if supported(r)]
     keys = [identity(r) for r in rows]
     reports, attempts = {}, {}
     with connect() as db:
@@ -290,7 +313,10 @@ def generate(row, stage):
         quote = fallback['quote'] if fallback else quote_for(row, now())
         with connect() as db:
             previous = reports_for(row, db).get('initial')
+        from .evidence_reviews import method_memory
         snapshot = {'stage': stage, 'capturedAt': now().isoformat(), 'match': row, 'research': research,
+                    'reviewLessons': method_memory('football', row['kickoff']),
+                    'reviewLessonInstructions': '这些是过去复盘提出的候选检查项。只核查本场适用的条件，不把一次赛果当成规律，不自动提高胜率或更改权重。',
                     'quote': quote, 'baseline': stats, 'initialPrediction': previous,
                     'reference': {k: v for k, v in fallback.items() if k not in {'research', 'quote'}} if fallback else None}
         rules = RULES + '\n若reference存在，本版是备用赛前资料初版，summary必须说明使用赛前参考盘口而非即时盘口，引用文件更新时间；仅用quote的盘口，不用match中旧quotes推断即时变化。备用资料没有正式首发、天气、伤停及杯赛往绩，不得编造这些资料。'

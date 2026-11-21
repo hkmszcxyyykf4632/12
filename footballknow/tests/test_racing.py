@@ -53,8 +53,11 @@ def test_pre_race_cannot_cross_start_or_pick_a_withdrawn_horse():
 
 
 def test_forecasts_are_immutable_and_post_race_reviews_do_not_inflate_score(tmp_path, monkeypatch):
+    from football import evidence_reviews
     value = race()
+    value.update(course='HV', distance=1200, source='https://racing.hkjc.com/zh-hk/local/information/localresults')
     monkeypatch.setattr(analysis, 'STATE', tmp_path)
+    monkeypatch.setattr(evidence_reviews, 'STATE', tmp_path)
     monkeypatch.setattr(analysis, 'get_race', lambda ident: value)
     monkeypatch.setattr(analysis, 'settings', lambda: SimpleNamespace(model='test-model'))
     def cached(path):
@@ -65,14 +68,25 @@ def test_forecasts_are_immutable_and_post_race_reviews_do_not_inflate_score(tmp_
         calls.append(context['phase'])
         return content(context['phase'])
     monkeypatch.setattr(analysis, 'request_json', reply)
+    def review_reply(rules, context, tokens):
+        calls.append('post')
+        return {'summary': ['原首选已核对正式赛果；过程证据不足，不能归因。'],
+                'claimAudits': [{'claimId': c['id'], 'verdict': 'unresolved', 'explanation': '现有赛果不足以验证原判断依据。',
+                                 'evidenceIds': []} for c in context['claims']],
+                'drivers': [], 'lessons': [], 'marketReview': []}
+    monkeypatch.setattr(evidence_reviews, 'request_json', review_reply)
     first = analysis.generate(value['id'], 'pre')['reports']['pre']
     assert analysis.generate(value['id'], 'pre')['reports']['pre'] == first
     assert calls == ['pre']
-    value['status'] = 'finished'; value['entries'][0].update(place=1, position='1')
+    value.update(status='finished', resultOfficial=True)
+    value['entries'][0].update(place=1, position='1', winOdds=3.1)
     final = analysis.generate(value['id'], 'post')
     assert final['reports']['pre'] == first
     assert final['evaluation']['published'] == final['evaluation']['wins'] == final['evaluation']['evaluated'] == 1
     assert set(final['reports']) == {'pre', 'post'}
+    assert final['reports']['post']['analysisStatus'] == 'ready' and calls == ['pre', 'post']
+    assert analysis.generate(value['id'], 'post')['reports']['pre'] == first
+    assert calls == ['pre', 'post']
 
 
 def test_model_finishing_after_off_is_never_saved_as_a_prediction(tmp_path, monkeypatch):

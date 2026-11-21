@@ -181,7 +181,10 @@ def generate(code):
         if len(bars) < 30 or (stamp.date() - datetime.fromisoformat(bars[-1]['date']).date()).days > 7:
             raise ValueError('可核对的近期复权价格不足，暂不能生成预测。')
         company = load(FOLDER / 'companies' / (code + '.json'))
+        from .evidence_reviews import method_memory
         context = {'stock': stock(code), 'asOf': stamp.isoformat(), 'company': company,
+                   'reviewLessons': method_memory('stocks', stamp.isoformat()),
+                   'reviewLessonInstructions': '以历史复盘为候选检查清单，核对本股是否适用；尚未经后续样本验证，不自动改变权重或宣称准确率提高。',
                    'prices': bars[-80:], 'metrics': price_metrics(bars), 'priceSource': history.get('source'),
                    'priceFreshness': {'fetchedAt': history.get('updatedAt'), 'lastCompletedDate': bars[-1]['date'],
                                       'refreshFailed': history_refresh_failed},
@@ -202,6 +205,7 @@ def generate(code):
         saved_content = content.model_dump()
         saved_content['protocolVersion'] = PROTOCOL_VERSION
         saved_content['priceData'] = context['priceFreshness']
+        saved_content['reviewChecks'] = context['reviewLessons']
         with connect() as connection:
             connection.execute('INSERT OR IGNORE INTO forecasts(code,day,version,issued_at,model,snapshot_hash,content) VALUES (?,?,?,?,?,?,?)',
                 (code, day, VERSION, issued_at, config.model, snapshot_hash, json.dumps(saved_content, ensure_ascii=False)))

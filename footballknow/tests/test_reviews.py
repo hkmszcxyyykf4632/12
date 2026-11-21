@@ -87,4 +87,5 @@ def test_football_review_preserves_pre_match_content_and_no_retrospective_pick(t
     result = reviews.football_review('m1')
     assert result['correct'] is False and result['original']['pick'] == 'H'
     assert result['original']['analysis']['summary'][0] == '固定原文一'
-    assert result['review'] is None
+    assert result['review']['analysisStatus'] == 'limited'
+    assert result['review']['drivers'] == []

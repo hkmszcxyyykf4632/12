@@ -6,6 +6,7 @@ import {racingNav} from './racing-ui.mjs';
 import {replayBlock,bindReplay} from './racing-replay.mjs';
 import {mountPaceSimulation} from './racing-pace.mjs';
 import {mountPreparation} from './racing-preparation.mjs';
+import {evidenceReviewHtml} from './evidence-review.mjs';
 
 const val=x=>x==null||x===''?'—':esc(String(x));
 const stamp=x=>x?new Date(x).toLocaleString('zh-CN',{timeZone:'Asia/Hong_Kong',hour12:false}):'—';
@@ -15,15 +16,16 @@ const person=p=>p?.source?source(p.source,p.name):val(p?.name);
 const table=(headers,rows)=>rows.length?`<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(c=>`<tr>${c.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:'<div class="empty">暂未收录这项资料。</div>';
 async function json(path,signal){const r=await fetch(path,{cache:'no-cache',signal});if(!r.ok)throw Error('资料正在同步，请稍后重新读取。');return r.json();}
 
-function evaluationHtml(state,race){
+export function evaluationHtml(state,race){
   const e=state.evaluation,phase=race.status==='finished'?'post':'pre';
   const report=state.reports?.[phase],prior=state.reports?.pre;
   const name=id=>race.entries.find(h=>h.id===id)?.name||id;
   let html=`<div class="forecast-rates"><div><span>首选胜出命中率</span><strong>${e.evaluated?(e.wins/e.evaluated*100).toFixed(1)+'%':'等待赛果验证'}</strong><small>${e.wins} / ${e.evaluated} 次有效预测 · ${e.pending} 次待赛果 · ${e.void} 次作废</small></div><div><span>首选前三名率</span><strong>${e.evaluated?(e.top3/e.evaluated*100).toFixed(1)+'%':'等待赛果验证'}</strong><small>前三名统计与胜出统计分开计算</small></div></div>`;
-  if(report){html+='<div class="research-summary">'+(report.pick?'<p class="racing-pick">首选：'+esc(name(report.pick))+'</p><p>关注：'+report.shortlist.map(id=>esc(name(id))).join(' · ')+'</p>':'')+report.summary.map(p=>'<p>'+esc(p)+'</p>').join('')+'<p class="note">DeepSeek · '+esc(report.model)+' · '+stamp(report.issuedAt)+'</p><details><summary>更多详细资料</summary>'+report.details.map(d=>'<h3>'+esc(d.title)+'</h3><p>'+esc(d.text)+'</p>').join('')+'</details></div>';}
+  if(report?.format==='evidence-review-1'){html+=evidenceReviewHtml(report);}
+  else if(report){html+='<div class="research-summary">'+(report.pick?'<p class="racing-pick">首选：'+esc(name(report.pick))+'</p><p>关注：'+(report.shortlist||[]).map(id=>esc(name(id))).join(' · ')+'</p>':'')+(report.summary||[]).map(p=>'<p>'+esc(p)+'</p>').join('')+(report.model||report.issuedAt?'<p class="note">'+[report.model,report.issuedAt?stamp(report.issuedAt):null].filter(Boolean).map(esc).join(' · ')+'</p>':'')+'<details><summary>更多详细资料</summary>'+(report.details||[]).map(d=>'<h3>'+esc(d.title)+'</h3><p>'+esc(d.text)+'</p>').join('')+'</details></div>';}
   else html+='<div class="empty">'+(phase==='pre'?'尚未发布本场预测，管理员可使用已配置的 DeepSeek 生成。':'管理员可生成赛后评价，结合实际赛果复盘。')+'</div>';
-  if(phase==='post')html+='<details class="racing-original"><summary>原始赛前预测与验证</summary>'+(prior?'<p>发布：'+stamp(prior.issuedAt)+' · 首选 '+esc(name(prior.pick))+'</p>'+prior.summary.map(p=>'<p>'+esc(p)+'</p>').join('')+'<p>验证：'+(state.outcome?.status==='evaluated'?'实际名次 '+val(state.outcome.position)+'；'+(state.outcome.win?'首选胜出命中':'首选胜出未命中'):esc(state.outcome?.reason||'等待完整赛果'))+'</p>':'<p>本场没有赛前发布的预测，不计入命中率。</p>')+'</details>';
-  if(phase==='post'&&prior){html+='<div class="table-wrap"><table><thead><tr><th>原关注马</th><th>原标记</th><th>实际名次</th><th>结果</th></tr></thead><tbody>'+[...new Set([prior.pick,...prior.shortlist])].filter(Boolean).map(id=>{const h=race.entries.find(e=>e.id===id);return '<tr><td>'+esc(name(id))+'</td><td>'+(id===prior.pick?'首选':'关注')+'</td><td>'+val(h?.place)+'</td><td>'+(h?.withdrawn?'退出作废':h?.place===1?'胜出':h?.place>0?'未胜出':'等待正式赛果')+'</td></tr>';}).join('')+'</tbody></table></div>';}
+  if(phase==='post')html+='<details class="racing-original"><summary>原始赛前预测与验证</summary>'+(prior?.pick?'<p>发布：'+stamp(prior.issuedAt)+' · 首选 '+esc(name(prior.pick))+'</p>'+(prior.summary||[]).map(p=>'<p>'+esc(p)+'</p>').join('')+'<p>验证：'+(state.outcome?.status==='evaluated'?'实际名次 '+val(state.outcome.position)+'；'+(state.outcome.win===true?'首选胜出命中':state.outcome.win===false?'首选胜出未命中':'尚不能验证'):esc(state.outcome?.reason||'等待完整赛果'))+'</p>':'<p>本场没有赛前发布的预测，不计入命中率。</p>')+'</details>';
+  if(phase==='post'&&prior?.pick){html+='<div class="table-wrap"><table><thead><tr><th>原关注马</th><th>原标记</th><th>实际名次</th><th>结果</th></tr></thead><tbody>'+[...new Set([prior.pick,...(prior.shortlist||[])])].filter(Boolean).map(id=>{const h=race.entries.find(e=>e.id===id);return '<tr><td>'+esc(name(id))+'</td><td>'+(id===prior.pick?'首选':'关注')+'</td><td>'+val(h?.place)+'</td><td>'+(h?.withdrawn?'退出作废':h?.place===1?'胜出':h?.place>0?'未胜出':'等待正式赛果')+'</td></tr>';}).join('')+'</tbody></table></div>';}
   return html+'<p class="note">赛前预测在开跑前固定保存。正式赛果发布后计算首选胜出和前三名结果；退出作废。所有有效预测均纳入，不包含赛后补写的判断。</p>';
 }
 
@@ -32,7 +34,7 @@ export function renderRace(id){
   main.innerHTML=pageHeading('赛马详情','正在读取本场资料。','<a class="button secondary" href="#/racing">香港赛马</a>')+'<div id="race-content" class="loading">正在读取排位及赛果…</div>';
   async function analysis(generate=false){
     const button=main.querySelector('#race-generate'),msg=main.querySelector('#race-ai-message');if(!button)return;button.disabled=true;analyzing=true;
-    try{const value=await api('/api/racing/races/'+id+'/analysis'+(generate?'?phase='+(race.status==='finished'?'post':'pre'):''),{signal:controller.signal,timeout:150000,...(generate?{method:'POST'}:{})});if(controller.signal.aborted)return;main.querySelector('#race-analysis').innerHTML=evaluationHtml(value,race);pace?.setPrediction(value);msg.textContent=generate?'分析已保存。':'';}
+    try{const value=await api('/api/racing/races/'+id+'/analysis'+(generate?'?phase='+(race.status==='finished'?'post':'pre'):''),{signal:controller.signal,timeout:150000,...(generate?{method:'POST'}:{})});if(controller.signal.aborted)return;const panel=main.querySelector('#race-analysis');panel.classList.remove('loading');panel.innerHTML=evaluationHtml(value,race);pace?.setPrediction(value);msg.textContent=generate?(value.reports?.post?.format==='evidence-review-1'&&value.reports.post.analysisStatus!=='ready'?'已整理事实，详细原因分析尚未完成。':'分析已保存。'):'';}
     catch(error){if(!controller.signal.aborted)msg.innerHTML=esc(error.message)+' <a href="#/admin">管理后台</a>';}
     finally{analyzing=false;if(!controller.signal.aborted)button.disabled=false;}
   }

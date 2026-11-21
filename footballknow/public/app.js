@@ -35,6 +35,7 @@ import {renderAnalysis} from './analysis-page.mjs';
 import {league} from './league.mjs';
 import {renderRankings} from './rankings-page.mjs';
 import {renderMatches,renderMatch,toggleFollow} from './matches-page.mjs';
+import {bindEvidenceReview} from './evidence-review.mjs';
 
 document.querySelector('[data-league-team-label]').textContent=league.name+'球队';
 document.querySelectorAll('[data-league]').forEach(link=>{const active=link.dataset.league===league.id;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','true');});
@@ -43,6 +44,7 @@ let disposePage=()=>{},updatePage=()=>{},stopPolling=()=>{},stopIndicator=()=>{}
 const route=()=>location.hash.replace(/^#\/?/,'').split('/');
 const routeKey=()=>`${league.id}:${route().join('/')}`;
 bindTheme();bindPalette();bindTableTools(()=>`${league.name}-${route()[0]||'首页'}`);bindPortraits(main);
+bindEvidenceReview(document);
 const closeDrawer=bindDrawer();
 
 function updateStatus() {

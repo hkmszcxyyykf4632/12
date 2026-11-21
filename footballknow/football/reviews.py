@@ -91,12 +91,18 @@ def football_review(match_id, league='epl', generate=False):
         raise LookupError('比赛不存在。')
     identity = match.id if league == 'ucl' else f'{match.season}|{match.home}|{match.away}'
     key = hashlib.sha256(identity.encode()).hexdigest()
-    original = load(league_path(STATE, league) / 'forecasts' / (key + '.json'))
+    original = load(league_path(STATE, league) / 'forecasts' / (key + '.json')) or None
     if original:
-        f = Forecast.model_validate(original)
-        issued = datetime.fromisoformat(f.generatedAt.replace('Z', '+00:00'))
-        kickoff = datetime.fromisoformat(f.kickoff.replace('Z', '+00:00'))
-        if f.league != league or issued.tzinfo is None or kickoff.tzinfo is None or issued >= kickoff:
+        try:
+            f = Forecast.model_validate(original)
+            issued = datetime.fromisoformat(f.generatedAt.replace('Z', '+00:00'))
+            kickoff = datetime.fromisoformat(f.kickoff.replace('Z', '+00:00'))
+            current_kickoff = datetime.fromisoformat((match.kickoff or '').replace('Z', '+00:00'))
+            valid = (f.league == league and issued.tzinfo and kickoff.tzinfo and issued < kickoff
+                     and kickoff == current_kickoff and f.home == match.home and f.away == match.away and f.season == match.season)
+        except (ValueError, TypeError):
+            valid = False
+        if not valid:
             original = None
     completed = (match.finished and match.homeGoals is not None and match.awayGoals is not None
                  and not any(word in match.scoreScope for word in ('加时', '点球', 'aggregate')))
@@ -108,22 +114,48 @@ def football_review(match_id, league='epl', generate=False):
         if generate:
             raise ValueError('比赛尚未完场，暂不能生成赛后复盘。')
         return result
-    if not original:
-        if generate:
-            raise ValueError('这场比赛没有保存的赛前预测，不能补写预测复盘。')
-        return result
     try:
         detail = get_detail(match.id, league, fetch_missing=False)
     except (OSError, ValueError, LookupError):
         detail = None
     if hasattr(detail, 'model_dump'):
         detail = detail.model_dump(mode='json')
-    context = {'task': '赛前分析的赛后复盘', 'originalPrediction': original,
-               'match': match.model_dump(mode='json'), 'result': result.copy(), 'matchDetails': detail,
-               'checkedAt': now(), 'scoring': '90 分钟含补时胜平负；原首选固定，赛后资料只用于复盘。'}
-    review_id = league + '|' + identity + '|' + str(result['score']) + '|' + original['generatedAt']
-    result['review'] = report('football', review_id, context, generate)
+    from .football_review_evidence import build_dossier
+    from .evidence_reviews import build_review
+    dossier = build_dossier(match.model_dump(mode='json'), original, detail, league)
+    result['review'] = build_review('football', dossier['identity'], dossier, generate)
+    if not original:
+        result['message'] = '未找到本场已保存的赛前预测；下列为实际过程研究，不计预测对错。'
     return result
+
+
+def football_forecast_review(row, original, generate=False):
+    """Use each saved stage independently; never attach a neighbouring fixture."""
+    from .football_review_evidence import build_dossier
+    from .evidence_reviews import build_review
+    from .match_details import get_detail, match_catalogue
+    from .match_centre_research import same_fixture
+    from .football_forecasts import connect, identity
+    from .motivation import digest
+    snapshot = None
+    if original.get('stage') and original.get('snapshotHash'):
+        with connect() as db:
+            saved = db.execute('SELECT snapshot,content FROM forecasts WHERE identity=? AND stage=?',
+                               (identity(row), original['stage'])).fetchone()
+        if saved and json.loads(saved['content']) == original:
+            candidate = json.loads(saved['snapshot'])
+            if digest(candidate) == original['snapshotHash']:
+                snapshot = candidate
+    league = row.get('league') or {'700': 'epl', '710': 'ligue1', '720': 'bundesliga', '730': 'seriea', '740': 'laliga'}.get(str(row.get('competitionId')))
+    match, detail = row, None
+    if league in {'epl', 'bundesliga', 'seriea', 'laliga', 'ucl'}:
+        _, matches = match_catalogue(league)
+        match = next((m for m in matches if same_fixture({**row, 'league': league}, m, league)
+                      and m.get('finished') and m.get('homeGoals') is not None and m.get('awayGoals') is not None), row)
+        if match is not row:
+            detail = get_detail(match['id'], league, fetch_missing=False)
+    dossier = build_dossier(match, original, detail, league, snapshot=snapshot)
+    return build_review('football', dossier['identity'], dossier, generate)
 
 
 def closed_bars(history, at):
@@ -173,7 +205,10 @@ def stock_review(code, generate=False, at=None):
               'priceSource': history.get('source'), 'priceUpdatedAt': history.get('updatedAt'),
               'message': '原预测保持不变，未到期的期限继续观察。'}
     identity = code + '|' + close['date'] + '|' + str(original['id'])
-    result['review'] = report('stocks', identity, {'task': '收盘后对先前预测复盘', **result}, generate)
+    from .stock_review_evidence import build_dossier
+    from .evidence_reviews import build_review
+    dossier = build_dossier(code, original, history, bars, result)
+    result['review'] = build_review('stocks', identity, dossier, generate)
     return result
 
 
@@ -192,13 +227,13 @@ def refresh_watched_reviews():
             continue
         existing = stock_review(code)
         from .stock_analysis import public_status
-        if not public_status(code)['latest'] or ((existing.get('close') or {}).get('date') == at.date().isoformat() and existing.get('review')):
+        if not public_status(code)['latest'] or ((existing.get('close') or {}).get('date') == at.date().isoformat() and (existing.get('review') or {}).get('analysisStatus') == 'ready'):
             continue
         attempts[code] = at.isoformat()
         publish(attempts_path, attempts)
         refresh_history(code)
         pending = stock_review(code)
-        if (pending.get('close') or {}).get('date') != at.date().isoformat() or pending.get('review'):
+        if (pending.get('close') or {}).get('date') != at.date().isoformat() or (pending.get('review') or {}).get('analysisStatus') == 'ready':
             return {'generated': 0, 'checked': 1}
         stock_review(code, generate=True)
         return {'generated': 1}
