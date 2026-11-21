@@ -6,7 +6,9 @@ import unicodedata
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
-from .files import PUBLIC, STATE, fetch_text, publish
+from .files import PUBLIC, STATE, publish
+from .ucl import fetch_json
+from .research_scope import supports_research
 from .motivation import dt, digest
 from .match_weather import forecast
 from .sync_control import read_control
@@ -28,7 +30,7 @@ def cached_json(url, path, seconds, at):
     if dt(old.get('updatedAt')) and timedelta(0) <= at - dt(old['updatedAt']) < timedelta(seconds=seconds):
         return old.get('raw', {})
     try:
-        raw = json.loads(fetch_text(url))
+        raw = fetch_json(url)
     except (OSError, ValueError):
         if isinstance(old.get('raw'), dict) and old['raw']:
             return {**old['raw'], '_cachedSourceAt': old.get('updatedAt')}
@@ -171,8 +173,13 @@ def prior_lineup(reference, team_id, at, translations=None):
         return {'status': '此前比赛阵容暂未取得', 'match': reference}
 
 
+def nearing_kickoff(row, at):
+    kickoff = dt(row.get('kickoff'))
+    return bool(kickoff and not row.get('finished') and timedelta(0) <= kickoff - at <= timedelta(hours=2))
+
+
 def build(row, at):
-    raw = cached_json(f'{BASE}/summary?event={row["id"]}', STATE / 'match-summaries' / (row['id'] + '.json'), 60 if row['started'] else 180, at)
+    raw = cached_json(f'{BASE}/summary?event={row["id"]}', STATE / 'match-summaries' / (row['id'] + '.json'), 60 if row['started'] or nearing_kickoff(row, at) else 180, at)
     game = game_of(raw, row['id'], row)
     before = dt(row['kickoff'])
     teams = {}
@@ -235,6 +242,8 @@ def research(ident):
 
 
 def research_row(row):
+    if not supports_research(row):
+        return {'eventId': row['id'], 'supported': False, 'message': '此赛事提供赛程与即场赛果'}
     ident = row['id']
     if not re.fullmatch(r'\d{1,16}', ident):
         raise LookupError('赛事编号不正确')
@@ -244,7 +253,7 @@ def research_row(row):
                 any(old.get('teams', {}).get(s, {}).get('teamId') != row['teams'][s]['id'] for s in ('home', 'away'))):
         old = {}
     at = datetime.now(timezone.utc)
-    ttl = 120 if row['started'] and not row['finished'] else 300
+    ttl = 60 if nearing_kickoff(row, at) else 120 if row['started'] and not row['finished'] else 300
     if dt(old.get('updatedAt')) and timedelta(0) <= at - dt(old['updatedAt']) < timedelta(seconds=ttl):
         return old
     if not read_control()['enabled']:
@@ -266,7 +275,7 @@ def refresh_research():
         return {'paused': True}
     at = datetime.now(timezone.utc)
     matches = load(PUBLIC / 'daily-football.json').get('matches', [])
-    matches = [m for m in matches if dt(m.get('kickoff')) and at - timedelta(hours=4) < dt(m['kickoff']) < at + timedelta(hours=3)]
+    matches = [m for m in matches if supports_research(m) and dt(m.get('kickoff')) and at - timedelta(hours=4) < dt(m['kickoff']) < at + timedelta(hours=3)]
     matches.sort(key=lambda m: (load(PUBLIC / 'daily-research' / (m['id'] + '.json')).get('updatedAt', ''), m['kickoff']))
     results = [research(m['id']) for m in matches[:2]]
     return {'checked': len(results), 'available': sum(bool(r.get('teams')) for r in results)}

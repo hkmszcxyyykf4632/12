@@ -7,8 +7,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-from football.daily_scores import parse_event, refresh_daily, preserve_pregame_quotes
-from football.motivation import build_original, review_match, verify_original
+from football.daily_scores import parse_event, refresh_daily, preserve_pregame_quotes, fetch_day
+from football.motivation import build_original, review_match, verify_original, digest, attach_research
 from football.match_research import lineup, lineup_diff, game_of, history_rows, streak
 from football.match_weather import parse_forecast, forecast
 from football.commodity_history import technical
@@ -23,6 +23,23 @@ def fixture():
 
 
 class DailyResearchTests(unittest.TestCase):
+    def test_daily_scores_use_the_working_shared_espn_client(self):
+        from urllib.error import HTTPError
+        from urllib.request import Request
+        event = fixture()
+        event['competitions'][0]['status']['type'] = {'name': 'STATUS_FULL_TIME', 'completed': True}
+        event['competitions'][0]['competitors'][0]['score'] = '2'
+        def source(request, **kwargs):
+            # Observed on the live endpoint: the generic custom-agent request is rejected,
+            # while the ESPN client already used by the league jobs returns the scoreboard.
+            if isinstance(request, Request) and request.get_header('User-agent', '').startswith('FootballKnow/'):
+                raise HTTPError(request.full_url, 403, 'Forbidden', {}, None)
+            return io.BytesIO(json.dumps({'events': [event]}).encode())
+        with patch('urllib.request.urlopen', side_effect=source):
+            rows = fetch_day('2026-11-20', '2026-11-21T11:00:00+00:00', {})
+        self.assertTrue(rows[0]['finished'])
+        self.assertEqual(rows[0]['teams']['home']['goals'], 2)
+
     def test_pregame_quotes_survive_live_prices_and_check_match_identity(self):
         before = parse_event(fixture(), '2026-11-20', '2026-11-20T17:55:00+00:00', {})
         quote = {'market': 'asian-handicap', 'provider': 'Source', 'via': 'ESPN', 'phase': 'latest',
@@ -144,3 +161,47 @@ class DailyResearchTests(unittest.TestCase):
         self.assertEqual(result['players'][0]['mandarin'], '中文译名')
         self.assertEqual(result['players'][0]['cantonese'], '粵語譯名')
         self.assertNotIn('mandarin', result['players'][1])
+
+
+class ObjectiveMatchContextTests(unittest.TestCase):
+    def test_rank_and_form_do_not_create_mindset_labels(self):
+        at = datetime(2026, 11, 20, 10, tzinfo=timezone.utc)
+        row = parse_event(fixture(), '2026-11-20', at.isoformat(), {})
+        row['teams']['away']['form'] = 'LLLLL'
+        context = {'table': {'updatedAt': at.isoformat(), 'season': str(row['season']), 'source': 'https://example.test/table', 'entries': [
+            {'espnId': '1', 'rank': 2, 'points': 24, 'played': 10},
+            {'espnId': '2', 'rank': 12, 'points': 12, 'played': 10}]}}
+        original = build_original(row, context, at)
+        self.assertEqual(original['version'], 'match-context-2')
+        for team in original['teams'].values():
+            self.assertNotIn('tendency', team)
+            self.assertNotIn('drawAcceptance', team)
+            self.assertEqual(team['checks'], [])
+            self.assertIn('若比分落后', team['scenarios'][0])
+        self.assertIn('第2、24分', original['teams']['home']['summary'])
+        self.assertIn('0胜、0平、5负', original['teams']['away']['summary'])
+        self.assertIn('取胜后为27分', str(original['teams']['home']['evidence']))
+
+    def test_old_snapshot_is_not_rewritten_and_result_does_not_grade_intent(self):
+        at = datetime(2026, 11, 20, 10, tzinfo=timezone.utc)
+        row = parse_event(fixture(), '2026-11-20', at.isoformat(), {})
+        original = build_original(row, {}, at)
+        original['version'] = 'intent-rules-1'
+        for team in original['teams'].values():
+            team.update(tendency='保平倾向', checks=[{'id': 'result', 'label': '全场不败', 'rule': 'unbeaten'}])
+        original['hash'] = digest({k: v for k, v in original.items() if k != 'hash'})
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / '123.json'
+            path.write_text(json.dumps(original), encoding='utf-8')
+            before = path.read_bytes()
+            attach_research(row, [], {}, at, Path(folder))
+            self.assertEqual(path.read_bytes(), before)
+        row.update(finished=True, scoreScope='90分钟含补时')
+        row['teams']['home'].update(goals=2, shots=16)
+        row['teams']['away'].update(goals=1, shots=4)
+        review = review_match(row, original)
+        self.assertEqual(review['teams']['home']['checks'], [])
+        self.assertNotIn('supported', review['teams']['home'])
+        self.assertIn('2 : 1', review['teams']['home']['summary'])
+        self.assertIn('16 : 4', review['teams']['home']['summary'])
+        self.assertTrue(verify_original(original, row))

@@ -142,9 +142,9 @@ def test_retry_cooldown_and_exception_body_never_public(sandbox, monkeypatch):
     assert 'secret' not in str(ff.status(sandbox))
 
 
-def test_timing_six_hours_bootstrap_and_ligue_one(sandbox, monkeypatch):
+def test_timing_six_hours_bootstrap_and_champions_league(sandbox, monkeypatch):
     row = fixture(7)
-    row['competitionId'] = '710'
+    row['competitionId'] = '775'
     publish(ff.PUBLIC/'daily-football.json', {'matches': [row]})
     calls = []
     monkeypatch.setattr(ff, 'generate', lambda r, stage: calls.append(stage) or True)

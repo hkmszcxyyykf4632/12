@@ -1,15 +1,16 @@
 """Daily worldwide scoreboards, with bounded polling and persistent pre-match records."""
-import json
 import math
 import re
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 
-from .files import PUBLIC, STATE, fetch_text, publish, read_json
+from .files import PUBLIC, STATE, publish, read_json
 from .leagues import LEAGUES, league_path
 from .motivation import attach_research
 from .market_odds import line_value
 from .odds import american
+from .ucl import fetch_json
+from .research_scope import supports_research
 
 HK = timezone(timedelta(hours=8))
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard'
@@ -239,7 +240,7 @@ def parse_event(event, source_day, stamp, names):
 
 def fetch_day(day, stamp, names):
     url = f'{BASE}?dates={day.replace("-", "")}&limit=1000'
-    raw = json.loads(fetch_text(url))
+    raw = fetch_json(url)
     events = raw.get('events')
     if not isinstance(events, list) or len(events) >= 1000:
         raise ValueError('Daily scoreboard missing or possibly truncated')
@@ -276,7 +277,12 @@ def refresh_daily(at=None, fetcher=fetch_day):
                 errors.append({'day': day, 'message': '来源暂时不可用，保留最近成功资料'})
     ordered = sorted(rows.values(), key=lambda row: (row['kickoff'], row['id']))
     for row in ordered:
-        attach_research(row, ordered, contexts, at, STATE / 'daily-motivation')
+        if supports_research(row):
+            attach_research(row, ordered, contexts, at, STATE / 'daily-motivation')
+        else:
+            row.pop('motivation', None)
+            row.pop('relatedNews', None)
+            continue
         context = contexts.get(row.get('league'), {})
         club_ids = {t['id'] for t in context.get('data', {}).get('teams', [])
                     if t['name'] in [row['teams'][s]['name'] for s in ('home', 'away')]}

@@ -78,7 +78,7 @@ class CentreTests(unittest.TestCase):
     def test_failed_refresh_keeps_source_time_and_does_not_publish_fake_freshness(self):
         old = {'updatedAt': '2026-01-01T00:00:00Z', 'raw': {'header': {'id': '123'}}}
         with patch.object(match_research, 'load', return_value=old), \
-             patch.object(match_research, 'fetch_text', side_effect=OSError('unavailable')), \
+             patch.object(match_research, 'fetch_json', side_effect=OSError('unavailable')), \
              patch.object(match_research, 'publish') as save:
             value = match_research.cached_json('https://example.test/source', Path('cache.json'), 60, datetime.now(timezone.utc))
         self.assertEqual(value['_cachedSourceAt'], old['updatedAt'])

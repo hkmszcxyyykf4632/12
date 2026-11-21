@@ -1,11 +1,11 @@
-"""Auditable intent hypotheses, frozen before kickoff, with separate outcome checks."""
+"""Frozen match context and conditional scenarios, separate from team intent and forecasts."""
 import hashlib
 import json
 from datetime import datetime, timedelta, timezone
 
 from .files import publish, read_json
 
-VERSION = 'intent-rules-1'
+VERSION = 'match-context-2'
 
 
 def dt(value):
@@ -37,37 +37,27 @@ def table_evidence(row, side, context, at):
 
 
 def team_hypothesis(row, side, context, at):
-    own, rival = row['teams'][side], row['teams']['away' if side == 'home' else 'home']
+    own = row['teams'][side]
     home = side == 'home' and not row.get('neutral')
     evidence = [{'title': '比赛场地', 'fact': '中立场' if row.get('neutral') else '主场' if home else '客场',
-                 'inference': '场地只用于战术倾向判断，不能单独确认战意。',
+                 'inference': '场地是比赛条件，不能据此判断球队争胜或接受平局。',
                  'source': row['source'], 'asOf': row['updatedAt']}]
-    form, opposing = own.get('form', ''), rival.get('form', '')
+    form = ''.join(c for c in str(own.get('form') or '').upper() if c in 'WDL')
     if form:
         evidence.append({'title': '来源所列近期战绩', 'fact': f'{len(form)}场：{form.count("W")}胜、{form.count("D")}平、{form.count("L")}负',
-                         'inference': '近期成绩用于判断取分压力；连败不代表主动求败。',
+                         'inference': '这是已发生的成绩，不代表本场比赛目标或战术部署。',
                          'source': row['source'], 'asOf': row['updatedAt']})
     table = table_evidence(row, side, context, at)
-    tendency, why, confidence = '待确认', '当前可核实资料不足以区分争胜或保平部署。', '资料不足'
     if table:
         t, opponent = table['own'], table['opponent']
         evidence.append({'title': '赛前积分形势',
                          'fact': f'本队第{t["rank"]}、{t["points"]}分（{t["played"]}场）；对手第{opponent["rank"]}、{opponent["points"]}分（{opponent["played"]}场）',
-                         'inference': '排名与分差用于识别取分压力，不宣称已经锁定晋级、保级或必须赢球。',
+                         'inference': '排名与积分提供取分背景，不能确认球队必须赢球或平局足够。',
                          'source': table['source'], 'asOf': table['asOf']})
-        confidence = '中低'
-        if t['rank'] >= table['count'] - 2 or t['rank'] <= 4:
-            tendency, why = '争胜优先', '积分位置带来较强取分需求，争取三分的倾向较高。'
-        elif not home and t['rank'] - opponent['rank'] >= 6 and opponent['points'] - t['points'] >= 6:
-            tendency, why = '保平倾向', '客场面对积分明显更高的对手，稳守取分、接受平局的可能性较高。'
-        else:
-            tendency, why = '争胜优先', '没有足够资料支持保平足够的判断，按常规争取三分处理。'
-    elif len(form) >= 3 and len(opposing) >= 3:
-        confidence = '低'
-        if not home and form.count('L') >= 3 and opposing.count('W') >= 3:
-            tendency, why = '保平倾向', '近期表现处于下风且作客，推测会更重视避免失利。'
-        elif home and form.count('W') >= 3:
-            tendency, why = '争胜优先', '主场与近期胜绩支持主动争胜的初步判断。'
+        evidence.append({'title': '本场取分影响',
+                         'fact': f'按联赛胜3分、平1分计算：本队取胜后为{t["points"] + 3}分，打平后为{t["points"] + 1}分；最终排名还取决于其他赛果。',
+                         'inference': '这是积分算术，不是球队已表态的目标，也不是胜率或比分预测。',
+                         'source': table['source'], 'asOf': table['asOf']})
     fixtures = context.get('live', {}).get('matches', [])
     next_dates = [dt(m.get('kickoff')) for m in fixtures
                   if own['name'] in (m.get('home'), m.get('away')) and dt(m.get('kickoff'))
@@ -76,28 +66,24 @@ def team_hypothesis(row, side, context, at):
         hours = (min(next_dates) - dt(row['kickoff'])).total_seconds() / 3600
         if hours <= 96:
             evidence.append({'title': '已收录后续赛程', 'fact': f'约{hours / 24:.1f}天后另有一场比赛',
-                             'inference': '密集赛程可能影响轮换；尚未由本场首发确认。',
+                             'inference': '若进行轮换，需由首发或教练说明确认；密集赛程不等于放弃本场。',
                              'source': context.get('live', {}).get('source') or row['source'],
                              'asOf': context.get('live', {}).get('updatedAt')})
-            confidence = '低' if tendency != '待确认' else confidence
-    draw = '较高' if tendency == '保平倾向' else '较低' if tendency == '争胜优先' else '待确认'
-    checks = [] if tendency == '待确认' else [
-        {'id': 'result', 'label': '全场取胜' if tendency == '争胜优先' else '全场不败',
-         'rule': 'win' if tendency == '争胜优先' else 'unbeaten'},
-        {'id': 'shots', 'label': '射门占比至少55%' if tendency == '争胜优先' else '射门占比不高于45%',
-         'rule': 'shots_ge_55' if tendency == '争胜优先' else 'shots_le_45'}]
-    return {'teamId': own['id'], 'team': own['label'], 'tendency': tendency, 'drawAcceptance': draw,
-            'loseIntent': '无法判断', 'confidence': confidence, 'summary': why,
+    return {'teamId': own['id'], 'team': own['label'],
+            'summary': '；'.join(e['fact'] for e in evidence if e['title'] != '本场取分影响'),
+            'goalStatus': '现有资料未收录可核对的本场目标表态；不从排名或近况推断争胜、保平心态。',
+            'scenarios': ['若比分落后且需要追分，可观察是否增加前场投入；这是假设情境，不是已确认部署。',
+                          '若比分领先，可观察是否减少冒险、加强防守；不能据此反推赛前只想保平。'],
             'evidence': evidence, 'missing': ['已核实的本场教练赛前言论', '确认首发与轮换', '完整伤停与杯赛晋级条件'],
-            'checks': checks}
+            'checks': []}
 
 
 def build_original(row, context, at):
     if row['state'] != 'scheduled' or row.get('started') or not dt(row['kickoff']) or at >= dt(row['kickoff']):
         return None
     result = {'version': VERSION, 'eventId': row['id'], 'generatedAt': at.isoformat(), 'kickoff': row['kickoff'],
-              'method': '公开数据规则分析；标签是战术与取分意图假设，非球队公开承诺或胜率。',
-              'reviewMethod': '赛后分别核对赛前登记的结果和射门指标；指标符合不等于证实主观心态。',
+              'method': '公开资料整理：积分与近况是客观背景；比赛目标须有本场明确表态，战术情境是条件假设，比分预测独立呈现。',
+              'reviewMethod': '赛后仅记录比分与射门等表现，不以赛果或射门占比检验球队内心意图。',
               'teams': {side: team_hypothesis(row, side, context, at) for side in ('home', 'away')}}
     return {**result, 'hash': digest(result)}
 
@@ -112,29 +98,23 @@ def verify_original(original, row):
 
 def review_match(row, original):
     if not verify_original(original, row):
-        return {'status': '无有效赛前记录', 'summary': '这场比赛未留存有效的赛前战意分析，不补写赛前结论。', 'teams': {}}
+        return {'status': '无有效赛前记录', 'summary': '这场比赛未留存有效赛前记录，不补写当时的目标或部署。', 'teams': {}}
     if not row['finished']:
-        return {'status': '待赛后验证', 'summary': '赛前结论已留存，完场并取得赛果后自动核对。', 'teams': {}}
+        return {'status': '待赛后记录', 'summary': '赛前客观资料已留存，完场后仅记录结果与表现。', 'teams': {}}
     teams = {}
-    for side, hypothesis in original['teams'].items():
+    for side in original['teams']:
         own, rival = row['teams'][side], row['teams']['away' if side == 'home' else 'home']
         scored, conceded = own['goals'], rival['goals']
         normal = row.get('scoreScope') == '90分钟含补时' and all(isinstance(x, int) for x in (scored, conceded))
         a, b = own.get('shots'), rival.get('shots')
-        share = a / (a + b) if all(isinstance(x, (int, float)) and x >= 0 for x in (a, b)) and a + b >= 6 else None
-        checks = []
-        for check in hypothesis['checks']:
-            rule = check['rule']
-            passed = ((scored > conceded if rule == 'win' else scored >= conceded) if normal else None) if check['id'] == 'result' else (
-                (share >= .55 if rule == 'shots_ge_55' else share <= .45) if share is not None and normal else None)
-            observed = (f'{scored} : {conceded}' if normal else '缺少可核实的90分钟赛果') if check['id'] == 'result' else (
-                f'{a:g} : {b:g}次，{share:.0%}' if share is not None and normal else '射门资料不足或包含加时')
-            checks.append({**check, 'observed': observed, 'passed': passed})
-        checked = [c for c in checks if c['passed'] is not None]
-        teams[side] = {'checks': checks, 'supported': sum(c['passed'] for c in checked), 'checked': len(checked),
-                       'summary': f'{sum(c["passed"] for c in checked)}/{len(checked)}项赛前指标得到支持' if checked else '现有资料不足以验证赛前倾向'}
+        valid_shots = normal and all(isinstance(x, (int, float)) and x >= 0 for x in (a, b))
+        observations = [{'label': '90分钟比分（本队在前）', 'observed': f'{scored} : {conceded}' if normal else '缺少可核实的90分钟赛果'}]
+        if valid_shots:
+            observations.append({'label': '射门次数（本队在前）', 'observed': f'{a:g} : {b:g}'})
+        teams[side] = {'checks': [], 'observations': observations,
+                       'summary': '；'.join(f'{item["label"]}：{item["observed"]}' for item in observations)}
     return {'status': '已复核', 'checkedAt': row['updatedAt'], 'source': row['source'], 'teams': teams,
-            'summary': '比赛结果和表现指标已与原记录对照；它们不能直接证明球队内心的输赢意图。'}
+            'summary': '这里只记录结果与表现，不评价争胜或保平心态是否得到支持。'}
 
 
 def attach_research(row, rows, contexts, at, folder):

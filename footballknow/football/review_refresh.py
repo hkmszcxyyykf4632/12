@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from .ai import settings
 from .files import PUBLIC, STATE, publish
 from .match_research import load
+from .leagues import LEAGUES
 from .sync_control import read_control
 
 
@@ -14,7 +15,7 @@ def ready(review):
 
 
 def candidates(at):
-    from .football_forecasts import connect, current_row, review, identity
+    from .football_forecasts import connect, current_row, review, identity, supported
     from .reviews import football_forecast_review, football_review
     from .racing_analysis import connect as racing_connect, public_status, generate
     from .racing import get_race
@@ -25,7 +26,7 @@ def candidates(at):
             row = current_row(item['event_id'])
         except LookupError:
             continue
-        if item['identity'] != identity(row):
+        if not supported(row) or item['identity'] != identity(row):
             continue
         if not row.get('finished') or str(row.get('kickoff', ''))[:10] < (at - timedelta(days=7)).date().isoformat():
             continue
@@ -37,6 +38,8 @@ def candidates(at):
     # Editorial fact supplements can be published without inventing an old prediction.
     for case in load(PUBLIC / 'review-evidence' / 'football.json').get('cases', []):
         fixture = case.get('identity', {})
+        if fixture.get('league') not in LEAGUES:
+            continue
         try:
             result = football_review(fixture['id'], fixture['league'])
         except (LookupError, KeyError):

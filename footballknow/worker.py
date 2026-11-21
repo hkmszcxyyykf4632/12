@@ -213,7 +213,10 @@ def settle(job: Job, name: str, clock: float, stamp: datetime) -> None:
     status.runs += 1
     status.lastDurationMs = round((clock - job.started) * 1000)
     job.future = None
-    job.due = max(clock, job.started + retry_delay(status.intervalSeconds, status.consecutiveFailures))
+    delay = retry_delay(status.intervalSeconds, status.consecutiveFailures)
+    if name == 'football-forecasts':
+        delay = status.intervalSeconds
+    job.due = max(clock, job.started + delay)
     status.nextAttempt = (stamp + timedelta(seconds=job.due - clock)).isoformat()
 
 
@@ -231,6 +234,30 @@ def stop_worker(signum: int, frame: object) -> None:
     STOP.set()
 
 
+PRIORITY_JOBS = {'daily-football', 'football-forecasts'}
+
+
+def dispatch_forecast(jobs, executor, clock, stamp):
+    if PAUSED.is_set() or STOP.is_set() or any(jobs[name].future is not None for name in PRIORITY_JOBS):
+        return False
+    if max_workers() == 1 and any(other.future is not None for name, other in jobs.items() if name not in PRIORITY_JOBS):
+        return False
+    due = [name for name in ('daily-football', 'football-forecasts') if clock >= jobs[name].due]
+    if not due:
+        return False
+    if len(due) == 2:
+        daily, forecast = jobs['daily-football'], jobs['football-forecasts']
+        name = 'daily-football' if daily.status.lastAttempt is None or daily.started <= forecast.started else 'football-forecasts'
+    else:
+        name = due[0]
+    job = jobs[name]
+    job.status.running = True
+    job.status.lastAttempt = stamp.isoformat()
+    job.started = clock
+    job.future = executor.submit(run_job, job.script)
+    return True
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
     signal.signal(signal.SIGTERM, stop_worker)
@@ -238,7 +265,8 @@ def main() -> None:
     jobs = job_table()
     started_at = datetime.now(timezone.utc).isoformat()
     published = 0.0
-    with ThreadPoolExecutor(max_workers=max_workers()) as executor:
+    general_workers = max(1, max_workers() - 1)
+    with ThreadPoolExecutor(max_workers=general_workers) as executor, ThreadPoolExecutor(max_workers=1) as forecast_executor:
         while not STOP.is_set():
             clock, stamp, changed = time.monotonic(), datetime.now(timezone.utc), False
             paused = not read_control()['enabled']
@@ -249,12 +277,17 @@ def main() -> None:
                 if job.future and job.future.done():
                     settle(job, name, clock, stamp)
                     changed = True
-            slots = max_workers() - sum(job.future is not None for job in jobs.values())
+            changed = dispatch_forecast(jobs, forecast_executor, clock, stamp) or changed
+            slots = general_workers - sum(job.future is not None for name, job in jobs.items() if name not in PRIORITY_JOBS)
+            if max_workers() == 1 and any(jobs[name].future is not None for name in PRIORITY_JOBS):
+                slots = 0
             fast = lambda name, job: job.status.group in {'scores', 'odds'} or name in {'football-forecasts', 'finance-quotes', 'finance-assets', 'racing-meetings', 'racing-live', 'portal-news'}
             background_running = sum(job.future is not None and not fast(name, job) for name, job in jobs.items())
             for name, job in sorted(jobs.items(), key=lambda item: (
                     not (item[0] == 'football-forecasts' and clock >= item[1].due),
                     item[1].due, item[1].status.group != 'scores')):
+                if name in PRIORITY_JOBS:
+                    continue
                 available = fast(name, job) or background_running < max(1, max_workers() - 1)
                 if not paused and slots > 0 and available and job.future is None and clock >= job.due:
                     job.status.running = True
