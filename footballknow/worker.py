@@ -36,6 +36,8 @@ JOBS: list[tuple[str, str, str]] = [
     ('football-forecasts', 'sync_football_forecasts.py', 'lineups'),
     ('daily-football', 'sync_daily_football.py', 'scores'),
     ('daily-research', 'sync_match_research.py', 'lineups'),
+    ('finance-backfill', 'sync_backfill.py companies', 'finance'),
+    ('racing-research', 'sync_backfill.py horse-research --limit 12', 'racing'),
     ('finance-cn', 'sync_equities.py cn', 'finance'),
     ('finance-us', 'sync_equities.py us', 'finance'),
     ('finance-volume', 'sync_equities.py volume', 'finance'),
@@ -107,6 +109,7 @@ def interval_overrides(environ: dict[str, str] | None = None) -> dict[str, int]:
 def job_table(environ: dict[str, str] | None = None) -> dict[str, Job]:
     base, overrides = sync_seconds(environ), interval_overrides(environ)
     defaults = {**{f'{league}-profiles': 86400 for league in LEAGUES},
+                'finance-backfill': 300, 'racing-research': 300,
                 'daily-research': 300, 'finance-cn': 300, 'finance-us': 300, 'finance-volume': 300,
                 'finance-companies': 86400, 'finance-catalogue': 86400, 'finance-history': 3600, 'finance-evaluation': 120,
                 'racing-meetings': 300, 'racing-catalogue': 86400, 'racing-horses': 600,

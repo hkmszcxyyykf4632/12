@@ -6,7 +6,9 @@ import worker
 
 def test_live_data_is_frequent_and_profile_work_is_bounded():
     jobs = worker.job_table({})
-    assert len(jobs) == 75
+    assert len(jobs) == 77
+    assert jobs['finance-backfill'].status.intervalSeconds == 300
+    assert jobs['racing-research'].status.intervalSeconds == 300
     assert jobs['football-forecasts'].status.intervalSeconds == 60
     assert jobs['daily-research'].status.intervalSeconds == 300
     assert jobs['finance-cn'].status.intervalSeconds == 300

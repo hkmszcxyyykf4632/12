@@ -13,6 +13,17 @@ def test_cash_debt_and_zero_are_distinct():
     assert classify(company(0, 0, 0))['category'] == 'balanced'
 
 
+def test_current_bonds_are_included_and_missing_fields_are_explained():
+    c = company()
+    c['financials']['statements']['balance'].append({'code': '004011021', 'name': '应付债券',
+        'date': '2026-06-30', 'currency': '人民币', 'amount': 80})
+    assert classify(c)['debt'] == 130
+    assert classify(c)['category'] == 'debt'
+    c = company()
+    c['financials']['statements']['balance'].pop()
+    assert '长期借款' in classify(c)['reason']
+
+
 def test_missing_debt_and_mixed_currency_never_become_cash_rich():
     c = company(); c['financials']['statements']['balance'].pop()
     assert classify(c)['category'] == 'unknown'

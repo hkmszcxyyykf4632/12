@@ -8,7 +8,7 @@ from .finance import FOLDER, load, now
 
 LOCK = threading.Lock()
 CASH = {'004002010', '004002011', '004001030'}
-DEBT = {'004011010', '004020001', '004020007', '004020018', '004011006', '004020005'}
+DEBT = {'004011010', '004020001', '004020007', '004020018', '004011006', '004020005', '004011021'}
 METHOD = '现金多：已披露现金及等价物、短期与中长期存款之和大于已披露借款、债券及租赁负债；负债多则相反。这是统一报表字段比较，不等同公司自行定义的净现金；不含受限制现金与证券投资。银行、保险及非普通报表单列。'
 
 
@@ -17,10 +17,10 @@ def classify(company):
     rows = finance.get('statements', {}).get('balance', [])
     today = datetime.now(timezone.utc).date().isoformat()
     dates = sorted({r.get('date', '') for r in rows if r.get('date') and r['date'] <= today})
-    result = {'code': company.get('code'), 'category': 'unknown', 'label': '待补资料', 'reportDate': dates[-1] if dates else None,
+    result = {'code': company.get('code'), 'category': 'unknown', 'label': '财务分类待核对' if dates else '财报尚未取得', 'reportDate': dates[-1] if dates else None,
               'source': company.get('source'), 'sourceLabel': company.get('sourceLabel'), 'updatedAt': now(), 'cash': None, 'debt': None, 'net': None}
     if not dates:
-        return result
+        return {**result, 'reason': '公司档案尚无资产负债表，后台正在按名单补录。'}
     period = [r for r in rows if r.get('date') == dates[-1]]
     if any(str(r.get('code', '')).startswith(('001', '002', '003')) for r in period):
         return {**result, 'category': 'special', 'label': '金融业独立口径'}
@@ -28,11 +28,14 @@ def classify(company):
     # Require the cash anchor and both maturity buckets; omitted rows are not zero.
     required = {'004002010', '004011010', '004020001'}
     relevant = [r for r in period if str(r.get('code')) in CASH | DEBT]
-    if not required <= by_code.keys() or any(not isinstance(r.get('amount'), (int, float)) or not math.isfinite(r['amount']) or r['amount'] < 0 for r in relevant):
-        return result
+    if not required <= by_code.keys():
+        names = {'004002010': '现金及等价物', '004011010': '短期借款', '004020001': '长期借款'}
+        return {**result, 'reason': '已收录财报，但分类所需字段未单列：' + '、'.join(names[k] for k in sorted(required - by_code.keys())) + '；可查看原始报表。'}
+    if any(not isinstance(r.get('amount'), (int, float)) or not math.isfinite(r['amount']) or r['amount'] < 0 for r in relevant):
+        return {**result, 'reason': '已收录财报，部分现金或借款字段数值需要核对。'}
     currencies = {r.get('currency') for r in relevant}
     if len(currencies) != 1 or None in currencies:
-        return result
+        return {**result, 'reason': '已收录财报，现金和借款字段的币种尚未统一。'}
     cash = sum(r['amount'] for r in relevant if str(r.get('code')) in CASH)
     debt = sum(r['amount'] for r in relevant if str(r.get('code')) in DEBT)
     net = cash - debt

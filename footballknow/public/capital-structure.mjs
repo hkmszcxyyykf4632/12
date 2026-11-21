@@ -1,7 +1,7 @@
 import {esc,sourceLink} from './ui.mjs';
 
 export const capitalCategory=(data,code)=>data?.rows?.[code]?.category||'unknown';
-export function capitalBadge(row){return `<span class="capital-badge capital-${esc(row?.category||'unknown')}">${esc(row?.label||'待补资料')}</span>${row?.reportDate?`<small>报告期 ${esc(row.reportDate)}</small>`:''}`;}
+export function capitalBadge(row){return `<span class="capital-badge capital-${esc(row?.category||'unknown')}">${esc(row?.label||'公司资料补录中')}</span>${row?.reportDate?`<small>报告期 ${esc(row.reportDate)}</small>`:''}${row?.reason?`<small>${esc(row.reason)}</small>`:''}`;}
 export function capitalDetail(row,method){
   if(!row)return '<p class="note">现金与负债分类暂缺足够的同口径资料，可先查看下方已披露报表。</p>';
   const amount=v=>Number.isFinite(v)?(v/1e8).toLocaleString('zh-CN',{maximumFractionDigits:2}):'—';
