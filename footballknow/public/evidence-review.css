@@ -31,3 +31,10 @@
 .er-facts li:focus,.er-sources li:focus{outline:2px solid var(--focus);outline-offset:-2px}
 .er-sources li{padding:12px 0;border-bottom:1px solid var(--line)}.er-sources small{display:block;color:var(--muted);font-size:12px}
 @media(max-width:620px){.er-timeline li{grid-template-columns:minmax(0,1fr);gap:4px}.er-card{padding:12px}.er-header{align-items:flex-start}.er-badge{max-width:100%}}
+
+.er-disclosure{min-width:0;border-top:1px solid var(--line);margin-top:12px}
+.er-disclosure>summary{padding:12px 0;cursor:pointer;font-weight:650;overflow-wrap:anywhere}
+.er-disclosure>summary:hover{color:var(--brand)}
+.er-disclosure>summary:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:var(--radius-sm)}
+.er-disclosure-body{padding:4px 0 12px}
+.er-disclosure-body>:first-child{margin-top:0}.er-disclosure-body>:last-child{margin-bottom:0}

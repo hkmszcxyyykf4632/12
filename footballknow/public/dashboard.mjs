@@ -51,7 +51,7 @@ async function paintSync() {
   } catch {/* The tile keeps its link to the monitor when the status service cannot be read. */}
 }
 
-export function renderHome() {
+export function renderHome(loadError=null) {
   main.innerHTML=`<div class="portal-masthead"><div class="portal-identity"><h1 class="brand-seal brand-seal-home" aria-label="峰弈科技"><span>峰弈</span><span>科技</span></h1><div><span class="eyebrow">足球 · 香港赛马 · 全球市场</span><p>涵盖足球、赛马、黄金、原油、股票与比特币的综合资料分析网站。</p></div></div><div class="portal-sponsors">赞助开发<a href="#/sponsors">茗是观茶业 · 自在堂唐卡 ↗</a></div></div>
   <section id="home-markets"></section><div class="section-head portal-section-head"><h2>即时资讯</h2><a class="button quiet" href="#/portal-news">全部中文新闻 →</a></div><div id="home-news"></div><div class="portal-shortcuts"><a href="#/live"><span>足球</span><strong>即场比赛与赔率 →</strong></a><a href="#/racing"><span>香港赛马</span><strong>赛马日与即时赛果 →</strong></a><a href="#/markets"><span>港股</span><strong>报价与公司资料 →</strong></a><a href="#/horses"><span>马匹资料</span><strong>马房、马主与往绩 →</strong></a></div><div class="section-head"><h2>${league.name}赛程与数据</h2><a href="#/matches">比赛中心 →</a></div><div id="home-lead"></div><div id="home-kpi"></div>
   <div class="dash-grid"><div>
@@ -62,15 +62,23 @@ export function renderHome() {
     <div class="section-head"><h2>射手榜</h2><a class="button quiet" href="#/rankings">球员榜</a></div><div id="home-scorers"></div>
   </div></div>
   <p class="note">开球时间按本地时区显示。比分、胜平负按 90 分钟含补时统计。<a href="#/sources">查看数据来源与统计口径</a></p>`;
-  const update=()=>{
+  main.querySelector('#home-markets').innerHTML='<div class="section-head"><h2>市场行情</h2><a class="button quiet" href="#/markets">港股与市场 →</a></div><div class="loading" role="status">正在读取市场行情…</div>';
+  main.querySelector('#home-news').innerHTML='<div class="loading" role="status">正在读取最新资讯…</div>';
+  const update=(error=loadError)=>{
     if(!main.querySelector('#home-lead'))return;
+    paintMarketPreview(main.querySelector('#home-markets'));paintPortalNews(main.querySelector('#home-news'));
+    if(!data){
+      main.querySelector('#home-lead').innerHTML=error?`<div class="error-box"><h2>暂时无法载入球队资料</h2><p>${esc(error.message)}。已有个人记录仍保存在本浏览器。</p><button class="button" id="reload">重新载入</button> <a class="button secondary" href="#/admin">管理后台</a></div>`:'<div class="loading" role="status">正在读取足球赛程与数据…</div>';
+      main.querySelector('#reload')?.addEventListener('click',()=>location.reload());
+      return;
+    }
     main.querySelector('#home-lead').innerHTML=leadFixture();
     main.querySelector('#home-kpi').innerHTML=kpiStrip();
     main.querySelector('#home-fixtures').innerHTML=fixtureBoard();
     main.querySelector('#home-standings').innerHTML=standingsPreview();
     main.querySelector('#home-scorers').innerHTML=scorers();
     main.querySelector('#home-recent').innerHTML=matchTable(data.matches.filter(m=>m.finished&&m.season===data.season&&m.competition===league.name).slice(0,6));
-    paintMarketPreview(main.querySelector('#home-markets'));paintSync();paintPortalNews(main.querySelector('#home-news'));
+    paintSync();
   };
   main.querySelector('.portal-masthead').insertAdjacentHTML('afterend','<div class="visit-counter" id="home-visits" aria-live="polite"></div>');
   mountVisitCounter(main.querySelector('#home-visits'));

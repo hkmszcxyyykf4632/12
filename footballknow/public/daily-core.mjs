@@ -1,3 +1,4 @@
+import {supportsFootballAnalysis} from './football-scope.mjs';
 import {combinedFixtures} from './competition-feed.mjs';
 import {quotesForMatch} from './settlement.mjs';
 export const hkDay=value=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Hong_Kong',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(value));
@@ -8,7 +9,7 @@ export function validDaily(value){
     /^\d{1,16}$/.test(m.id)&&Number.isFinite(Date.parse(m.kickoff))&&m.teams?.home?.id&&m.teams?.away?.id&&m.teams.home.id!==m.teams.away.id);
 }
 export function dailyRows(snapshot,feeds,{date=hkDay(Date.now()),competition='all',search='',now=Date.now()}={}){
-  const locals=combinedFixtures(feeds,{state:'all',date:'',now:Date.parse(date+'T12:00:00+08:00')});
+  const locals=combinedFixtures(feeds,{state:'all',date:'',now,windowAt:Date.parse(date+'T12:00:00+08:00')});
   const consumed=new Set(),rows=[];
   for(const global of snapshot?.matches||[]){
     const h=global.teams.home,a=global.teams.away;
@@ -17,10 +18,19 @@ export function dailyRows(snapshot,feeds,{date=hkDay(Date.now()),competition='al
     const match=candidates.length===1?candidates[0]:null;
     if(match)consumed.add(match.league+'|'+match.id);
     const feed=feeds.find(f=>f.league===global.league);
+    const localStamp=Date.parse(match?.updatedAt),globalStamp=Date.parse(global.updatedAt);
+    const newerLocal=match&&Number.isFinite(localStamp)&&(!Number.isFinite(globalStamp)||localStamp>globalStamp);
+    const score=newerLocal?{
+      started:match.started,finished:match.finished,homeGoals:match.homeGoals,awayGoals:match.awayGoals,
+      state:match.finished?'finished':match.started?'live':'scheduled',status:match.finished?'已完场':match.started?'进行中':'未开赛',
+      clock:match.finished?'':match.clock||'',updatedAt:match.updatedAt,source:match.source||global.source,
+      teams:{home:{...h,goals:match.homeGoals},away:{...a,goals:match.awayGoals}},
+    }:{homeGoals:h.goals,awayGoals:a.goals};
+    const scoreStamp=Date.parse(score.updatedAt||global.updatedAt);
     rows.push({...match,...global,id:match?.id||global.id,dailyId:global.id,local:match||null,
       key:'daily:'+global.id,home:match?.home||h.name,away:match?.away||a.name,homeLabel:h.label,awayLabel:a.label,
-      homeGoals:h.goals,awayGoals:a.goals,quotes:[...(global.quotes||[]),...(match?quotesForMatch(feed?.markets,match):[])],
-      delayed:!Number.isFinite(Date.parse(global.updatedAt))||now-Date.parse(global.updatedAt)>180000});
+      ...score,quotes:[...(global.quotes||[]),...(match?quotesForMatch(feed?.markets,match):[])],
+      delayed:!Number.isFinite(scoreStamp)||now-scoreStamp>180000});
   }
   for(const m of locals){
     if(consumed.has(m.league+'|'+m.id))continue;
@@ -29,7 +39,7 @@ export function dailyRows(snapshot,feeds,{date=hkDay(Date.now()),competition='al
       quotes:quotesForMatch(feeds.find(f=>f.league===m.league)?.markets,m)});
   }
   const q=search.trim().toLocaleLowerCase();
-  return rows.filter(m=>m.day===date&&(competition==='all'||competition==='major'&&(['700','710','720','730','740'].includes(String(m.competitionId))||['epl','laliga','seriea','bundesliga'].includes(m.league))||competition==='five'&&Boolean(m.league)||competition==='league:'+m.league||competition==='competition:'+m.competitionId)
+  return rows.filter(m=>m.day===date&&(competition==='all'||competition==='major'&&supportsFootballAnalysis(m)||competition==='five'&&Boolean(m.league)||competition==='league:'+m.league||competition==='competition:'+m.competitionId)
     &&(!q||[m.home,m.away,m.homeLabel,m.awayLabel,m.competition].join(' ').toLocaleLowerCase().includes(q)))
     .sort((a,b)=>Date.parse(a.kickoff)-Date.parse(b.kickoff)||a.key.localeCompare(b.key));
 }

@@ -19,7 +19,7 @@ function fixture(){return {
     sources:[{id:'source-private-id',title:'官方比赛中心',url:'https://example.org/match?a=1&b=2',updatedAt:'2026-11-20T12:00:00Z'}],
     gaps:['缺少首发公布前后的连续赔率快照。']}
 };}
-const dom=report=>new JSDOM(evidenceReviewHtml(report),{url:'https://local.test/#/match/test'});
+const dom=(report,options)=>new JSDOM(evidenceReviewHtml(report,options),{url:'https://local.test/#/match/test'});
 
 test('detailed review exposes timeline, exact claims, causal limits, odds and prospective checks',()=>{
   const document=dom(fixture()).window.document;
@@ -96,7 +96,7 @@ test('missing original never renders invented claim audits or method omissions',
 });
 
 test('citation clicks open evidence and focus the matching fact without changing the SPA route',()=>{
-  const window=dom(fixture()).window,document=window.document;
+  const window=dom(fixture(),{compact:true}).window,document=window.document;
   bindEvidenceReview(document);bindEvidenceReview(document);
   const link=document.querySelector('.er-timeline a[data-evidence-anchor]');
   const destination=document.getElementById(link.getAttribute('href').slice(1));
@@ -112,6 +112,8 @@ test('citation clicks open evidence and focus the matching fact without changing
   sourceLink.dispatchEvent(new window.MouseEvent('click',{bubbles:true,cancelable:true}));
   assert.ok(document.activeElement.className!==undefined);
   assert.equal(document.activeElement.id,sourceLink.getAttribute('href').slice(1));
+  assert.equal(document.querySelector('[data-disclosure="review-sources"]').open,true);
+  assert.equal(window.location.hash,'#/match/test');
 });
 
 test('revision-prefixed anchors remain distinct across reports and invalid references are omitted',()=>{
@@ -153,6 +155,8 @@ test('football and stock panels render factual reviews for empty originals and n
       bindReview(target,{kind:item.kind,id:item.kind==='stock'?'00700':'test',league:'epl'});
       await new Promise(resolve=>setImmediate(resolve));
       assert.ok(target.querySelector('.evidence-review'));
+      assert.equal(target.querySelectorAll('.er-disclosure').length,item.kind==='football'?6:0);
+      assert.ok([...target.querySelectorAll('.er-disclosure')].every(detail=>!detail.open));
       assert.ok(!target.textContent.includes('undefined'));
       assert.ok(!target.textContent.includes('未命中'));
       assert.equal(target.querySelector('[data-review-generate]').disabled,!item.enabled);
@@ -169,7 +173,7 @@ test('football and stock panels render factual reviews for empty originals and n
 test('automatic football and racing settlement surfaces use detailed review while forecasts remain brief',async()=>{
   const {forecastsHtml}=await import('../public/football-forecasts.mjs');
   const {evaluationHtml}=await import('../public/racing-page.mjs');
-  const row={id:'123',dailyId:'123',competitionId:'710',kickoff:'2026-11-21T16:00:00Z',finished:true,
+  const row={id:'123',dailyId:'123',competitionId:'700',kickoff:'2026-11-21T16:00:00Z',finished:true,
     teams:{home:{id:'1',label:'甲'},away:{id:'2',label:'乙'}}};
   const report=fixture();report.revision='football-integration';
   const prediction={score:[2,1],asianSide:'pass',issuedAt:'2026-11-21T09:00:00Z',summary:['简短赛前预测。'],details:[],
@@ -185,6 +189,7 @@ test('automatic football and racing settlement surfaces use detailed review whil
   const state={evaluation:{evaluated:0,wins:0,top3:0,pending:0,void:0},reports:{post:racingReport,pre:{}},outcome:{status:'evaluated',win:null}};
   const racingHtml=evaluationHtml(state,race),racing=new JSDOM(racingHtml).window.document;
   assert.ok(racing.querySelector('.evidence-review'));
+  assert.equal(racing.querySelectorAll('.er-disclosure').length,0);
   for(const invalid of ['undefined','Invalid Date','未命中'])assert.ok(!racing.body.textContent.includes(invalid));
   assert.ok(racing.body.textContent.includes('没有赛前发布的预测'));
   const html=await readFile(new URL('../public/index.html',import.meta.url),'utf8');
@@ -196,4 +201,23 @@ test('automatic football and racing settlement surfaces use detailed review whil
     const content=`<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>详细复盘组件验证</title><link rel="stylesheet" href="../../../public/styles.css"><link rel="stylesheet" href="../../../public/expansion.css"><link rel="stylesheet" href="../../../public/sections.css"><link rel="stylesheet" href="../../../public/daily.css"><link rel="stylesheet" href="../../../public/research-features.css"><link rel="stylesheet" href="../../../public/evidence-review.css"><style>main{max-width:1000px;margin:auto;padding:24px}.validation-surface{margin-bottom:48px}</style></head><body><main><h1>详细复盘组件验证</h1><p>以下为界面测试夹具，不是真实预测成绩。</p><section class="validation-surface"><h2>足球两阶段预测</h2>${footballHtml}</section><section class="validation-surface"><h2>赛马事实研究</h2>${racingHtml}</section><section class="validation-surface"><h2>详细分析尚待生成</h2>${evidenceReviewHtml(awaiting)}</section></main><script type="module">import {bindEvidenceReview} from '../../../public/evidence-review.mjs';bindEvidenceReview(document);</script></body></html>`;
     await writeFile(`${process.env.EVIDENCE_RENDER_DIR}/renderer-fixture.html`,content,'utf8');
   }
+});
+
+
+test('compact opt-in preserves content and visible summary and turning points while collapsing details',()=>{
+  const report=fixture(),standard=dom(report).window.document,compact=dom(report,{compact:true}).window.document;
+  assert.equal(compact.body.textContent,standard.body.textContent);
+  assert.equal(standard.querySelectorAll('.er-disclosure').length,0);
+  for(const key of ['timeline','claims','market','lessons','gaps','facts','sources']){
+    const detail=compact.querySelector(`details[data-disclosure="review-${key}"]`);
+    assert.ok(detail,key);assert.equal(detail.open,false,key);
+    assert.ok(detail.querySelector('summary').textContent.trim(),key);
+  }
+  assert.equal(compact.querySelector('.er-summary').closest('details'),null);
+  const turningPoint=[...compact.querySelectorAll('h3')].find(node=>node.textContent==='关键转折与可能原因');
+  assert.equal(turningPoint.closest('details'),null);
+  for(const detail of compact.querySelectorAll('details'))detail.open=true;
+  assert.ok([...compact.querySelectorAll('details')].every(detail=>detail.open));
+  report.revision='new-revision';report.generatedAt='2026-11-21T14:00:00Z';
+  assert.deepEqual([...dom(report,{compact:true}).window.document.querySelectorAll('[data-disclosure]')].map(node=>node.dataset.disclosure),[...compact.querySelectorAll('[data-disclosure]')].map(node=>node.dataset.disclosure));
 });

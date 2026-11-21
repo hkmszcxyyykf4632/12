@@ -21,7 +21,7 @@ export async function competitionFeeds(){
 }
 export function localDate(value){const d=new Date(value);return Number.isFinite(d.getTime())?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`:'';}
 export const fixtureTime=m=>Date.parse(m.kickoff||(m.date?`${m.date}T12:00:00`:''));
-export function combinedFixtures(feeds,{league='all',state='upcoming',date='',now=Date.now()}={}){
+export function combinedFixtures(feeds,{league='all',state='upcoming',date='',now=Date.now(),windowAt=now}={}){
   const rows=[];
   for(const feed of feeds){
     if(!feed.data||!feed.live||league!=='all'&&league!==feed.league)continue;
@@ -29,11 +29,11 @@ export function combinedFixtures(feeds,{league='all',state='upcoming',date='',no
     for(const m of feed.live.matches){
       const kickoff=fixtureTime(m),day=localDate(m.kickoff||`${m.date}T12:00:00`);
       if(date&&date!==day)continue;
-      if(!date&&Number.isFinite(kickoff)&&(kickoff<now-7*86400000||kickoff>now+7*86400000))continue;
+      if(!date&&Number.isFinite(kickoff)&&(kickoff<windowAt-7*86400000||kickoff>windowAt+7*86400000))continue;
       if(state==='live'&&(!m.started||m.finished)||state==='upcoming'&&(m.finished||!m.started&&(!Number.isFinite(kickoff)||kickoff<now))||state==='finished'&&!m.finished)continue;
       const archived=feed.data.matches?.find(a=>a.season===m.season&&a.competition===m.competition&&a.home===m.home&&a.away===m.away);
       rows.push({...m,aliases:[...(m.aliases||[]),archived?.id].filter(Boolean),league:feed.league,homeLabel:names[m.home]||m.home,awayLabel:names[m.away]||m.away,day,
-        updatedAt:feed.live.updatedAt,delayed:feed.failed||now-Date.parse(feed.live.updatedAt)>180000});
+        updatedAt:feed.live.updatedAt,delayed:Boolean(feed.failed)||!Number.isFinite(Date.parse(feed.live.updatedAt))||now-Date.parse(feed.live.updatedAt)>180000});
     }
   }
   return rows.sort((a,b)=>(fixtureTime(a)||Infinity)-(fixtureTime(b)||Infinity)||a.league.localeCompare(b.league)||a.id.localeCompare(b.id));

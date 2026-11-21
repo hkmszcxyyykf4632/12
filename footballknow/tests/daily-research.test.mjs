@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {handicapAlerts} from '../public/odds-alerts.mjs';
+import {JSDOM} from 'jsdom';
 import {dailyRows} from '../public/daily-core.mjs';
 
 const quote=(phase,line,extra={})=>({market:'asian-handicap',provider:'Provider A',via:'Feed',phase,line,prices:{H:1.9,A:1.9},fetchedAt:'2026-11-20T01:00:00Z',...extra});
@@ -68,4 +69,40 @@ test('totals and three-way prices use their own market and selection',()=>{
   assert.equal(result.length,1);
   assert.equal(result[0].selection,'H');
   assert.equal(result[0].measure,'price');
+});
+
+
+test('legacy motivation shows objective facts by default and retains unsupported guesses only in closed audit',async()=>{
+  globalThis.document=new JSDOM('<main id="main"></main>').window.document;
+  const {motivationHtml,motivationSummary}=await import('../public/daily-research.mjs');
+  const team={team:'曼城',tendency:'争胜优先',summary:'推测争取三分',drawAcceptance:'较低',confidence:'中低',loseIntent:'无法判断',evidence:[{title:'赛前积分形势',fact:'本队第2、24分；对手第12、12分',inference:'推测争胜'},{title:'来源所列近期战绩',fact:'5场：3胜、1平、1负'}],missing:['首发名单'],checks:[{label:'全场取胜'}]};
+  const original={generatedAt:'2026-11-21T08:00:00Z',version:'intent-rules-1',hash:'abcdefghijklmnop',teams:{home:team,away:{...team,team:'富咸',tendency:'保平倾向',summary:'推测接受平局'}}};
+  const before=JSON.stringify(original);
+  assert.match(motivationSummary({motivation:{original}},'away'),/第2、24分/);
+  assert.doesNotMatch(motivationSummary({motivation:{original}},'away'),/保平|接受平局/);
+  const review={teams:{home:{summary:'2/2项赛前指标得到支持',checks:[{label:'取胜',observed:'2:1',passed:true}]}}};
+  const document=new JSDOM(motivationHtml({motivation:{original,review}})).window.document;
+  for(const detail of document.querySelectorAll('details'))assert.equal(detail.open,false);
+  const visible=document.body.cloneNode(true);visible.querySelectorAll('details').forEach(node=>node.remove());
+  assert.match(visible.textContent,/第2、24分/);assert.match(visible.textContent,/3胜、1平、1负/);
+  assert.doesNotMatch(visible.textContent,/争胜优先|保平倾向|推测争取三分|2\/2项|原接受平局判断/);
+  assert.match(document.querySelector('[data-disclosure="motivation-away-original"]').textContent,/保平倾向/);
+  assert.match(document.querySelector('[data-disclosure="motivation-home-original"]').textContent,/2\/2项赛前指标得到支持/);
+  assert.equal(JSON.stringify(original),before);
+});
+
+test('new motivation and absent snapshots use actual context and separate conditional scenarios from goals',async()=>{
+  globalThis.document=new JSDOM('<main id="main"></main>').window.document;
+  const {motivationHtml}=await import('../public/daily-research.mjs');
+  const teams={home:{label:'曼城',form:'WWDWL'},away:{label:'富咸',form:'LWDLD'}};
+  for(const original of [null,{version:'match-context-2',teams:{home:{team:'曼城',evidence:[{title:'赛前积分形势',fact:'本队第2、24分'}]},away:{team:'富咸',evidence:[]}}}]){
+    const document=new JSDOM(motivationHtml({teams,motivation:{original,review:{teams:{home:{observations:[{label:'90分钟比分（本队在前）',observed:'2 : 1'}]}}}}})).window.document;
+    assert.match(document.body.textContent,/比赛目标须有明确表态/);
+    assert.match(document.body.textContent,/比分预测单独呈现/);
+    assert.match(document.body.textContent,/2 : 1/);
+    assert.equal(document.querySelector('[data-disclosure="motivation-home-original"]'),null);
+    const scenarios=document.querySelector('[data-disclosure="motivation-home-scenarios"]');
+    assert.equal(scenarios.open,false);assert.match(scenarios.textContent,/若比分落后/);
+    assert.match(document.querySelectorAll('.intent-team')[1].textContent,/1胜、2平、2负/);
+  }
 });

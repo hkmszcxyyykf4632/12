@@ -41,6 +41,7 @@ document.querySelector('[data-league-team-label]').textContent=league.name+'球�
 document.querySelectorAll('[data-league]').forEach(link=>{const active=link.dataset.league===league.id;link.classList.toggle('active',active);if(active)link.setAttribute('aria-current','true');});
 
 let disposePage=()=>{},updatePage=()=>{},stopPolling=()=>{},stopIndicator=()=>{};
+let waitingForData=false,loadError=null;
 const route=()=>location.hash.replace(/^#\/?/,'').split('/');
 const routeKey=()=>`${league.id}:${route().join('/')}`;
 bindTheme();bindPalette();bindTableTools(()=>`${league.name}-${route()[0]||'首页'}`);bindPortraits(main);
@@ -65,6 +66,7 @@ export function updateView() {
 }
 
 function render() {
+ waitingForData=false;
  disposePage();disposePage=()=>{};updatePage=()=>{};
  const [current,id,second]=route(),page=current||'home';closeDrawer();
  const racingPages=['racing','race','horse','horses','horse-going','bloodlines','racing-day','racing-rankings'];
@@ -95,8 +97,13 @@ function render() {
  if(page==='live'){document.querySelector('#breadcrumb').textContent='全球足球 / 每日赛事与即场赛果';disposePage=renderLive();return;}
  if(page==='news'){disposePage=renderNews(id||'');return;}
  if(page==='portal-news'){document.querySelector('#breadcrumb').textContent='峰弈科技 / 即时资讯';disposePage=renderPortalNews(id);return;}
- if(!data)return;
- if(page==='home')updatePage=renderHome();
+ if(page==='home')updatePage=renderHome(loadError);
+ else if(!data){
+   waitingForData=true;
+   main.innerHTML=loadError?`<div class="error-box"><h2>暂时无法载入球队资料</h2><p>${esc(loadError.message)}。已有个人记录仍保存在本浏览器。</p><button class="button" id="reload">重新载入</button> <a class="button secondary" href="#/admin">管理后台</a></div>`:'<div class="loading" role="status">正在读取球队资料…</div>';
+   main.querySelector('#reload')?.addEventListener('click',()=>location.reload());
+   return;
+ }
  else if(page==='rankings')updatePage=renderRankings();
  else if(page==='compare')updatePage=renderCompare(id,second);
  else if(page==='player')updatePage=renderPlayer(id,second);
@@ -112,7 +119,7 @@ function render() {
  else if(page==='sources')renderSources();
  else main.innerHTML='<div class="empty">页面不存在。<a href="#/">回到联赛总览</a></div>';
  if(storeProblem)main.insertAdjacentHTML('afterbegin',`<div class="error-box">${esc(storeProblem)}</div>`);
- if(data.warnings?.length)main.insertAdjacentHTML('afterbegin','<p class="notice">部分历史资料来源暂未更新，正在显示最近成功记录。<a href="#/sources">查看来源</a></p>');
+ if(data?.warnings?.length)main.insertAdjacentHTML('afterbegin','<p class="notice">部分历史资料来源暂未更新，正在显示最近成功记录。<a href="#/sources">查看来源</a></p>');
  updateStatus();enhanceTables(main,routeKey());hydratePlayerPortraits(main,league.id);
 }
 
@@ -151,11 +158,12 @@ if(Observer) {
 window.addEventListener('pagehide',()=>{stopPolling();stopIndicator();disposePage();tableObserver?.disconnect();clearTimeout(tablePass);});
 
 async function start() {
- try {await refresh(true);reconcile(data.matches);render();stopPolling=startPolling(updateView);stopIndicator=startSyncIndicator(()=>stopPolling.now?.());}
+ render();
+ try {await refresh(true);if(waitingForData)render();updateView();stopPolling=startPolling(updateView);stopIndicator=startSyncIndicator(()=>stopPolling.now?.());}
  catch(error) {
-   if(['coaches','bloodlines','horse-going','videos','video-admin','cn-markets','us-stocks','stock-volume','admin','status','live','news','portal-news','sponsors','markets','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset','racing','race','horse','horses','racing-day','racing-rankings'].includes(route()[0])){render();return;}
-   main.innerHTML=`<div class="error-box"><h2>暂时无法载入球队资料</h2><p>${esc(error.message)}。已有个人记录仍保存在本浏览器。</p><button class="button" id="reload">重新载入</button> <a class="button secondary" href="#/admin">管理后台</a></div>`;
-   main.querySelector('#reload').addEventListener('click',()=>location.reload());
+   loadError=error;
+   if(waitingForData)render();
+   else if(!route()[0]||route()[0]==='home')updatePage(error);
  }
 }
 start();
