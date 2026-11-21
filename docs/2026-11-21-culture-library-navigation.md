@@ -24,4 +24,12 @@
 - 录音相关检查使用模拟播放器，未据此声称已完成真人音频听感验证。
 - 投资站发布前健康状态正常，后台未暂停，worker PID 为 2416130；只部署两个静态文件，不重启 worker。
 
-正式发布版本与在线验证结果发布后补记。
+## 正式发布验证
+
+- 源码版本：`62356f13f669bdc94b1cd5e84acb1afef5ad6652`；发布包提交：`810027693410cf124921eaa0d0d458236ff0cb9e`，均已推送 GitHub。
+- 文化站于香港时间 2026-11-21 16:21 发布，207 个文件，压缩包 SHA-256 为 `2109b27beebedd30213f56c871b601cf29b41a0a121a60f0ec0adb0b7dc9eb6c`。
+- `https://tripitaka.shop/jingzang-release.json` 返回上述源码版本。线上分类、北传目录、《楞严经》第十卷结束语和章节控制均已用浏览器验证。
+- 文化站回退备份：`/var/backups/jingzang/20261121T082151`；旧目录：`/srv/jingzang/releases/8ed83808540a8c994a995970d9ffc03243aecc2c`。Caddy 与访问计数服务正常。
+- 投资站于香港时间 16:21:56 完成两文件更新。线上首页和 `shell.mjs` 摘要分别为 `b3658ac760c4ada78add6033bcbaf504df779d3ba564032f9e3ffd6ba24ac720`、`6e585537a26269c397127433a3ead974365f7896842611d5d0c90bc6265ee506`，与提交中的文件完全一致。
+- 投资站备份：`/var/backups/footballknow/ui-20261121T082155`。发布后 worker PID 仍为 2416130、健康状态正常、未暂停；当时心跳延迟为 1 秒。浏览器首页正常加载、没有倒计时、未捕获到控制台错误。
+- 页面截图：`docs/evidence/2026-11-21-culture-navigation/culture-left-categories.jpg` 与 `investment-without-countdown.jpg`。
