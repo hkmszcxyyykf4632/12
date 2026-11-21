@@ -1,7 +1,7 @@
 {
   "identity": "bundesliga:espn:401884736",
   "league": "bundesliga",
-  "basisFactsHash": "f7a65254b1a23ce57dafd280fcdaec1a709e219155125d258a7f99a73727852f",
+  "basisFactsHash": "2d8165764118da85206fcf21ff07f55a6d3102ed4cbdf2e33adf0d66f194cd9c",
   "checkedAt": "2026-11-21",
   "reviewMethod": "AI draft checked and amended against source-linked match facts and calculated odds; original drafts retained privately.",
   "corrections": [
@@ -184,7 +184,7 @@
         "evidenceIds": [
           "f93a6b04a4955",
           "ff61453b3dce3",
-          "f259ed30fbbc0"
+          "fc6eb29984230"
         ]
       },
       {
@@ -193,7 +193,7 @@
         "evidenceIds": [
           "f4d1aeea526eb",
           "f531e3e7fd0b4",
-          "f259ed30fbbc0"
+          "fc6eb29984230"
         ]
       },
       {
@@ -202,7 +202,7 @@
         "evidenceIds": [
           "fec50c2d9c35e",
           "fcaf398376419",
-          "f259ed30fbbc0"
+          "fc6eb29984230"
         ]
       },
       {
@@ -219,5 +219,16 @@
         ]
       }
     ]
+  },
+  "basisNonResultHash": "b72465a9a1ada036ce729d80ec5684af0d6b613f62fd4158b0a9efddbbf729be",
+  "resultFact": {
+    "text": "Bayern Munich 1–1 FC Koln（90 分钟含补时）",
+    "sourceIds": [
+      "s19d32c0ed67d"
+    ],
+    "category": "result",
+    "time": "2026-11-20",
+    "beforeEvent": null,
+    "id": "fc6eb29984230"
   }
 }
