@@ -145,6 +145,20 @@ def _revision(dossier):
     return _hash({'version': VERSION, 'dossier': stable})
 
 
+def _generate_analysis(dossier):
+    rules = professional_rules(dossier['domain'], RULES)
+    draft = request_json(rules, dossier, 10000)
+    try:
+        return validate_analysis(draft, dossier)
+    except ValueError as error:
+        issues = error.errors(include_input=False, include_url=False) if hasattr(error, 'errors') else str(error)
+        correction = {'dossier': dossier, 'draftToCorrect': draft, 'validationErrors': issues}
+        repaired = request_json(rules + '\n上一份草稿未通过校验。根据 validationErrors 修正，返回完整 JSON。'
+                                '没有事实支持的原因、建议或市场解释应删除该条；不能为了保留文字随意挂上不相关证据。'
+                                '没有原预测不构成方法遗漏的证据。缺项只在有相关事实支持时讨论，不能补造证据 ID。', correction, 10000)
+        return validate_analysis(repaired, dossier)
+
+
 def _read(path):
     try:
         return json.loads(path.read_text('utf-8'))
@@ -190,7 +204,7 @@ def build_review(domain, identity, dossier, generate=False):
         try:
             saved = _read(path)
             if not saved:
-                content = validate_analysis(request_json(professional_rules(domain, RULES), dossier, 10000), dossier)
+                content = _generate_analysis(dossier)
                 saved = {**content, 'generatedAt': datetime.now(timezone.utc).isoformat(),
                          'protocolVersion': VERSION, 'revision': revision, 'originalHash': _hash(dossier['original'])}
                 folder.mkdir(parents=True, exist_ok=True)

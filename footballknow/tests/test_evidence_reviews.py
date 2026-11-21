@@ -98,3 +98,32 @@ def test_revision_file_is_complete_before_becoming_visible(tmp_path, monkeypatch
     assert reviews._save_revision(path, {'value': 1}) == {'value': 1}
     monkeypatch.setattr(reviews.os, 'link', link)
     assert reviews._save_revision(path, {'value': 2}) == {'value': 1}
+
+
+def test_uncited_lesson_gets_one_correction_before_publication(tmp_path, monkeypatch):
+    monkeypatch.setattr(reviews, 'STATE', tmp_path)
+    d = dossier()
+    invalid = answer(d)
+    invalid['lessons'][0]['evidenceIds'] = []
+    calls = []
+    def model(rules, context, tokens):
+        calls.append(context)
+        return invalid if len(calls) == 1 else answer(d)
+    monkeypatch.setattr(reviews, 'request_json', model)
+    result = reviews.build_review('football', 'fixture', d, True)
+    assert result['analysisStatus'] == 'ready'
+    assert len(calls) == 2 and calls[1]['validationErrors'][0]['loc'] == ('lessons', 0, 'evidenceIds')
+    assert calls[1]['dossier'] == d
+
+
+def test_failed_correction_is_never_published(tmp_path, monkeypatch):
+    monkeypatch.setattr(reviews, 'STATE', tmp_path)
+    d = dossier()
+    invalid = answer(d)
+    invalid['drivers'][0]['evidenceIds'] = ['invented']
+    calls = []
+    monkeypatch.setattr(reviews, 'request_json', lambda *args: calls.append(args) or invalid)
+    with pytest.raises(ValueError, match='不存在'):
+        reviews.build_review('football', 'fixture', d, True)
+    assert len(calls) == 2
+    assert not list(tmp_path.glob('evidence-reviews/football/*/*.json'))
