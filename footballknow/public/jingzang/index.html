@@ -166,10 +166,26 @@ audio{width:100%;margin-top:6px}
 .loading{padding:80px 20px;text-align:center;color:var(--soft)}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.pair{grid-template-columns:1fr;gap:0}header.site h1{font-size:32px}.shelf{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:18px 14px}.slip{font-size:15px}.slip.long{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.cover{transition:none}}
+.culture-shell{padding-left:232px}.culture-shell #app{min-width:0}.culture-shell .wrap{padding-left:30px;padding-right:30px}
+.culture-nav{position:fixed;inset:0 auto 0 0;width:232px;padding:28px 18px 22px;background:#183d37;color:#f4f0e4;overflow-y:auto;border-right:1px solid #36584e;z-index:10}
+.culture-brand{display:block;text-decoration:none;padding:0 12px 24px}.culture-brand>span{display:block;font:600 34px/1.3 var(--song);letter-spacing:.3em}.culture-brand small{display:block;color:#b4c9bb;font-size:11px;letter-spacing:.12em;margin-top:8px}
+#culture-menu>a,.culture-traditions>a{display:block;padding:9px 12px;margin:3px 0;border-radius:5px;text-decoration:none;font-size:14px;line-height:1.5;color:#e0e8de;border-left:3px solid transparent}
+#culture-menu>a:hover,#culture-menu>a[aria-current=page]{background:#31594d;border-left-color:#d1b274;color:#fff}
+.culture-nav .culture-nav-label{margin:23px 12px 8px;color:#a8bdb0;font-size:11px;letter-spacing:.12em}.culture-traditions{margin:4px 0 12px 12px;display:grid;gap:5px}
+.tradition-nanchuan{--tradition:#8b5c16;--tradition-wash:#f4e8ce;--tradition-border:#d8bb80}.tradition-hanchuan{--tradition:#254e79;--tradition-wash:#e2eaf4;--tradition-border:#9eb9d7}.tradition-zangchuan{--tradition:#8d3d48;--tradition-wash:#f2e0df;--tradition-border:#d6a5a7}
+.culture-traditions>a{background:var(--tradition-wash);color:var(--tradition);border-left-color:var(--tradition-border);font-size:13px;margin:0}.culture-traditions>a:hover,.culture-traditions>a[aria-current=page]{background:var(--tradition);color:#fff;border-left-color:#e5ca83}
+.culture-nav .culture-investment{margin-top:25px!important;padding-top:18px!important;border-top:1px solid #4b665b;font-size:12px!important;color:#b4c9bb!important}
+.culture-menu-toggle{display:none}.section-kicker{font-size:12px;letter-spacing:.16em;color:var(--seal)!important;margin:0 0 14px!important}.culture-home{border-bottom:1px solid var(--line);padding-bottom:28px!important}.culture-home .culture-intro{font:500 24px/1.7 var(--song);color:var(--ink);margin-top:20px}.culture-home .site-visits{margin-top:20px}
+.tradition-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0 30px}.tradition-card{position:relative;display:block;min-width:0;padding:25px 22px 20px;background:var(--tradition-wash);border:1px solid var(--tradition-border);border-top:4px solid var(--tradition);border-radius:5px;text-decoration:none;color:var(--tradition)}
+.tradition-card:hover{box-shadow:0 5px 18px #183d3714}.tradition-card h2{font:600 21px/1.45 var(--song);margin:18px 0 8px}.tradition-card p{font-size:13px;line-height:1.8;margin:0 0 20px}.tradition-seal{display:inline-grid;place-items:center;width:42px;height:48px;border:1px solid var(--tradition);font:600 17px/1.2 var(--song);writing-mode:vertical-rl;letter-spacing:.15em}.tradition-enter{font-size:13px}
+.buddhism-page>header{border-bottom:2px solid var(--tradition-border,var(--line));margin-bottom:25px}.buddhism-page .shelf-title h2{color:var(--tradition,var(--ink))}.tradition-resources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 30px}.tradition-resources>a{display:grid;gap:8px;padding:20px;background:var(--sheet);border:1px solid var(--tradition-border);border-left:4px solid var(--tradition);text-decoration:none;color:var(--tradition)}.tradition-resources b{font:600 19px/1.4 var(--song)}.tradition-resources span{font:14px/1.7 var(--hei);color:var(--soft)}.tradition-resources small{font:12px/1.6 var(--hei)}
+:root[data-theme=dark] .buddhism-page{--tradition:#bdd4e6}:root[data-theme=dark] .buddhism-page.tradition-nanchuan{--tradition:#e5c48a}:root[data-theme=dark] .buddhism-page.tradition-zangchuan{--tradition:#efb1b5}
+@media(max-width:1100px){.tradition-cards{gap:12px}.tradition-card{padding:20px 15px}.tradition-card h2{font-size:19px}.culture-shell .wrap{padding-left:22px;padding-right:22px}}
+@media(max-width:900px){.culture-shell{padding-left:0}.culture-nav{position:relative;width:100%;padding:16px 20px;overflow:visible}.culture-brand{padding:0;display:inline-block}.culture-brand>span{font-size:26px}.culture-brand small{display:none}.culture-menu-toggle{display:flex;gap:20px;align-items:center;position:absolute;right:20px;top:16px;border:1px solid #789587;background:transparent;color:#f4f0e4;border-radius:4px;padding:7px 12px;font-size:13px}#culture-menu{display:none;margin-top:15px}#culture-menu.is-open{display:block}.culture-traditions{margin-left:14px}.tradition-cards{grid-template-columns:1fr}.tradition-card{padding:20px}.tradition-card h2{margin-top:10px}.tradition-resources{grid-template-columns:1fr}.culture-shell .wrap{padding-left:20px;padding-right:20px}}
 </style>
 </head>
-<body>
-<div class="wrap"><a class="back" href="https://inwesting.shop/">← 峰弈科技</a></div>
+<body class="culture-shell">
+<aside class="culture-nav" id="culture-navigation" aria-label="经藏导航"></aside>
 <div id="app"><p class="loading">正在打开经藏…</p></div>
 <script src="./counter.js"></script>
 <script src="./recorded-reading.js"></script>

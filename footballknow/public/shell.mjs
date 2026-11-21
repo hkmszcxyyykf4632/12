@@ -40,6 +40,7 @@ export function paintSync() {
 
 /** Ticks the countdown once a second; returns a function that stops it. */
 export function startSyncIndicator(syncNow) {
+  if(!$('#sync-pill'))return ()=>{};
   const timer=setInterval(paintSync,1000);
   const click=()=>syncNow();
   $('#sync-pill')?.addEventListener('click',click);

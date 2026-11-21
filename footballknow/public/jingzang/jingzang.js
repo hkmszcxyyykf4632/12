@@ -112,7 +112,19 @@ document.addEventListener('click',e=>{const t=e.target;if(t.dataset&&t.dataset.v
   else if(t.id==='vexport'){const out={};BOOKS.forEach(b=>{const l=store.get('media-'+b.id,[]);if(l.length)out[b.id]=l.map(m=>({label:m.label,url:m.url,lang:m.lang||'评论'}));});const text=JSON.stringify(out,null,1),msg=$('#vmsg');if(!Object.keys(out).length){msg.textContent='还没有自己加的视频。';return;}(navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(()=>{msg.textContent='已复制，共 '+Object.values(out).reduce((n,l)=>n+l.length,0)+' 支。';}).catch(()=>{msg.textContent=text;});}});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-fan]');if(!b)return;prefs.fan=!prefs.fan;store.set('prefs',prefs);stop();if(prefs.fan)loadFan(route);else route();});
 function applyPrefs(){document.documentElement.dataset.theme=prefs.theme;document.documentElement.style.setProperty('--size',prefs.size+'px');store.set('prefs',prefs);}
-function route(){window.RecordedReading?.stop();const m=/^#b-(.+)-(\d+)$/.exec(location.hash);stop();if(location.hash==='#yi')yiPage();else if(location.hash==='#video')videoPage();else if(location.hash==='#zang')zangPage();else if(location.hash==='#cha')chaPage();else if(m&&byId[m[1]])reader(byId[m[1]],Math.min(byId[m[1]].ch.length,Math.max(1,+m[2]))-1);else shelf();window.scrollTo(0,0);}
+function route(){
+  window.RecordedReading?.stop();stop();renderNavigation();
+  const hash=location.hash,m=/^#b-(.+)-(\d+)$/.exec(hash),category=CATEGORIES.find(c=>hash==='#cat-'+c[0]);
+  if(hash==='#yi')yiPage();
+  else if(hash==='#video')videoPage();
+  else if(hash==='#zang')zangPage();
+  else if(hash==='#cha')chaPage();
+  else if(hash==='#fo'||TRADITIONS.some(t=>hash==='#fo-'+t.id))buddhismPage(hash.slice(4));
+  else if(category)categoryPage(category);
+  else if(m&&byId[m[1]])reader(byId[m[1]],Math.min(byId[m[1]].ch.length,Math.max(1,+m[2]))-1);
+  else shelf();
+  window.scrollTo(0,0);
+}
 const href=(b,i)=>`#b-${b.id}-${i+1}`;
 const shelfOf=b=>b.cat==='儒'?(FOUR.includes(b.id)?'四书':'五经'):b.cat;
 
@@ -279,18 +291,53 @@ function yiPage(){
     <div class="shelf-title"><h2>本草</h2><span>五十二卷</span></div><div class="shelf">${CARDS(list.filter(b=>b.id==='bcgm'))}</div>
     <footer>文字据公版古籍电子本整理，尚未逐卷校对；《本草纲目》原书的药图没有收录。</footer></div>`;
 }
-const CARDS=list=>`${list.map(b=>`<a class="book" href="${href(b,0)}"><div class="cover"><div class="slip ${b.name.length>4?'long':''}">${esc(b.name)}</div>${b.plain?'<span class="badge">白话</span>':''}</div><div class="book-meta"><b>${esc(b.full)}</b>${esc(b.by)}<br>${b.ch.length} 章 · ${b.chars.toLocaleString()} 字</div></a>`).join('')}`;
+const CARDS=list=>`${list.map(b=>`<a class="book" href="${href(b,0)}"><div class="cover"><div class="slip ${b.name.length>4?'long':''}">${esc(b.name)}</div>${b.plain?'<span class="badge">白话</span>':''}</div><div class="book-meta"><b>${esc(b.full)}</b>${esc(b.by)}<br>${b.ch.length} ${b.unit||'章'} · ${b.chars.toLocaleString()} 字</div></a>`).join('')}`;
+
+const CATEGORIES=[['dao','道','道家经典'],['sishu','四书','四书'],['wujing','五经','五经'],['history','史','史传'],['histories','正史','二十四史'],['novels','小说','四大名著'],['notes','注','古注']];
+const TRADITIONS=[
+  {id:'nanchuan',name:'南传佛教',short:'南传',sub:'上座部 · 巴利三藏',intro:'以巴利三藏为经典根基，重视戒、定、慧的修学。由此了解长部、中部、相应部、增支部与小部的经藏结构。'},
+  {id:'hanchuan',name:'北传佛教（汉传）',short:'北传',sub:'汉译经典 · 经论与诵读',intro:'从汉译经典走近大乘佛教的思想与修行。经文、古注与日常诵读分列，便于循序阅读。'},
+  {id:'zangchuan',name:'藏传佛教',short:'藏传',sub:'藏文大藏经 · 传承与艺术',intro:'了解藏传佛教的经典、传承与造像艺术。从甘珠尔、丹珠尔的文献体系，延伸至唐卡中的人物与象征。'}
+];
+function renderNavigation(){
+  const nav=$('#culture-navigation');if(!nav)return;
+  const match=/^#b-(.+)-\d+$/.exec(location.hash),book=match&&byId[match[1]];
+  const category=book&&CATEGORIES.find(c=>c[1]===shelfOf(book));
+  const active=book?.tradition?'#fo-'+book.tradition:book?.cat==='医'?'#yi':category?'#cat-'+category[0]:location.hash||'#';
+  const item=(url,label,cls='')=>`<a href="${url}" class="${cls}"${active===url?' aria-current="page"':''}>${label}</a>`;
+  nav.innerHTML=`<a class="culture-brand" href="#"><span>经藏</span><small>经典 · 人文 · 艺术</small></a><button class="culture-menu-toggle" id="culture-menu-toggle" aria-expanded="false" aria-controls="culture-menu">分类目录 <span aria-hidden="true">☰</span></button><nav id="culture-menu" aria-label="文化分类">${item('#','首页')}<p class="culture-nav-label">经典阅读</p>${item('#cat-dao','道家经典')}${item('#fo','佛教文化')}<div class="culture-traditions">${TRADITIONS.map(t=>item('#fo-'+t.id,t.name,'tradition-'+t.id)).join('')}</div>${CATEGORIES.slice(1).map(c=>item('#cat-'+c[0],c[2])).join('')}<p class="culture-nav-label">文化与艺术</p>${item('#yi','传统医书')}${item('#cha','茶文化')}${item('#zang','唐卡艺术')}${item('#video','讲解与影像')}<a class="culture-investment" href="https://inwesting.shop/">峰弈科技 ↗</a></nav>`;
+}
+document.addEventListener('click',event=>{
+  if(event.target.closest?.('#culture-menu-toggle')){
+    const button=$('#culture-menu-toggle'),open=button.getAttribute('aria-expanded')!=='true';
+    button.setAttribute('aria-expanded',String(open));$('#culture-menu').classList.toggle('is-open',open);
+  }else if(event.target.closest?.('#culture-menu a')){
+    $('#culture-menu-toggle')?.setAttribute('aria-expanded','false');$('#culture-menu')?.classList.remove('is-open');
+  }
+});
+function traditionCards(){return `<div class="tradition-cards">${TRADITIONS.map(t=>`<a class="tradition-card tradition-${t.id}" href="#fo-${t.id}"><span class="tradition-seal" aria-hidden="true">${t.short}</span><h2>${t.name}</h2><p>${t.sub}</p><span class="tradition-enter">进入目录 →</span></a>`).join('')}</div>`;}
+function buddhismPage(id){
+  state.book=null;const t=TRADITIONS.find(t=>t.id===id);document.title=(t?.name||'佛教文化')+' · 经藏';
+  const list=BOOKS.filter(b=>b.tradition===id),texts=list.filter(b=>b.cat==='佛'&&!b.repeat),chants=list.filter(b=>b.repeat),notes=list.filter(b=>b.cat==='注');
+  let content='';
+  if(!t)content=`${traditionCards()}<p class="origins-note">按传承与经典语言分为三个阅读入口。这里的“北传”指汉传佛教；三种传统有共同的思想源流，也各有丰富的文献与修学传统。</p>`;
+  else if(id==='hanchuan')content=`<div class="shelf-title"><h2>经典原文</h2><span>${texts.length} 部</span></div><div class="shelf">${CARDS(texts)}</div><div class="shelf-title"><h2>日常诵读</h2><span>药师咒 · 大悲咒</span></div><div class="shelf">${CARDS(chants)}</div><div class="shelf-title"><h2>古注</h2><span>参照阅读</span></div><div class="shelf">${CARDS(notes)}</div>`;
+  else if(id==='nanchuan')content=`<div class="essay"><h2>巴利三藏</h2><p>三藏分为律藏、经藏、论藏。经藏的五部为长部、中部、相应部、增支部与小部。汉译阿含与其中部分经文有平行对应，不能直接视为同一套译本。</p><h2>经藏阅读</h2><p>以下进入 SuttaCentral 的对应目录，可按经目选择已有的中文译文，并参看巴利原文。不同经目的译文覆盖有所不同。</p><div class="tradition-resources">${[['dn','长部','篇幅较长的经文'],['mn','中部','中等篇幅的经文'],['sn','相应部','按主题与相应编组'],['an','增支部','依数字次第编组'],['kn','小部','法句、经集等多种文集']].map(([key,name,desc])=>`<a href="https://suttacentral.net/${key}?lang=zh" target="_blank" rel="noopener noreferrer"><b>${name}</b><span>${desc}</span><small>SuttaCentral · 外站阅读 ↗</small></a>`).join('')}</div></div>`;
+  else content=`<div class="essay"><h2>经典与传承</h2><p>甘珠尔汇集被视为佛语的藏译经典，丹珠尔汇集印度论师的论著与注释。宁玛、噶举、萨迦、格鲁等传承各有修学次第。</p><div class="tradition-resources"><a href="#zang"><b>藏传佛教与唐卡</b><span>传承介绍、尊像辨识与自在堂作品</span><small>在本站阅读 →</small></a><a href="https://84000.co/reading-room" target="_blank" rel="noopener noreferrer"><b>藏文大藏经译文</b><span>84000 经典翻译阅读室</span><small>英文译文 · 外站阅读 ↗</small></a></div></div>`;
+  $('#app').innerHTML=`<div class="wrap buddhism-page ${t?'tradition-'+t.id:''}"><header class="site"><a class="back" href="${t?'#fo':'#'}">← ${t?'佛教文化':'经藏'}</a><p class="section-kicker">${t?.sub||'经典 · 传承 · 修学'}</p><h1>${t?.name||'佛教文化'}</h1><p>${t?.intro||'循经典而读，沿传承而行。由不同的语言与文化，走近佛教共同的智慧源流。'}</p></header>${content}</div>`;
+}
+function categoryPage(category){
+  state.book=null;document.title=category[2]+' · 经藏';const list=BOOKS.filter(b=>shelfOf(b)===category[1]);
+  $('#app').innerHTML=`<div class="wrap"><header class="site"><a class="back" href="#">← 经藏</a><h1>${category[2]}</h1><p>${list.length} 部典籍</p></header><div class="shelf">${CARDS(list)}</div></div>`;
+}
+
 function shelf(){
   queueMicrotask(()=>window.jingzangCountVisit(document.querySelector('#culture-visits')));
   state.book=null;document.title='经藏 · 经、史、医书与四大名著';
-  const last=store.get('last',null),lb=last&&byId[last.book];
-  $('#app').innerHTML=`<div class="wrap"><header class="site"><h1>经藏</h1><p>中华文化的根，在这些书里。这里把道、佛、儒三家的经典，连同正史、医书与四大名著放在一处，不收费，没有广告，可以读，也可以听，愿更多人翻开它们。</p><p>原文逐句朗读，国语粤语可选；已译的经文附白话对照。</p>
-    <p class="site-visits">访问次数 <strong id="culture-visits" aria-live="polite">—</strong></p>
-    <a class="side-door" href="#b-ysz-1">药师咒 · 108 遍</a><a class="side-door" href="#b-dbz-1">大悲咒 · 108 遍</a><a class="side-door" href="#yi">医书：黄帝内经、本草纲目</a><a class="side-door" href="#zang">藏传佛教与唐卡</a><a class="side-door" href="#cha">茶</a><a class="side-door" href="#video">视频区</a><button class="side-door" data-fan>${prefs.fan?'简体':'繁體'}</button>
-    ${lb?`<a class="resume" href="${href(lb,Math.min(last.ch,lb.ch.length-1))}">接着上次读：${esc(lb.name)} · ${esc(lb.ch[Math.min(last.ch,lb.ch.length-1)].t)}</a>`:''}</header>
-    <div class="shelf-title"><h2>从这里读起</h2><span>第一次来，不妨先翻这几篇</span></div><ul class="starts">${[['xj',1,'心经','二百六十字，三分钟读完，汉传佛教最常念诵的一部经。附白话。'],['ddj',1,'道德经 · 第一章','“道可道，非常道。”八十一章都很短，每章附白话。'],['ly',1,'论语 · 学而第一','孔子怎样谈学习、交友和做人。附白话。'],['dx',1,'大学','一千七百多字，讲从修身到平天下的次第。附白话。'],['sgyy',1,'三国演义 · 第一回','桃园三结义。章回小说适合用听的。'],['s01',7,'史记 · 项羽本纪','鸿门宴、垓下之围，司马迁最有名的一篇。']].filter(x=>byId[x[0]]).map(([id,n,t,d])=>`<li><a href="#b-${id}-${n}">${t}</a><span>${d}</span></li>`).join('')}</ul>
+
+  $('#app').innerHTML=`<div class="wrap"><header class="site culture-home"><p class="section-kicker">经史之间 · 人文之境</p><h1>经藏</h1><p class="culture-intro">展卷见天地，静读观古今。</p><p>汇经典之思，览史籍之深，于茶香与丹青之间，体会东方文化的悠远意趣。</p><p class="site-visits">访问次数 <strong id="culture-visits" aria-live="polite">—</strong></p></header>
     <div class="shelf-title"><h2>三家源流</h2><span>道教、佛教与儒家经典的来历</span></div><div class="origins"><section><h3>道教</h3><p>道教是中国本土生长出来的宗教。思想源头是先秦的老子、庄子，东汉时结合神仙方术与民间信仰成为有组织的教团，尊老子为太上老君，奉《道德经》为根本经典，讲清静无为、修身养性。</p><details><summary>道教简史</summary><dl><dt>先秦</dt><dd>老子作《道德经》五千言，庄子继之，是为道家。此时只有思想学派，还没有宗教组织；民间另有神仙方术与长生之说流传。</dd><dt>东汉</dt><dd>顺帝时张陵在蜀地创立五斗米道（后称天师道），奉老子为太上老君，以《道德经》教人；同时张角的太平道奉《太平经》。道教作为有组织的宗教由此开始。</dd><dt>魏晋南北朝</dt><dd>葛洪著《抱朴子》，总结炼养之说；上清、灵宝两系经典相继出现。北魏寇谦之、南朝陆修静整顿教规与斋仪，陶弘景居茅山传上清之学。</dd><dt>唐</dt><dd>李唐皇室认老子为先祖，道教极盛，科举一度设“道举”，以《道德经》等取士。《清静经》也在这一时期通行。</dd><dt>宋、金、元</dt><dd>宋真宗、徽宗崇道。金代王重阳在北方创立全真道，主张出家清修、三教合一；弟子丘处机西行见成吉思汗。南方以龙虎山张天师为首的各符箓派合为正一道。此后道教分全真、正一两大派。</dd><dt>明、清</dt><dd>明正统十年（1445）编成《正统道藏》，万历年间又有续藏，本站所收道经即出于此。清代以后官方扶持减少，道教更多融入民间信仰与日常习俗。</dd><dt>今日</dt><dd>全真、正一两派并存，宫观遍及华人社会。</dd></dl></details></section><section><h3>佛教</h3><p>佛教起于古印度，创始人释迦牟尼生活在约二千五百年前，教人认识苦的由来、以智慧与慈悲求解脱。两汉之际传入中国，经数百年译经与讲习，同儒、道相互影响，成为中国文化的一部分。</p><details><summary>佛教简史</summary><dl><dt>公元前六至五世纪</dt><dd>释迦牟尼生于蓝毗尼（今尼泊尔南部），出家修行，在菩提伽耶觉悟，于鹿野苑初次说法，此后在恒河流域传道四十余年。</dd><dt>佛灭度后</dt><dd>弟子多次集会，诵出并整理佛所说的教法与戒律。公元前三世纪阿育王护持佛教，派人向四方传布。约公元前后大乘佛教兴起，般若、法华、净土等经典陆续出现。</dd><dt>两汉之际</dt><dd>佛教经西域传入中国，传统说法是东汉明帝永平年间。东汉末安世高、支娄迦谶在洛阳译经。</dd><dt>魏晋南北朝</dt><dd>鸠摩罗什于公元 401 年到长安，译出《金刚经》《法华经》《阿弥陀经》等，文字流畅，通行至今。道安、慧远等人奠定了僧团制度与净土信仰；菩提达摩来华，后世尊为禅宗初祖。</dd><dt>隋、唐</dt><dd>中国佛教的高峰，天台、华严、法相、律、净土、禅、密等宗派先后成立。玄奘西行求法十七年，回国后译经一千三百余卷，《心经》《药师经》通行本即出其手；《地藏经》题为实叉难陀译。六祖惠能之后，禅宗大盛。</dd><dt>唐末至宋</dt><dd>唐武宗会昌年间（845）大规模毁佛，义理诸宗受创，禅宗与净土宗成为主流，此后逐渐禅净合流。北宋开宝年间开始雕印大藏经。</dd><dt>向外传播</dt><dd>汉传佛教传到朝鲜、日本、越南；南传佛教经斯里兰卡传入东南亚；七世纪起佛教传入西藏，形成藏传佛教。</dd><dt>明、清至今</dt><dd>明清多次官刻大藏经，清雍正、乾隆年间刻成《乾隆大藏经》（龙藏）。今天汉传、南传、藏传三系并存。</dd></dl></details></section><section><h3>儒家与四书五经</h3><p>儒家由孔子开创，讲仁义礼智、修身齐家治国，是学问与教化，不是宗教。五经是孔子用来教学的古代典籍，四书是南宋朱熹选定的四部入门书，两者合起来是古代读书人的基本功课。</p><details><summary>四书五经简史</summary><dl><dt>春秋</dt><dd>孔子（公元前 551—479）在鲁国讲学，整理《诗》《书》《礼》《易》《春秋》等古代典籍，用来教弟子。弟子与再传弟子把他的言行辑成《论语》。</dd><dt>战国</dt><dd>孟子、荀子发扬孔子之学；《孟子》七篇成书。相传《大学》出于曾子一系，《中庸》为孔子之孙子思所作，两篇后来都收在《礼记》里。</dd><dt>秦、汉</dt><dd>秦始皇焚书，典籍散失，汉初靠老儒口授与民间藏本重新写定。汉武帝建元五年（前 136）立五经博士，《诗》《书》《礼》《易》《春秋》成为官学。原有《乐经》，已失传，所以称五经而不称六经。</dd><dt>唐</dt><dd>孔颖达等奉诏撰《五经正义》，统一解释，作为科举标准。经书的范围此后逐步扩大，到宋代定为十三经。</dd><dt>南宋</dt><dd>朱熹把《大学》《中庸》从《礼记》中抽出，与《论语》《孟子》合为“四书”，作《四书章句集注》，主张先读四书、再读五经。</dd><dt>元、明、清</dt><dd>元仁宗延祐年间恢复科举，规定从四书出题、以朱熹注为准，明清沿用，直到 1905 年废除科举。六百年间，四书五经是读书人的必读书。</dd><dt>五经各是什么</dt><dd>《诗经》是三百零五篇诗歌；《尚书》是上古的政事文献；《礼记》讲礼制与修身；《周易》讲阴阳变化，原是占筮之书；《春秋》是鲁国的编年史，本站所收为附《左传》的本子。</dd></dl></details></section></div><p class="origins-note">以上是通行史述的简要整理，年代从常见说法；各家自身的传承记载或有不同。</p>
-    ${GROUPS.map(([key,label])=>{const list=BOOKS.filter(b=>shelfOf(b)===key);return list.length?`<div class="shelf-title"><h2>${label}</h2><span>${key==='注'?'古人的注解，整部收录':list.length+' 部'}</span></div><div class="shelf">${list.map(b=>`<a class="book" href="${href(b,0)}"><div class="cover"><div class="slip ${b.name.length>4?'long':''}">${esc(b.name)}</div>${b.plain?'<span class="badge">白话</span>':''}</div><div class="book-meta"><b>${esc(b.full)}</b>${esc(b.by)}<br>${b.ch.length} 章 · ${b.chars.toLocaleString()} 字</div></a>`).join('')}</div>`:'';}).join('')}
+    ${GROUPS.map(([key,label])=>{if(key==='佛')return `<div class="shelf-title"><h2>佛教文化</h2><span>南传 · 北传 · 藏传</span></div>${traditionCards()}`;const list=BOOKS.filter(b=>shelfOf(b)===key);return list.length?`<div class="shelf-title"><h2>${label}</h2><span>${key==='注'?'古人的注解':list.length+' 部'}</span></div><div class="shelf">${CARDS(list)}</div>`:'';}).join('')}
     <footer>经文为公版古籍，各部所据版本写在阅读页右侧。白话由本站自译，仅供理解，繁体由程序自动转换（转换字表来自开源项目 OpenCC），个别字可能不准，不能代替原文与师承讲解。朗读使用设备自带的中文语音，是合成声音，不是法师或道长的唱诵。</footer></div>`;
 }
 
@@ -361,7 +408,7 @@ function draw(b,ci){
     ${recitationPanel()}<div class="wrap layout"><article><h1>${esc(c.t)}</h1><p class="by">${esc(b.full)} · ${esc(b.by)}</p><div class="text${recitation?' chant-text':''}" id="text">${body(c,ci)}</div>
       ${c.v||recitation?'':`<p class="none">${b.cat==='注'?'这是古人的注解原文。':'这一章的白话还没有译出。'}${notes.length?`可以先参看古注：${notes.map(n=>`<a href="${href(n,0)}">${esc(n.name)}</a>`).join('、')}。`:''}</p>`}
       <div class="pager"><button class="ctl" id="prev2" ${ci?'':'disabled'}>← 上一章</button><button class="ctl" id="next2" ${ci<b.ch.length-1?'':'disabled'}>下一章 →</button></div></article>
-    <aside><section><h2>关于这部经</h2><p>${esc(b.intro)}</p><p>版本：${esc(b.src)}</p>${b.sourceUrl?`<p><a href="${esc(b.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看咒文来源</a></p>`:''}${b.plain?`<p>白话：本站自译，已完成 ${b.plain} / ${b.ch.length} 章。</p>`:''}
+    <aside><section><h2>关于这部经</h2><p>${esc(b.intro)}</p><p>版本：${esc(b.src)}</p>${b.sourceUrl?`<p><a href="${esc(c.sourceUrl||b.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(b.sourceLabel||'查看来源')}</a></p>`:''}${b.licenseUrl?`<p class="text-license"><a href="${esc(b.licenseUrl)}" target="_blank" rel="noopener noreferrer">${esc(b.licenseLabel)}</a></p>`:''}${b.plain?`<p>白话：本站自译，已完成 ${b.plain} / ${b.ch.length} 章。</p>`:''}
         ${notes.length?`<p>古注：${notes.map(n=>`<a href="${href(n,0)}" style="color:var(--azure)">${esc(n.name)}</a>（${esc(n.by)}）`).join('；')}</p>`:''}${base?`<p>所注经文：<a href="${href(base,0)}" style="color:var(--azure)">${esc(base.name)}</a></p>`:''}</section>
       <section><h2>在本书中查找</h2><input id="find" type="search" placeholder="输入字词，如：上善若水" aria-label="在本书中查找"><div id="hits"></div></section>${mediaPanel(b)}</aside></div>`;
   $('#lang').value=prefs.lang;$('#rate').value=String(prefs.rate);fillVoices();if($('#chain'))$('#chain').checked=prefs.chain;updateRecitation();
