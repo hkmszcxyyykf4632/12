@@ -127,13 +127,27 @@ function videoPage(){
     <p><button class="ctl" id="vexport">复制我加的视频清单</button> <span id="vmsg" class="vnote"></span></p>
     <footer>视频都是外站连结，版权属于各自的制作单位；如果连结失效或内容不合适，请告诉站长更换。还没有视频的书会陆续补上。</footer></div>`;
 }
-/* 唐卡图片：把照片放进 images/tangka/ 目录，在这里登记档名与说明，页面就会显示。 */
-const TANGKA=[]; /* {key:'shuiyue',file:'xxx.jpg',caption:'水月观音 · 噶玛噶赤画派'} */
+const TANGKA=[
+  {key:'shuiyue',file:'zz-shuiyue-guanyin',caption:'水月观音',credit:'噶玛噶赤画派 · 德吉卓嘎绘',source:'808',width:1801,height:3201},
+  {key:'molizhi',file:'zz-marici-seated',caption:'摩利支天 · 坐姿',credit:'勉唐画派 · 晋美绘',source:'1052',width:706,height:1245},
+  {key:'molizhi',file:'zz-marici-standing',caption:'摩利支天 · 站姿多尊',credit:'勉萨画派孜东风格 · 多吉旺久绘',source:'1051',width:707,height:1245},
+  {key:'daweide',file:'zz-yamantaka',caption:'大威德金刚 · 多尊',credit:'齐岗画派',source:'1047',width:707,height:1245},
+  {key:'mahagala',file:'zz-six-armed-mahakala',caption:'六臂玛哈嘎拉（大黑天）',credit:'勉唐画派 · 索朗次仁绘',source:'1045',width:708,height:1245},
+  {key:'sansheng',file:'zz-western-three-saints',caption:'西方三圣 · 极乐世界',credit:'勉萨画派孜东风格 · 多吉旺久绘',source:'1044',width:507,height:900},
+  {key:'heiguanyin',file:'zz-five-faced-black-avalokiteshvara',caption:'五面黑观音',credit:'勉唐画派 · 格桑次罗绘',source:'1041',width:1804,height:3207},
+  {key:'sanzun',file:'zz-manjushri-triad',caption:'文殊三尊（三怙主）',credit:'勉萨画派孜东系 · 次仁罗杰绘',source:'1040',width:1842,height:3275},
+  {key:'baiwenshu',file:'zz-white-manjushri',caption:'白文殊',credit:'勉萨画派孜东风格 · 多吉旺久绘',source:'1037',width:1914,height:3402}
+];
 const ZUN=[{"k":"shuiyue","n":"水月观音","d":"观音菩萨的一种形象：菩萨闲坐水边岩石上，静观水中月影，比喻世间万象如水中之月，看得见而没有实体。这个样式相传由唐代画家周昉创出，宋元时期在汉地的壁画、雕塑中极为流行，后来也进入藏地绘画。噶玛噶赤画派本来就吸收了汉地山水的画法，画水月观音尤其相宜。","w":[["水月观音（噶玛噶赤画派，德吉卓嘎绘）","808"]]},{"k":"molizhi","n":"摩利支天","d":"梵名的意思是“光”或“阳焰”，藏语称“具光佛母”。经中说她常行于日前，日不见她，她能见日，无人能捉、能害，所以古来被奉为护身、隐身、免于刀兵之难的本尊。唐代不空等人译出《摩利支天经》后传遍汉地，日本武士也多供奉；道教的斗姆元君与她的形象相通。她常坐在猪拉的车上或骑猪，手持针线与无忧树枝，针线用来缝住恶人的口眼。","w":[["摩利支天·坐姿（勉唐画派，晋美绘）","1052"],["摩利支天·站姿多尊（勉萨画派孜东风格，多吉旺久绘）","1051"]]},{"k":"daweide","n":"大威德金刚","d":"又称怖畏金刚，是文殊菩萨为降伏死主阎魔而现的忿怒相：水牛头，九面、三十四臂、十六足，脚下踩着诸天与鸟兽，表示智慧能摧破死亡与一切障碍。这一法门十一世纪由热译师等人从印度、尼泊尔传入西藏，各派都修。宗喀巴极为重视，格鲁派把他同密集金刚、胜乐金刚并列为三大本尊。","w":[["大威德金刚·多尊（齐岗画派）","1047"]]},{"k":"mahagala","n":"六臂玛哈嘎拉","d":"玛哈嘎拉意为“大黑天”，原是印度的神祇，被佛教吸收为护法。六臂的这一尊被认为是观音菩萨为护持佛法而化现的智慧护法，身黑蓝色，六手持钺刀、颅器、念珠、三叉戟等。十一世纪由香巴噶举的祖师琼波南觉传入西藏，后来成为格鲁派最重要的护法之一，在蒙古地区也广受供奉。","w":[["黑六臂玛哈嘎拉（勉唐画派，索朗次仁绘）","1045"]]},{"k":"baozhang","n":"宝帐怙主","d":"玛哈嘎拉的另一种身相，出自《金刚帐续》，是萨迦派的主要护法。他身形矮壮，两手在胸前持钺刀与颅器，双臂上横托一根木杖，传说寺院里的护法都藏身在这根杖中。元代萨迦派的八思巴受封为帝师，宝帐怙主也随之被供奉于元朝宫廷。","w":[["宝帐怙主（勉萨画派，欧珠绘）","1024"]]},{"k":"sansheng","n":"西方三圣","d":"阿弥陀佛居中，左右是观世音菩萨与大势至菩萨，合称西方三圣，出自《观无量寿经》等净土经典。阿弥陀佛在成佛前发愿建成没有苦难的极乐世界，凡是愿意往生的人都接引。藏地称阿弥陀佛为“无量光佛”，身红色，双手捧钵；祈愿往生极乐世界的发愿文是各派共同的日常功课。","w":[["西方三圣·极乐世界（勉萨画派孜东风格，多吉旺久绘）","1044"]]},{"k":"sanzun","n":"文殊三尊（三怙主）","d":"文殊菩萨、观音菩萨、金刚手菩萨合称“三怙主”，分别代表佛的智慧、慈悲与力量，是西藏最常见的组合，山口的石刻、寺院的壁画上处处可见。藏人把吐蕃的三位法王也同他们对应起来：松赞干布是观音，赤松德赞是文殊，赤热巴巾是金刚手。","w":[["文殊三尊（勉萨画派孜东系，次仁罗杰绘）","1040"]]},{"k":"baiwenshu","n":"白文殊","d":"文殊菩萨是智慧的象征，常见的是橘黄色、右手举剑的样子；白文殊是他的另一种身相，身色洁白，手持青莲，莲上托着经书与剑。学经的僧人和读书的孩子多修持白文殊，祈求增长记忆与理解。","w":[["白文殊（勉萨画派孜东风格，多吉旺久绘）","1037"]]},{"k":"caishen","n":"五姓财神","d":"藏语称“藏巴拉”，源自印度的财富之神，佛教中视为布施资粮、使修行人免于匮乏的护法，而不只是求财。按身色分黄、白、红、黑、绿五位，以黄财神为首。他们左手多握一只口吐珍宝的鼬鼠。相传白财神是阿底峡尊者见到穷人受苦而落泪时，由观音菩萨的悲心化现，骑在龙上；红财神主要由萨迦派传承。","w":[["黄财神（勉萨画派，欧珠绘）","1033"],["白财神（勉萨画派，欧珠绘）","1028"],["红财神·骑龙（勉萨画派，欧珠绘）","1032"],["黑财神（勉萨画派，欧珠绘）","1029"],["黑财神（齐岗画派，次仁罗杰绘）","1036"],["绿财神（勉萨画派，欧珠绘）","1025"]]}];
+
+function tangkaGallery(pics){
+  if(!pics.length)return '';
+  return `<div class="tangka zun-pics">${pics.map(t=>`<figure><a href="./images/tangka/${t.file}.png" target="_blank" rel="noopener" aria-label="查看原图：${esc(t.caption)}（新窗口）"><picture><source srcset="./images/tangka/${t.file}.webp" type="image/webp"><img src="./images/tangka/${t.file}.png" width="${t.width}" height="${t.height}" alt="${esc(t.caption)} · 自在堂藏品实拍" loading="lazy" decoding="async"></picture></a><figcaption><strong>${esc(t.caption)}</strong><small>自在堂 · ${esc(t.credit)}</small><a href="./images/tangka/${t.file}.png" target="_blank" rel="noopener" aria-label="查看原图：${esc(t.caption)}（新窗口）">查看原图 ↗</a></figcaption></figure>`).join('')}</div>`;
+}
 
 function zangPage(){
   state.book=null;document.title='藏传佛教与唐卡 · 经藏';
-  const _unused=TANGKA.length?`<div class="tangka">${TANGKA.map(t=>`<figure><img src="./images/tangka/${esc(t.file)}" alt="${esc(t.caption)}" loading="lazy"><figcaption>${esc(t.caption)}${t.credit?`<small>${esc(t.credit)}</small>`:''}</figcaption></figure>`).join('')}</div>`:`<p class="caution">唐卡照片还没有放上来。站长提供照片后，会按题材配在下面各段旁边。</p>`;
+  const deities=ZUN.flatMap(z=>z.k==='sanzun'?[{k:'heiguanyin',n:'五面黑观音',d:'这件小扎卡在自在堂作品目录中题为“五面黑观音”，由格桑次罗绘制，属勉唐画派。画面以蓝黑色的忿怒主尊为中心，周围安排火焰、金线与眷属；多面、多臂及细密的构图，是欣赏这件作品时值得留意的细节。名称与画师资料依自在堂此件作品的介绍。',w:[['五面黑观音（勉唐画派，格桑次罗绘）','1041']]},z]:[z]);
   $('#app').innerHTML=`<div class="wrap"><header class="site"><a class="back" href="#">← 经藏</a><h1>藏传佛教与唐卡</h1><p>佛教传入青藏高原之后，同当地文化结合，形成了汉传、南传之外的第三大传统。唐卡是它最有代表性的艺术。</p></header>
   <div class="essay">
   <h2>藏传佛教</h2>
@@ -170,7 +184,8 @@ function zangPage(){
   <p>先看正中最大的一位，那是主尊。他的肤色、手势和手里拿的东西说明他是谁：比如文殊右手举剑、左手持经，绿度母身绿、右腿前伸。主尊上方通常是这一法门的传承祖师，下方是护持它的护法神，四周是眷属或故事。背后往往写着咒语或题记。</p>
   <h2>唐卡里的诸尊</h2>
   <p>下面这几位都是唐卡上常见的主尊，画像由本站的赞助者自在堂提供。自在堂是台湾茗是观旗下的品牌，从事西藏唐卡与小扎卡的收藏和推广。</p>
-  ${ZUN.map(z=>{const pics=TANGKA.filter(t=>t.key===z.k);return `<section class="zun"><h3>${z.n}</h3>${pics.length?`<div class="tangka">${pics.map(t=>`<figure><img src="./images/tangka/${esc(t.file)}" alt="${esc(t.caption)}" loading="lazy"><figcaption>${esc(t.caption)}<small>自在堂 藏</small></figcaption></figure>`).join('')}</div>`:`<div class="tangka"><div class="slot">${z.n}<small>画像待补</small></div></div>`}<p>${z.d}</p><p class="zun-links">自在堂的画像：${z.w.map(([t,n])=>`<a href="https://msgart.com/ldcms/fuwuanli/${n}.html" target="_blank" rel="noopener">${t}</a>`).join('、')}</p></section>`;}).join('')}
+  <p class="tangka-note">自在堂藏品实拍。点击照片可查看完整原图。</p>
+  ${deities.map(z=>`<section class="zun" data-deity="${z.k}"><h3>${z.n}</h3>${tangkaGallery(TANGKA.filter(t=>t.key===z.k))}<p>${z.d}</p><p class="zun-links">自在堂的画像：${z.w.map(([t,n])=>`<a href="https://msgart.com/ldcms/fuwuanli/${n}.html" target="_blank" rel="noopener">${t}</a>`).join('、')}</p></section>`).join('')}
   <p><a href="https://msgart.com/" target="_blank" rel="noopener">自在堂网站 msgart.com</a></p>
   </div>
   <footer>以上是通行说法的简要整理，各教派自身的传承记载或有不同。</footer></div>`;
