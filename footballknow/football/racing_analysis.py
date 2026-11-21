@@ -1,12 +1,14 @@
 """Separate, immutable pre-race forecasts and result-based post-race reviews."""
 import hashlib
 import json
+import math
 import re
 import sqlite3
 import threading
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta, timezone
 from typing import Literal
+from urllib.parse import parse_qs, urlsplit
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -33,7 +35,8 @@ RULES = '''你是香港赛马资料分析员。只使用输入内带日期的马
 赛前方法：比较所有出赛马匹，不忽略冷门和初出马。以同场地同途程、近期状态、班次负磅、档位和资料完整度为依据，选择一个首选horseId和最多三个不同horseId的关注名单，首选须在名单内。不给伪精确胜率或必胜措辞。给出最主要支持点及改变判断的条件。结果仅代表输入时点；说明关键缺项，不能用未经验证的成功率增强结论。
 赛后方法：首先核对官方名次、退出、时间、头马距离、沿途走位及赛后独赢赔率。区分结果与推测；表现未达预期不能自动归咎于骑师或操纵。说明冠军和主要对手表现、原首选实际名次、哪项赛前证据得到支持或失效。没有赛前预测时明确无原始预测可比较。赛后独赢赔率不可当作赛前已知赔率，不编造开盘、临场变化或潜在伤病。赛后首选和名单固定为空，禁止把获胜者倒写成预测。
 评估：首选胜出命中率=赛前固定首选实际第一名次数/已有完整赛果且首选实际出赛的预测次数；死热第一名算命中，首选退出作废另列，未完赛不计。前三命中另计，不混成胜出率。所有有效赛前预测都纳入。无样本只能写等待验证。
-成稿要求：summary和details都是直接给读者看的成稿，不写JSON字段名、程序变量、核对步骤或草稿更正。没有原始预测时仅说「本站未保存本场赛前预测」；不出现priorPrediction等内部名称。马号、马名、名次和距离必须先与本场entries核实，无法确认就省略，不输出「32号？实为11号」之类边写边改的文字。两三段摘要直接讲结果、主要依据和关键条件，不逐项叙述内部检查过程。
+事实一致性：marketSnapshot是已按本场身份、采集时间和开跑时间核对的保存报价；有独赢报价时不得声称没有赛前独赢赔率。1.0也是来源已公布的有效报价，不能因报价悬殊或没有完整赔率路径而说没有报价。有报价不等于有资金流、交易量或可靠趋势；retained或stale为真时必须称最近保存报价，不能称当前即时价格。没有合格报价时不补造赔率。晨操分类必须逐马遵循preparation.runners中的activity和known；维持常规操练不能在摘要写成积极或加紧，资料不足不能写成已知积极。摘要与详情必须一致。
+成稿要求：summary和details都是直接给读者看的成稿，不写JSON字段名、程序变量、核对步骤或草稿更正。仅在phase为post且没有原始赛前预测时，说明「本站未保存本场赛前预测」；phase为pre正在发布本场新预测，不得声称本场未保存预测。不出现priorPrediction等内部名称。马号、马名、名次和距离必须先与本场entries核实，无法确认就省略，不输出「32号？实为11号」之类边写边改的文字。两三段摘要直接讲结果、主要依据和关键条件，不逐项叙述内部检查过程。
 严格输出JSON：{"summary":["短结论第一段","短结论第二段"],"pick":"赛前首选horseId或赛后null","shortlist":["horseId"],"details":[{"title":"依据","text":"可复核的事实与条件"}]}。summary两至三段，每段不超过220字；details一至五项，每项标题40字内正文800字内。'''
 
 
@@ -60,6 +63,14 @@ def connect():
         race_id TEXT NOT NULL, phase TEXT NOT NULL, issued_at TEXT NOT NULL,
         model TEXT NOT NULL, snapshot_hash TEXT NOT NULL, content TEXT NOT NULL,
         PRIMARY KEY(race_id,phase))''')
+    db.execute('''CREATE TABLE IF NOT EXISTS fact_amendments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, race_id TEXT NOT NULL, issued_at TEXT NOT NULL,
+        original_report_hash TEXT NOT NULL, reason TEXT NOT NULL, facts_hash TEXT NOT NULL,
+        content TEXT NOT NULL, UNIQUE(race_id, original_report_hash, facts_hash))''')
+    db.execute("""CREATE TRIGGER IF NOT EXISTS fact_amendments_no_update BEFORE UPDATE ON fact_amendments
+        BEGIN SELECT RAISE(ABORT, 'Fact amendments are append-only'); END""")
+    db.execute("""CREATE TRIGGER IF NOT EXISTS fact_amendments_no_delete BEFORE DELETE ON fact_amendments
+        BEGIN SELECT RAISE(ABORT, 'Fact amendments are append-only'); END""")
     try:
         with db:
             yield db
@@ -95,16 +106,28 @@ def validate_content(value, race, phase):
     return report.model_dump()
 
 
+def validate_factual_claims(content, context):
+    if context.get('phase') != 'pre':
+        return content
+    prose = '\n'.join(content['summary'] + [d['text'] for d in content['details']])
+    has_win = any(pool.get('type') == 'WIN' and pool.get('quotes') for pool in context.get('marketSnapshot', {}).get('pools', []))
+    if has_win and re.search(r'(?:暂[无無]|暫無|[没沒]有|尚[无無])(?:[赛賽]前|即[时時])?[独獨][赢贏][赔賠]率(?!的?(?:[走历歷]|路[径徑]))', prose):
+        raise ValueError('本场已有经身份及时间核对的独赢报价，不得写暂无赛前独赢赔率；缺少完整走势不等于没有报价。')
+    if re.search(r'本站(?:尚)?未保存本[场場][赛賽]前[预預][测測]', prose):
+        raise ValueError('当前正在发布本场赛前预测，不得写本站未保存本场赛前预测。')
+    return content
+
+
 def model_report(context, race, phase):
     value = request_json(professional_rules('racing', RULES), context, 4500)
     try:
-        return validate_content(value, race, phase)
+        return validate_factual_claims(validate_content(value, race, phase), context)
     except ValueError as error:
         correction = {**context, 'previousResponse': value,
                       'validationIssue': str(error)[:2000],
                       'formatCorrection': '上次输出未通过检查。请保留事实依据，修正格式：关注名单最多三匹、必须含首选、不得有退出马或重复项；赛后 pick=null 且 shortlist=[]；摘要每段220字内；详情每项800字内。重新输出完整JSON。'}
         repair_rules = RULES + '\n按validationIssue修正previousResponse。必须逐项确认 shortlist 长度不超过3且包含首选；只保留两三段摘要，每段220字内；赛后 pick=null、shortlist=[]。公开文字去掉内部字段和草稿更正，马号与名次从原始资料核实。事实和马匹身份仍只依据原始资料，输出通过规范的完整JSON。'
-        return validate_content(request_json(professional_rules('racing', repair_rules), correction, 4500), race, phase)
+        return validate_factual_claims(validate_content(request_json(professional_rules('racing', repair_rules), correction, 4500), race, phase), context)
 
 
 def outcome(report, race):
@@ -123,8 +146,13 @@ def public_status(ident):
     with connect() as db:
         rows = db.execute('SELECT * FROM reports WHERE race_id=?', (ident,)).fetchall()
         all_pre = db.execute("SELECT * FROM reports WHERE phase='pre'").fetchall()
+        amendments = db.execute('SELECT * FROM fact_amendments WHERE race_id=? ORDER BY id', (ident,)).fetchall()
     reports = {r['phase']: {'issuedAt': r['issued_at'], 'model': r['model'], 'snapshotHash': r['snapshot_hash'],
                            **json.loads(r['content'])} for r in rows}
+    if 'pre' in reports and amendments:
+        reports['pre']['amendments'] = [
+            {'id': r['id'], 'issuedAt': r['issued_at'], 'originalReportHash': r['original_report_hash'],
+             'reason': r['reason'], **json.loads(r['content'])} for r in amendments]
     if race.get('status') == 'finished' and race.get('resultOfficial') is True and any(e.get('place') == 1 for e in race['entries']):
         if 'post' in reports:
             reports['legacyPost'] = reports['post']
@@ -137,6 +165,98 @@ def public_status(ident):
     totals['successRate'] = totals['wins'] / len(evaluated) if evaluated else None
     return {'raceId': ident, 'reports': reports, 'evaluation': totals,
             'outcome': outcome(reports['pre'], race) if 'pre' in reports else None}
+
+
+def market_snapshot(race, at):
+    """Bind cached HKJC quotes to this card and an observed pre-race time."""
+    def timestamp(value):
+        try:
+            parsed = datetime.fromisoformat(str(value).replace('Z', '+00:00'))
+            return parsed if parsed.tzinfo is not None else None
+        except ValueError:
+            return None
+
+    snapshot = {'raceId': race.get('id'), 'asOf': at.isoformat(), 'offTime': race.get('offTime'),
+                'source': race.get('source'), 'status': 'unavailable', 'pools': [],
+                'missingPools': ['WIN', 'PLA', 'QIN'],
+                'notes': ['保存报价不是完整赔率路径；首次收录不是官方开盘价，不能据此推断资金流。']}
+    identity = re.fullmatch(r'(\d{4}-\d{2}-\d{2})-(ST|HV)-(\d+)', race.get('id', ''))
+    off = timestamp(race.get('offTime'))
+    source = urlsplit(race.get('source') or '')
+    query = parse_qs(source.query)
+    if not identity or not off or race.get('status') != 'scheduled' or at >= off:
+        return snapshot
+    day, course, number = identity.groups()
+    if (race.get('date') != day or race.get('course', course) != course or str(race.get('raceNo', number)) != number
+            or source.hostname != 'racing.hkjc.com' or not source.path.endswith('/racecard')
+            or query.get('racedate', [''])[0].replace('/', '-') != day
+            or query.get('Racecourse') != [course] or query.get('RaceNo') != [number]):
+        return snapshot
+    active = {}
+    for entry in race.get('entries', []):
+        no = str(entry.get('number', ''))
+        if not entry.get('withdrawn') and no.isdigit():
+            no = str(int(no))
+            if no in active:
+                return snapshot
+            active[no] = {'id': entry['id'], 'number': no, 'name': entry.get('name')}
+    for pool in race.get('pools', []):
+        kind = pool.get('type')
+        checked, updated = timestamp(pool.get('checkedAt')), timestamp(pool.get('sourceUpdatedAt'))
+        if (kind not in snapshot['missingPools'] or pool.get('raceId', race['id']) != race['id']
+                or not checked or not updated or not updated <= checked <= at or checked >= off):
+            continue
+        quotes, seen = [], set()
+        for quote in pool.get('quotes', []):
+            bits = str(quote.get('combination', '')).split(',')
+            if any(not bit.isdigit() for bit in bits):
+                continue
+            bits = sorted((str(int(bit)) for bit in bits), key=int)
+            if len(bits) != (2 if kind == 'QIN' else 1) or len(set(bits)) != len(bits) or any(bit not in active for bit in bits):
+                continue
+            combination = ','.join(bits)
+            try:
+                price = float(quote.get('value'))
+            except (TypeError, ValueError):
+                continue
+            if not math.isfinite(price) or price <= 0 or combination in seen:
+                continue
+            seen.add(combination)
+            quotes.append({'combination': combination, 'value': str(quote['value']), 'horses': [active[bit] for bit in bits]})
+        if quotes:
+            snapshot['pools'].append({'type': kind, 'checkedAt': pool['checkedAt'], 'sourceUpdatedAt': pool['sourceUpdatedAt'],
+                                      'retained': bool(pool.get('quoteRetained')), 'stale': (at - checked).total_seconds() > 180,
+                                      'quotes': quotes})
+            snapshot['missingPools'].remove(kind)
+    if snapshot['pools']:
+        snapshot['status'] = 'available'
+    return snapshot
+
+
+def append_fact_amendment(ident, reason):
+    """Append an attributed factual correction without changing the original forecast."""
+    if not isinstance(reason, str) or not reason.strip() or len(reason) > 2000:
+        raise ValueError('请提供明确的事实更正原因（2000字以内）。')
+    if not read_control()['enabled']:
+        raise ValueError('同步已暂停，暂不发布事实更正。')
+    race = get_race(ident)
+    at = datetime.now(timezone.utc)
+    check_phase(race, 'pre', at)
+    market = market_snapshot(race, at)
+    with connect() as db:
+        original = db.execute("SELECT * FROM reports WHERE race_id=? AND phase='pre'", (ident,)).fetchone()
+        if original is None:
+            raise ValueError('本场没有已保存的赛前预测可更正。')
+        report_hash = hashlib.sha256(json.dumps(dict(original), ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+        facts = {'marketSnapshot': market, 'preparationSnapshot': json.loads(original['content']).get('preparationSnapshot')}
+        stable = {**facts, 'marketSnapshot': {k: v for k, v in market.items() if k != 'asOf'}, 'reason': reason.strip()}
+        facts_hash = hashlib.sha256(json.dumps(stable, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+        check_phase(get_race(ident), 'pre', datetime.now(timezone.utc))
+        if not read_control()['enabled']:
+            raise ValueError('同步已暂停，本次事实更正未发布。')
+        db.execute('INSERT OR IGNORE INTO fact_amendments (race_id,issued_at,original_report_hash,reason,facts_hash,content) VALUES (?,?,?,?,?,?)',
+                   (ident, at.isoformat(), report_hash, reason.strip(), facts_hash, json.dumps(facts, ensure_ascii=False)))
+    return public_status(ident)
 
 
 def generate(ident, phase: Literal['pre', 'post']):
@@ -175,7 +295,12 @@ def generate(ident, phase: Literal['pre', 'post']):
             raise ValueError(f'本场马匹档案仍在同步：已有 {coverage}/{len(horses)} 匹，需要至少 {max(1, len(horses) // 2)} 匹，稍后再生成预测。')
         preparation = assessment(ident)
         preparation['runners'] = [{k: v for k, v in r.items() if k != 'workouts'} for r in preparation.get('runners', [])]
-        context = {'phase': phase, 'asOf': now(), 'race': race, 'horses': horses,
+        market = market_snapshot(race, datetime.now(timezone.utc))
+        model_race = {k: v for k, v in race.items() if k not in {'pools', 'dividends'}}
+        model_race['entries'] = [{k: v for k, v in entry.items() if k != 'winOdds'} for entry in race['entries']]
+        if market['pools']:
+            model_race['pools'] = market['pools']
+        context = {'phase': phase, 'asOf': now(), 'race': model_race, 'marketSnapshot': market, 'horses': horses,
                    'reviewLessons': method_memory('racing', race['offTime']),
                    'reviewLessonInstructions': '历史复盘仅提供已有证据支持的候选检查项，请逐项判断本场是否适用；不是已验证的权重或胜率，不将历史赛果当作普遍规律，不自动提高评分。',
                    'preparation': preparation,
@@ -193,6 +318,7 @@ def generate(ident, phase: Literal['pre', 'post']):
         content['profileCoverage'] = context['profileCoverage']
         if phase == 'pre':
             content['preparationSnapshot'] = preparation
+            content['marketSnapshot'] = market
             content['reviewChecks'] = context['reviewLessons']
         digest = hashlib.sha256(json.dumps(context, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
         with connect() as db:

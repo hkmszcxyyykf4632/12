@@ -16,15 +16,37 @@ const person=p=>p?.source?source(p.source,p.name):val(p?.name);
 const table=(headers,rows)=>rows.length?`<div class="table-wrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(c=>`<tr>${c.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:'<div class="empty">暂未收录这项资料。</div>';
 async function json(path,signal){const r=await fetch(path,{cache:'no-cache',signal});if(!r.ok)throw Error('资料正在同步，请稍后重新读取。');return r.json();}
 
+function amendmentsHtml(report){
+  const amendments=report.amendments||[],latest=amendments.at(-1);if(!latest)return '';
+  const market=latest.marketSnapshot||{},pools=market.pools||[],win=pools.find(p=>p.type==='WIN'),place=pools.find(p=>p.type==='PLA');
+  const selected=new Set([report.pick,...(report.shortlist||[])]);
+  const prep=(latest.preparationSnapshot?.runners||[]).filter(h=>selected.has(h.id));
+  const quotes=(win?.quotes||[]).filter(q=>(q.horses||[]).some(h=>selected.has(h.id)));
+  const quoteRows=quotes.map(q=>[(q.horses||[]).map(h=>esc(h.number+' · '+h.name)).join('、'),val(q.value),val(place?.quotes?.find(p=>p.combination===q.combination)?.value)]);
+  const prepRows=prep.map(h=>[esc(h.number+' · '+h.name),esc(h.activity||'资料不足'),h.known?val(h.counts7?.fast)+' / '+val(h.counts7?.trial):'—',esc(h.window?.to||'—')]);
+  return '<div class="racing-amendment"><p><strong>资料说明已更正</strong> · '+stamp(latest.issuedAt)+'</p><p>'+esc(latest.reason)+'</p><p class="note">首选、关注名单与原发布时间保持不变。</p><details><summary>核对后的赔率与晨操资料</summary>'+
+    '<p>'+esc(market.status==='available'?'已取得本场赛前报价；报价存在不代表已有完整变动走势。':'本次未取得可核对的赛前报价。')+'</p>'+
+    (quotes.length?table(['关注马','独赢','位置'],quoteRows):'')+
+    pools.map(p=>'<p class="note">'+esc(({WIN:'独赢',PLA:'位置',QIN:'连赢'})[p.type]||p.type)+' · 来源更新 '+stamp(p.sourceUpdatedAt)+' · 检查 '+stamp(p.checkedAt)+(p.retained||p.stale?' · 保留的历史报价':'')+'</p>').join('')+
+    '<p class="note">补充记录 '+stamp(market.asOf)+'；不将此时点的赔率倒写为原预测时已知。</p>'+
+    (prep.length?table(['原关注马','已保存的备战观察','近7天快操 / 试闸','观察截至'],prepRows):'')+
+    '<p class="note">晨操分类取自本版预测保存的观察记录，仅描述公开操练，不代表胜率。</p></details></div>';
+}
+function reportBody(report){
+  const paragraphs=(report.summary||[]).map(p=>'<p>'+esc(p)+'</p>').join('');
+  const details=(report.details||[]).map(d=>'<h3>'+esc(d.title)+'</h3><p>'+esc(d.text)+'</p>').join('');
+  return report.amendments?.length?amendmentsHtml(report)+'<details class="racing-original"><summary>原始说明（已更正）</summary>'+paragraphs+details+'</details>':paragraphs+'<details><summary>更多详细资料</summary>'+details+'</details>';
+}
+
 export function evaluationHtml(state,race){
   const e=state.evaluation,phase=race.status==='finished'?'post':'pre';
   const report=state.reports?.[phase],prior=state.reports?.pre;
   const name=id=>race.entries.find(h=>h.id===id)?.name||id;
   let html=`<div class="forecast-rates"><div><span>首选胜出命中率</span><strong>${e.evaluated?(e.wins/e.evaluated*100).toFixed(1)+'%':'等待赛果验证'}</strong><small>${e.wins} / ${e.evaluated} 次有效预测 · ${e.pending} 次待赛果 · ${e.void} 次作废</small></div><div><span>首选前三名率</span><strong>${e.evaluated?(e.top3/e.evaluated*100).toFixed(1)+'%':'等待赛果验证'}</strong><small>前三名统计与胜出统计分开计算</small></div></div>`;
   if(report?.format==='evidence-review-1'){html+=evidenceReviewHtml(report);}
-  else if(report){html+='<div class="research-summary">'+(report.pick?'<p class="racing-pick">首选：'+esc(name(report.pick))+'</p><p>关注：'+(report.shortlist||[]).map(id=>esc(name(id))).join(' · ')+'</p>':'')+(report.summary||[]).map(p=>'<p>'+esc(p)+'</p>').join('')+(report.model||report.issuedAt?'<p class="note">'+[report.model,report.issuedAt?stamp(report.issuedAt):null].filter(Boolean).map(esc).join(' · ')+'</p>':'')+'<details><summary>更多详细资料</summary>'+(report.details||[]).map(d=>'<h3>'+esc(d.title)+'</h3><p>'+esc(d.text)+'</p>').join('')+'</details></div>';}
+  else if(report){html+='<div class="research-summary">'+(report.pick?'<p class="racing-pick">首选：'+esc(name(report.pick))+'</p><p>关注：'+(report.shortlist||[]).map(id=>esc(name(id))).join(' · ')+'</p>':'')+reportBody(report)+(report.model||report.issuedAt?'<p class="note">'+[report.model,report.issuedAt?stamp(report.issuedAt):null].filter(Boolean).map(esc).join(' · ')+'</p>':'')+'</div>';}
   else html+='<div class="empty">'+(phase==='pre'?'本场预测正在等待自动生成；排位与马匹资料齐备后会在开跑前直接发布。':'管理员可生成赛后评价，结合实际赛果复盘。')+'</div>';
-  if(phase==='post')html+='<details class="racing-original"><summary>原始赛前预测与验证</summary>'+(prior?.pick?'<p>发布：'+stamp(prior.issuedAt)+' · 首选 '+esc(name(prior.pick))+'</p>'+(prior.summary||[]).map(p=>'<p>'+esc(p)+'</p>').join('')+'<p>验证：'+(state.outcome?.status==='evaluated'?'实际名次 '+val(state.outcome.position)+'；'+(state.outcome.win===true?'首选胜出命中':state.outcome.win===false?'首选胜出未命中':'尚不能验证'):esc(state.outcome?.reason||'等待完整赛果'))+'</p>':'<p>本场没有赛前发布的预测，不计入命中率。</p>')+'</details>';
+  if(phase==='post')html+='<details class="racing-original"><summary>原始赛前预测与验证</summary>'+(prior?.pick?'<p>发布：'+stamp(prior.issuedAt)+' · 首选 '+esc(name(prior.pick))+'</p>'+reportBody(prior)+'<p>验证：'+(state.outcome?.status==='evaluated'?'实际名次 '+val(state.outcome.position)+'；'+(state.outcome.win===true?'首选胜出命中':state.outcome.win===false?'首选胜出未命中':'尚不能验证'):esc(state.outcome?.reason||'等待完整赛果'))+'</p>':'<p>本场没有赛前发布的预测，不计入命中率。</p>')+'</details>';
   if(phase==='post'&&prior?.pick){html+='<div class="table-wrap"><table><thead><tr><th>原关注马</th><th>原标记</th><th>实际名次</th><th>结果</th></tr></thead><tbody>'+[...new Set([prior.pick,...(prior.shortlist||[])])].filter(Boolean).map(id=>{const h=race.entries.find(e=>e.id===id);return '<tr><td>'+esc(name(id))+'</td><td>'+(id===prior.pick?'首选':'关注')+'</td><td>'+val(h?.place)+'</td><td>'+(h?.withdrawn?'退出作废':h?.place===1?'胜出':h?.place>0?'未胜出':'等待正式赛果')+'</td></tr>';}).join('')+'</tbody></table></div>';}
   return html+'<p class="note">赛前预测在开跑前固定保存。正式赛果发布后计算首选胜出和前三名结果；退出作废。所有有效预测均纳入，不包含赛后补写的判断。</p>';
 }

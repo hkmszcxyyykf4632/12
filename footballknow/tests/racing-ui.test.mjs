@@ -32,3 +32,18 @@ test('pool view separates recorded prices from official dividends and escapes ho
   assert.ok(html.includes('3.3')&&html.includes('1.4')&&html.includes('8.2')&&html.includes('33.00'));
   assert.ok(!html.includes('<img src=x>'));
 });
+
+test('race fact amendments retain the pick and original narrative with dated quote and training evidence',async()=>{
+  const {evaluationHtml}=await import('../public/racing-page.mjs');
+  const report={pick:'a',shortlist:['a','b'],issuedAt:'2026-11-21T12:00:00Z',summary:['旧文称没有赔率'],details:[{title:'旧依据',text:'原文保留'}],amendments:[{issuedAt:'2026-11-21T13:00:00Z',reason:'有报价，不代表已有完整走势。',marketSnapshot:{status:'available',asOf:'2026-11-21T13:00:00Z',pools:[{type:'WIN',sourceUpdatedAt:'2026-11-21T12:55:00Z',checkedAt:'2026-11-21T12:56:00Z',quotes:[{combination:'1',value:'1.2',horses:[{id:'a',number:'1',name:'<img src=x>'}]}]}]},preparationSnapshot:{runners:[{id:'b',number:'5',name:'乙',activity:'维持常规操练',known:true,counts7:{fast:1,trial:0},window:{to:'2026-11-20'}}]}}]};
+  const race={status:'scheduled',entries:[{id:'a',name:'甲'},{id:'b',name:'乙'}]};
+  const state={reports:{pre:report},evaluation:{evaluated:0,wins:0,top3:0,pending:1,void:0}};
+  const view=new JSDOM(evaluationHtml(state,race)).window.document;
+  assert.equal(view.querySelector('.racing-pick').textContent,'首选：甲');
+  assert.match(view.querySelector('.racing-amendment').textContent,/维持常规操练/);
+  assert.match(view.querySelector('.racing-amendment').textContent,/1 \/ 0/);
+  assert.equal(view.querySelector('.racing-original').open,false);
+  assert.match(view.querySelector('.racing-original').textContent,/旧文称没有赔率/);
+  assert.equal(view.querySelector('img'),null);
+  assert.equal(report.pick,'a');
+});

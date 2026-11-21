@@ -1,9 +1,11 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 import subprocess
+import sqlite3
 import sys
 import time
+import copy
 from types import SimpleNamespace
 
 import pytest
@@ -197,3 +199,178 @@ print(json.dumps({'pid': os.getpid(), 'result': result}))
         if holder.poll() is None:
             holder.kill()
             holder.communicate(timeout=10)
+
+
+def quoted_card(cards):
+    rows, _ = cards
+    race = copy.deepcopy(rows[0])
+    race['source'] += '?racedate=2026%2F11%2F22&Racecourse=ST&RaceNo=1'
+    race['pools'] = [{'type': 'WIN', 'checkedAt': '2026-11-21T16:29:00+00:00',
+                     'sourceUpdatedAt': '2026-11-21T16:28:00+00:00',
+                     'quotes': [{'combination': '1', 'value': '1.0'}]}]
+    return race
+
+
+def test_market_input_keeps_one_point_zero_binds_horse_and_marks_retained_quotes(cards):
+    race = quoted_card(cards)
+    race['pools'][0].update(quoteRetained=True, checkedAt='2026-11-21T16:20:00+00:00', sourceUpdatedAt='2026-11-21T16:19:00+00:00')
+    value = analysis.market_snapshot(race, AT)
+    pool = value['pools'][0]
+    assert value['status'] == 'available' and value['missingPools'] == ['PLA', 'QIN']
+    assert pool['retained'] and pool['stale']
+    assert pool['quotes'] == [{'combination': '1', 'value': '1.0', 'horses': [
+        {'id': race['entries'][0]['id'], 'number': '1', 'name': race['entries'][0]['name']}]}]
+
+
+@pytest.mark.parametrize('invalid', ['future-source', 'future-check', 'after-off', 'wrong-pool-race',
+                                     'wrong-card-source', 'wrong-date', 'unknown-horse', 'withdrawn', 'no-timezone', 'non-numeric'])
+def test_market_input_rejects_unattributable_or_future_quotes(cards, invalid):
+    race = quoted_card(cards)
+    pool = race['pools'][0]
+    if invalid == 'future-source':
+        pool['sourceUpdatedAt'] = '2026-11-21T16:31:00+00:00'
+    elif invalid == 'future-check':
+        pool['checkedAt'] = '2026-11-21T16:31:00+00:00'
+    elif invalid == 'after-off':
+        race['offTime'] = AT.isoformat()
+    elif invalid == 'wrong-pool-race':
+        pool['raceId'] = '2026-11-22-ST-2'
+    elif invalid == 'wrong-card-source':
+        race['source'] = race['source'].replace('RaceNo=1', 'RaceNo=2')
+    elif invalid == 'wrong-date':
+        race['date'] = '2026-11-23'
+    elif invalid == 'unknown-horse':
+        pool['quotes'][0]['combination'] = '9'
+    elif invalid == 'withdrawn':
+        race['entries'][0]['withdrawn'] = True
+    elif invalid == 'no-timezone':
+        pool['checkedAt'] = '2026-11-21T16:29:00'
+    else:
+        pool['quotes'][0]['value'] = 'NaN'
+    assert analysis.market_snapshot(race, AT)['pools'] == []
+
+
+def test_future_generation_passes_only_verified_market_input_and_saves_snapshot(cards, monkeypatch):
+    _, calls = cards
+    race = quoted_card(cards)
+    race['entries'][0]['winOdds'] = 99
+    publish(analysis.FOLDER / 'races' / (race['id'] + '.json'), race)
+    original = analysis.request_json
+
+    def response(rules, context, tokens):
+        value = original(rules, context, tokens)
+        value['summary'][1] = '已有保存的独赢报价；没有完整赔率走势，不能推断资金流。'
+        return value
+
+    monkeypatch.setattr(analysis, 'request_json', response)
+    report = analysis.generate(race['id'], 'pre')['reports']['pre']
+    assert calls[0]['marketSnapshot']['status'] == 'available'
+    assert calls[0]['race']['pools'] == report['marketSnapshot']['pools']
+    assert 'winOdds' not in calls[0]['race']['entries'][0]
+
+
+@pytest.mark.parametrize('claim', ['暂无赛前独赢赔率', '暫無賽前獨贏賠率', '没有独赢赔率', '沒有獨贏賠率'])
+def test_false_missing_odds_claim_gets_one_bounded_model_correction(cards, monkeypatch, claim):
+    race = quoted_card(cards)
+    replies = []
+
+    def response(rules, context, tokens):
+        replies.append(context)
+        return {'summary': ['首选以已提供资料为依据。', claim if len(replies) == 1 else '已有独赢保存报价，没有完整赔率走势。'],
+                'pick': race['entries'][0]['id'], 'shortlist': [race['entries'][0]['id']],
+                'details': [{'title': '资料', 'text': '保留来源报价，不推断资金流。'}]}
+
+    monkeypatch.setattr(analysis, 'request_json', response)
+    context = {'phase': 'pre', 'marketSnapshot': analysis.market_snapshot(race, AT)}
+    result = analysis.model_report(context, race, 'pre')
+    assert len(replies) == 2 and '已有经身份及时间核对' in replies[1]['validationIssue']
+    assert '已有独赢' in result['summary'][1]
+    bad = copy.deepcopy(result)
+    bad['details'][0]['text'] = claim
+    with pytest.raises(ValueError, match='独赢报价'):
+        analysis.validate_factual_claims(bad, context)
+
+
+def test_new_forecast_cannot_claim_no_saved_forecast_but_post_review_can(cards):
+    rows, _ = cards
+    report = analysis.generate(rows[0]['id'], 'pre')['reports']['pre']
+    report['summary'] = ['本站未保存本場賽前預測。', '资料仍待更新。']
+    with pytest.raises(ValueError, match='当前正在发布'):
+        analysis.validate_factual_claims(report, {'phase': 'pre'})
+    assert analysis.validate_factual_claims(report, {'phase': 'post'}) == report
+
+
+def test_append_only_correction_preserves_original_row_and_original_preparation(cards, monkeypatch, tmp_path):
+    rows, calls = cards
+    ident = rows[0]['id']
+    preparation = {'runners': [{'id': rows[0]['entries'][0]['id'], 'name': '测试马1', 'activity': '维持常规操练', 'known': True}]}
+    monkeypatch.setattr(analysis, 'assessment', lambda value: copy.deepcopy(preparation))
+    original = analysis.generate(ident, 'pre')['reports']['pre']
+    with analysis.connect() as db:
+        before = dict(db.execute("SELECT * FROM reports WHERE race_id=? AND phase='pre'", (ident,)).fetchone())
+    race = quoted_card(cards)
+    publish(analysis.FOLDER / 'races' / (ident + '.json'), race)
+    class CorrectionClock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            value = AT + timedelta(minutes=10)
+            return value.astimezone(tz) if tz else value.replace(tzinfo=None)
+
+    monkeypatch.setattr(analysis, 'datetime', CorrectionClock)
+    monkeypatch.setattr(analysis, 'assessment', lambda value: pytest.fail('Must not replace historical preparation'))
+    corrected = analysis.append_fact_amendment(ident, '核对赔率及晨操分类。')['reports']['pre']
+    assert len(calls) == 1
+    assert {k: v for k, v in corrected.items() if k != 'amendments'} == original
+    amendment = corrected['amendments'][0]
+    assert amendment['marketSnapshot']['pools'][0]['quotes'][0]['value'] == '1.0'
+    assert amendment['preparationSnapshot'] == preparation
+    assert amendment['originalReportHash'] and amendment['issuedAt'] == (AT + timedelta(minutes=10)).isoformat()
+    assert original['issuedAt'] == AT.isoformat()
+    assert len(analysis.append_fact_amendment(ident, '核对赔率及晨操分类。')['reports']['pre']['amendments']) == 1
+    with analysis.connect() as db:
+        after = dict(db.execute("SELECT * FROM reports WHERE race_id=? AND phase='pre'", (ident,)).fetchone())
+    assert before == after
+    assert 'amendments' not in analysis.public_status(rows[1]['id'])['reports'].get('pre', {})
+    (tmp_path / 'append-only-proof.json').write_text(json.dumps({'originalBefore': before, 'originalAfter': after,
+                                                               'amendment': amendment}, ensure_ascii=False), encoding='utf-8')
+
+
+def test_correction_requires_saved_forecast_and_stops_at_off_time_or_pause(cards, monkeypatch):
+    rows, _ = cards
+    with pytest.raises(ValueError, match='没有已保存'):
+        analysis.append_fact_amendment(rows[0]['id'], '事实更正')
+    analysis.generate(rows[0]['id'], 'pre')
+    monkeypatch.setattr(analysis, 'read_control', lambda: {'enabled': False})
+    with pytest.raises(ValueError, match='暂停'):
+        analysis.append_fact_amendment(rows[0]['id'], '事实更正')
+    monkeypatch.setattr(analysis, 'read_control', lambda: {'enabled': True})
+    rows[0]['offTime'] = AT.isoformat()
+    publish(analysis.FOLDER / 'races' / (rows[0]['id'] + '.json'), rows[0])
+    with pytest.raises(ValueError, match='开赛'):
+        analysis.append_fact_amendment(rows[0]['id'], '事实更正')
+
+
+def test_legacy_missing_preparation_remains_missing_in_correction(cards, monkeypatch):
+    rows, _ = cards
+    ident = rows[0]['id']
+    content = {'summary': ['旧版赛前判断。', '旧版没有保存晨操快照。'], 'pick': rows[0]['entries'][0]['id'],
+               'shortlist': [rows[0]['entries'][0]['id']], 'details': []}
+    with analysis.connect() as db:
+        db.execute('INSERT INTO reports VALUES (?,?,?,?,?,?)',
+                   (ident, 'pre', AT.isoformat(), 'legacy-model', 'legacy-hash', json.dumps(content)))
+    monkeypatch.setattr(analysis, 'assessment', lambda value: pytest.fail('Do not invent historical preparation'))
+    correction = analysis.append_fact_amendment(ident, '仅核对可取得的事实。')['reports']['pre']['amendments'][0]
+    assert correction['preparationSnapshot'] is None
+
+
+def test_fact_amendment_database_rejects_update_and_delete(cards):
+    rows, _ = cards
+    ident = rows[0]['id']
+    analysis.generate(ident, 'pre')
+    correction = analysis.append_fact_amendment(ident, '保留可审计的事实更正。')['reports']['pre']['amendments'][0]
+    with analysis.connect() as db:
+        with pytest.raises(sqlite3.IntegrityError, match='append-only'):
+            db.execute('UPDATE fact_amendments SET reason=? WHERE id=?', ('改写历史', correction['id']))
+        with pytest.raises(sqlite3.IntegrityError, match='append-only'):
+            db.execute('DELETE FROM fact_amendments WHERE id=?', (correction['id'],))
+    assert analysis.public_status(ident)['reports']['pre']['amendments'] == [correction]
