@@ -1,8 +1,8 @@
 {
-  "sourceRevision": "dd364c2da884ac244ea3c4ebbeebf5088a02c01d",
-  "archive": "releases/evidence-reviews-dd364c2da884.tar.gz",
-  "sha256": "9f93b05c0d73708382006799ca9b4b71ae16d03da2341b14e1870a0ea31a9c44",
-  "bytes": 523880,
+  "sourceRevision": "21c3d62121b215ff2440057a974c3a2e7cdf6bb3",
+  "archive": "releases/evidence-reviews-21c3d62121b2.tar.gz",
+  "sha256": "7a6946662db334c2321ad0e5844f24c9f0837f87f0dd1fcf95465bc433f6608b",
+  "bytes": 523985,
   "deployFiles": [
     "deploy/footballknow-web.service",
     "deploy/footballknow-worker.service",
