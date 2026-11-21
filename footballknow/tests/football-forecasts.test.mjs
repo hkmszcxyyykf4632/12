@@ -68,3 +68,18 @@ test('score scenario separates match winner from handicap result including quart
     assert.equal(v.stages.initial.report.asianSide,asianSide);
   }
 });
+
+test('pre-game amendment shows corrected evidence while preserving original forecast in closed audit',()=>{
+  const v=structuredClone(value);
+  const report={score:[2,1],asianSide:'A',quote:{line:-1.5,prices:{H:2,A:1.85}},issuedAt:'2026-11-21T09:00:00Z',summary:['原始错误说明'],details:[{title:'原依据',text:'原文保留'}],amendments:[{issuedAt:'2026-11-21T10:00:00Z',reason:'纠正统计首选',text:'统计首选 1:1，模型主选 2:1。',facts:{home:{name:'甲',formSummary:'近十场5胜1平4负',formation:'4-2-3-1',previousRetained:8,headToHeadRetained:6}}}]};
+  v.stages.final.report=report;
+  document.querySelector('main').innerHTML=forecastsHtml(row,v,now);
+  const card=document.querySelectorAll('.forecast-card')[1];
+  assert.match(card.querySelector('.forecast-result').textContent,/乙 受让 1.5 球.*2 : 1/);
+  assert.match(card.querySelector('.forecast-amendment').textContent,/统计首选 1:1，模型主选 2:1/);
+  assert.equal(card.querySelector('.forecast-amendment').closest('details'),null);
+  const audit=card.querySelector('[data-disclosure="forecast-final-original"]');
+  assert.equal(audit.open,false);assert.match(audit.textContent,/原始错误说明/);assert.match(audit.textContent,/原文保留/);
+  assert.match(card.textContent,/较上一场保留 8 名首发/);
+  assert.equal(report.summary[0],'原始错误说明');
+});

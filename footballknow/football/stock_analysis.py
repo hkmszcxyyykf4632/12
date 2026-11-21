@@ -153,7 +153,7 @@ def price_metrics(bars):
     return result
 
 
-def generate(code):
+def generate(code, *, automatic=False):
     from .reviews import require_watched
     require_watched(code)
     if not stock(code):
@@ -163,6 +163,10 @@ def generate(code):
     try:
         stamp = datetime.now(timezone.utc)
         day = stamp.astimezone(HK).date().isoformat()
+        automatic_quote = None
+        if automatic:
+            from .stock_automation import automatic_snapshot
+            automatic_quote = automatic_snapshot(code, stamp)
         with connect() as connection:
             prior = connection.execute('SELECT id FROM forecasts WHERE code=? AND day=? AND version=?', (code, day, VERSION)).fetchone()
         if prior:
@@ -172,11 +176,13 @@ def generate(code):
             raise ValueError('请先在管理后台填写 DeepSeek API Key。')
         history = load(FOLDER / 'history' / (code + '.json'))
         history_refresh_failed = False
-        if not history.get('updatedAt') or (stamp - datetime.fromisoformat(history['updatedAt'])).total_seconds() > 3600:
+        if not history.get('updatedAt') or (stamp - datetime.fromisoformat(history['updatedAt'])).total_seconds() > 3600 or automatic and history.get('code') != code:
             try:
                 history = refresh_history(code)
             except (OSError, ValueError):
                 history_refresh_failed = True
+        if automatic and history.get('code') != code:
+            raise ValueError('价格资料的股票身份尚未核实。')
         bars = completed_bars(history, stamp)
         if len(bars) < 30 or (stamp.date() - datetime.fromisoformat(bars[-1]['date']).date()).days > 7:
             raise ValueError('可核对的近期复权价格不足，暂不能生成预测。')
@@ -188,7 +194,7 @@ def generate(code):
                    'prices': bars[-80:], 'metrics': price_metrics(bars), 'priceSource': history.get('source'),
                    'priceFreshness': {'fetchedAt': history.get('updatedAt'), 'lastCompletedDate': bars[-1]['date'],
                                       'refreshFailed': history_refresh_failed},
-                   'quote': load(FOLDER / ('cn-quotes.json' if len(code) == 6 else 'quotes.json')).get('quotes', {}).get(code),
+                   'quote': automatic_quote or load(FOLDER / ('cn-quotes.json' if len(code) == 6 else 'quotes.json')).get('quotes', {}).get(code),
                    'evaluationRules': public_status(code)['rules'], 'historicalEvaluation': public_status(code)['evaluation']}
         # Bound report input to the two most recent periods, retaining all published line items.
         if context['company'].get('financials'):
@@ -200,12 +206,20 @@ def generate(code):
         if any(len(p) > 240 or not p for p in content.summary):
             raise ValueError('模型摘要格式不正确，请稍后重试。')
         issued_at = now()
+        if automatic:
+            issued = datetime.fromisoformat(issued_at)
+            automatic_snapshot(code, issued)
+            if issued.astimezone(HK).date().isoformat() != day:
+                raise ValueError('生成跨越交易日，取消发布并等待下一次核对。')
         day = datetime.fromisoformat(issued_at).astimezone(HK).date().isoformat()
         snapshot_hash = hashlib.sha256(json.dumps(context, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
         saved_content = content.model_dump()
         saved_content['protocolVersion'] = PROTOCOL_VERSION
         saved_content['priceData'] = context['priceFreshness']
         saved_content['reviewChecks'] = context['reviewLessons']
+        if automatic:
+            saved_content['publicationMode'] = 'watched-stock-automatic'
+            saved_content['tradingReceipt'] = {key: automatic_quote.get(key) for key in ('code', 'quotedAt', 'barAt', 'fetchedAt', 'source')}
         with connect() as connection:
             connection.execute('INSERT OR IGNORE INTO forecasts(code,day,version,issued_at,model,snapshot_hash,content) VALUES (?,?,?,?,?,?,?)',
                 (code, day, VERSION, issued_at, config.model, snapshot_hash, json.dumps(saved_content, ensure_ascii=False)))

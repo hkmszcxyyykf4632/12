@@ -29,6 +29,7 @@ RULES = '''你是足球赛前资料分析员，输出亚洲让球盘方向和90�
 临场版说明相对初版是否改变及最主要原因，有证据才调整；不要为了显示更新刻意反转。比分固定主队在前，score为两个0至12整数，给一个最可能比分；没有依据不要伪精确预测概率。summary两段，每段最多150字，第一段简明方向和比分，第二段关键依据及可能改变判断的条件。details列2至5项可核对的事实、统计方法、来源缺项；不输出内部思考或逐步推理。不能承诺收益或最低命中率。
 details分别说明比分依据和亚洲盘依据：比分应结合baseline的首选比分及双方进失球、主客场、正式首发等本场事实；若偏离baseline.leadingScores[0]，必须指出输入中可核对的本场证据，没有这种证据则采用统计首选比分。亚洲盘方向须说明实际让球数、报价及赢盘条件，允许与最可能比分的净胜方向不同，但必须解释概率分布、盘口条件或本场证据上的理由，不把两者机械绑定。
 summary第一段必须直接给出一个明确主选，使用具体队名写出比分、胜平负和实际亚洲盘方向，不用一串模糊备选代替判断。赢球与赢盘分别说明，例如主队2:1而主让1.5时，主队赢球但客队+1.5赢盘，两者一致。第二段给2至3条输入中可核对的关键证据及改判触发条件。无实际盘口时明确写暂不选边，不得编造盘口；明确主选不代表确定结果或已校准的成功率。
+统计首选比分和初版比分由系统直接从封存字段展示，不能把调整后的主选比分称为统计首选或沿用统计首选。若文字提及统计首选，必须逐字核对baseline.leadingScores[0]；提及初版预测比分则核对initialPrediction.score。不要把初版统计基线与初版实际预测混为一谈。
 严格返回JSON：{"score":[2,1],"asianSide":"H","summary":["简短结论","主要依据"],"details":[{"title":"阵容与近况","text":"可核对依据"}]}。details标题40字内、正文600字内。'''
 
 
@@ -48,7 +49,15 @@ def connect():
         CREATE TABLE IF NOT EXISTS attempts (
         identity TEXT NOT NULL, stage TEXT NOT NULL, retry_at TEXT NOT NULL,
         failures INTEGER NOT NULL DEFAULT 0, message TEXT NOT NULL,
-        PRIMARY KEY(identity,stage));''')
+        PRIMARY KEY(identity,stage));
+        CREATE TABLE IF NOT EXISTS forecast_amendments (
+        id TEXT PRIMARY KEY, identity TEXT NOT NULL, stage TEXT NOT NULL,
+        issued_at TEXT NOT NULL, content TEXT NOT NULL);
+        CREATE INDEX IF NOT EXISTS forecast_amendments_identity ON forecast_amendments(identity,stage);
+        CREATE TRIGGER IF NOT EXISTS forecast_amendments_no_update
+        BEFORE UPDATE ON forecast_amendments BEGIN SELECT RAISE(ABORT, 'amendments are append-only'); END;
+        CREATE TRIGGER IF NOT EXISTS forecast_amendments_no_delete
+        BEFORE DELETE ON forecast_amendments BEGIN SELECT RAISE(ABORT, 'amendments are append-only'); END;''')
     try:
         with db:
             yield db
@@ -150,7 +159,19 @@ class Content(BaseModel):
     details: list[Detail] = Field(min_length=1, max_length=5)
 
 
-def validate(value, quote):
+def baseline_explanation(report):
+    scores = report.get('baseline', {}).get('leadingScores', [])
+    score = scores[0] if scores else None
+    chosen = report.get('score')
+    if not (isinstance(score, list) and len(score) == 2 and isinstance(chosen, list) and len(chosen) == 2):
+        return None
+    text = f'封存统计基线首选 {score[0]}:{score[1]}；本版实际主选 {chosen[0]}:{chosen[1]}。'
+    text += '两者不同，主选属于模型调整，不能称为沿用统计首选。' if score != chosen else '本版比分与统计首选一致。'
+    return {'baselineScore': score, 'selectedScore': chosen, 'differsFromBaseline': score != chosen,
+            'source': 'stored-report.baseline.leadingScores[0]', 'text': text}
+
+
+def validate(value, quote, stats=None, previous=None):
     if any(type(n) is not int or not 0 <= n <= 12 for n in value.get('score', [])):
         raise ValueError('比分格式未通过检查')
     report = Content.model_validate(value)
@@ -158,6 +179,14 @@ def validate(value, quote):
         raise ValueError('预测摘要格式未通过检查')
     if quote is None and report.asianSide != 'pass':
         raise ValueError('未取得盘口，不能生成让球盘方向')
+    prose = '\n'.join([*report.summary, *(part.text for part in report.details)])
+    checks = [(r'(?:统计(?:基线)?(?:的)?首选(?:比分)?|基线(?:的)?首选(?:比分)?)',
+               ((stats or {}).get('leadingScores') or [None])[0]),
+              (r'初版(?:的)?(?:预测比分|主选比分|首选比分|比分|主选|首选)', (previous or {}).get('score'))]
+    for subject, expected in checks:
+        for match in re.finditer(subject + r'[^。；，\n\d]{0,12}(\d{1,2})\s*[:：比-]\s*(\d{1,2})', prose):
+            if expected is not None and [int(match[1]), int(match[2])] != expected:
+                raise ValueError('预测文字误述封存统计首选或初版比分')
     return report.model_dump()
 
 
@@ -165,7 +194,55 @@ def reports_for(row, db):
     result = {}
     for r in db.execute('SELECT * FROM forecasts WHERE identity=?', (identity(row),)):
         result[r['stage']] = json.loads(r['content'])
+    for r in db.execute('SELECT stage,content FROM forecast_amendments WHERE identity=? ORDER BY issued_at,id', (identity(row),)):
+        if r['stage'] in result:
+            result[r['stage']].setdefault('amendments', []).append(json.loads(r['content']))
     return result
+
+
+def record_baseline_amendment(row, stage, reason):
+    at = now()
+    latest = current_row(row['id'])
+    if stage not in {'initial', 'final'} or not pregame(latest, at) or identity(latest) != identity(row):
+        raise ValueError('只能为身份一致且尚未开赛的封存预测追加更正')
+    if not isinstance(reason, str) or not reason.strip() or len(reason) > 500:
+        raise ValueError('更正原因须为1至500字')
+    with connect() as db:
+        db.execute('BEGIN IMMEDIATE')
+        stored = db.execute('SELECT content,snapshot FROM forecasts WHERE identity=? AND stage=?', (identity(row), stage)).fetchone()
+        if not stored:
+            raise LookupError('尚无本阶段封存预测')
+        report = json.loads(stored['content'])
+        explanation = baseline_explanation(report)
+        if not explanation:
+            raise ValueError('封存统计基线缺失，不能推测更正内容')
+        original_snapshot = json.loads(stored['snapshot'])
+        previous_score = (original_snapshot.get('initialPrediction') or {}).get('score')
+        facts = {}
+        for side in ('home', 'away'):
+            team = original_snapshot.get('research', {}).get('teams', {}).get(side, {})
+            form, lineup, comparisons = team.get('form', {}), team.get('lineup', {}), team.get('comparisons', {})
+            facts[side] = {'name': team.get('name') or original_snapshot.get('match', {}).get('teams', {}).get(side, {}).get('label'),
+                           'formSummary': form.get('summary'), 'run': form.get('run'), 'outcome': form.get('outcome'),
+                           'formation': lineup.get('formation'), 'lineupConfirmed': lineup.get('confirmed') is True,
+                           'previousRetained': comparisons.get('previous', {}).get('difference', {}).get('retained'),
+                           'headToHeadRetained': comparisons.get('headToHead', {}).get('difference', {}).get('retained'),
+                           'source': f'stored-snapshot.research.teams.{side}'}
+        text = explanation['text']
+        if previous_score:
+            text += f'本版生成时引用的初版实际预测为 {previous_score[0]}:{previous_score[1]}。'
+        text += '本说明仅更正统计事实，不补造当时的调整依据；原预测比分、亚洲盘方向和快照保持封存。'
+        amendment = {'kind': 'baseline-factual-correction', 'stage': stage, 'issuedAt': at.isoformat(),
+                     'reason': reason.strip(), 'text': text, 'baselineExplanation': explanation,
+                     'facts': facts,
+                     'initialPredictionScore': previous_score, 'originalReportHash': digest(report),
+                     'originalSnapshotHash': digest(original_snapshot)}
+        amendment['id'] = digest(amendment)
+        if not pregame(latest, now()):
+            raise ValueError('已过开赛时间，未追加赛前更正')
+        db.execute('INSERT OR IGNORE INTO forecast_amendments VALUES (?,?,?,?,?)',
+                   (amendment['id'], identity(row), stage, amendment['issuedAt'], json.dumps(amendment, ensure_ascii=False)))
+    return amendment
 
 
 def review(report, row):
@@ -204,7 +281,8 @@ def status(row, at=None, saved=None, tries=None, paused=None):
         message = ('同步已暂停，恢复后自动检查' if paused else
                    '已过开赛时间，未留下本阶段预测' if not pregame(row, at) else
                    attempt.get('message') or ('开赛前6小时自动生成' if stage == 'initial' else '开赛前120分钟开始准备并检查，双方正式首发确认后生成'))
-        stages[stage] = {'report': {**report, 'review': review(report, row)} if report else None,
+        stages[stage] = {'report': {**report, 'baselineExplanation': baseline_explanation(report), 'amendments': report.get('amendments', []),
+                                   'review': review(report, row)} if report else None,
                          'message': message, 'retryAt': attempt.get('retry_at')}
     return {'supported': True, 'eventId': row['id'], 'kickoff': row['kickoff'],
             'teams': {s: str(row['teams'][s]['id']) for s in ['home', 'away']},
@@ -255,6 +333,10 @@ def read_index():
                 reports.setdefault(r['identity'], {})[r['stage']] = json.loads(r['content'])
             for r in db.execute(f'SELECT * FROM attempts WHERE identity IN ({placeholders})', chunk):
                 attempts.setdefault(r['identity'], {})[r['stage']] = dict(r)
+            for r in db.execute(f'SELECT identity,stage,content FROM forecast_amendments WHERE identity IN ({placeholders}) ORDER BY issued_at,id', chunk):
+                report = reports.get(r['identity'], {}).get(r['stage'])
+                if report is not None:
+                    report.setdefault('amendments', []).append(json.loads(r['content']))
     at, paused = now(), not read_control()['enabled']
     return {'updatedAt': at.isoformat(), 'matches': {r['id']: status(r, at, reports.get(identity(r), {}),
                 attempts.get(identity(r), {}), paused) for r in rows}}
@@ -327,7 +409,7 @@ def generate(row, stage):
                     'quote': quote, 'baseline': stats, 'initialPrediction': previous,
                     'reference': {k: v for k, v in fallback.items() if k not in {'research', 'quote'}} if fallback else None}
         rules = RULES + '\n若reference存在，本版是备用赛前资料初版，summary必须说明使用赛前参考盘口而非即时盘口，引用文件更新时间；仅用quote的盘口，不用match中旧quotes推断即时变化。备用资料没有正式首发、天气、伤停及杯赛往绩，不得编造这些资料。'
-        content = validate(request_json(professional_rules('football', rules), snapshot, 2800), quote)
+        content = validate(request_json(professional_rules('football', rules), snapshot, 2800), quote, stats, previous)
         finished = now()
         latest = current_row(row['id'])
         if not read_control()['enabled'] or not pregame(latest, finished) or identity(latest) != identity(row):
