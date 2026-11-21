@@ -71,7 +71,14 @@ def test_review_lessons_do_not_leak_into_earlier_predictions(tmp_path, monkeypat
     a['lessons'][0]['category'] = 'method'
     known = reviews.add_fact(d, '赛前已经记录对手近五场多次反击进球。', [d['sources'][0]['id']], before_event=True)
     a['lessons'][0]['evidenceIds'].append(known)
-    monkeypatch.setattr(reviews, 'request_json', lambda *args: a)
+    def model(rules, context, tokens):
+        value = copy.deepcopy(a)
+        mapping = {old['id']: new['id'] for old, new in zip(d['facts'], context['facts'])}
+        for section in ('claimAudits', 'drivers', 'lessons', 'marketReview'):
+            for item in value[section]:
+                item['evidenceIds'] = [mapping[e] for e in item['evidenceIds']]
+        return value
+    monkeypatch.setattr(reviews, 'request_json', model)
     reviews.build_review('football', 'fixture', d, True)
     assert reviews.method_memory('football', '2020-01-01T00:00:00+00:00') == []
     future = reviews.method_memory('football', '2100-01-01T00:00:00+00:00')
@@ -99,7 +106,7 @@ def test_hypothesis_cannot_be_labelled_as_observed_fact():
 def test_analysis_revision_creates_new_report_without_changing_original(tmp_path, monkeypatch):
     monkeypatch.setattr(reviews, 'STATE', tmp_path)
     d = dossier()
-    monkeypatch.setattr(reviews, 'request_json', lambda *args: answer(d))
+    monkeypatch.setattr(reviews, 'request_json', lambda rules, context, tokens: answer(context))
     first = reviews.build_review('football', 'fixture', d, True)
     monkeypatch.setattr(reviews, 'ANALYSIS_REVISION', 'new-audit-rules')
     second = reviews.build_review('football', 'fixture', d, True)
@@ -125,17 +132,20 @@ def test_revision_file_is_complete_before_becoming_visible(tmp_path, monkeypatch
 def test_uncited_lesson_gets_one_correction_before_publication(tmp_path, monkeypatch):
     monkeypatch.setattr(reviews, 'STATE', tmp_path)
     d = dossier()
-    invalid = answer(d)
-    invalid['lessons'][0]['evidenceIds'] = []
     calls = []
     def model(rules, context, tokens):
         calls.append(context)
-        return invalid if len(calls) == 1 else answer(d)
+        value = answer(context if len(calls) == 1 else context['dossier'])
+        if len(calls) == 1:
+            value['lessons'][0]['evidenceIds'] = []
+        return value
     monkeypatch.setattr(reviews, 'request_json', model)
     result = reviews.build_review('football', 'fixture', d, True)
     assert result['analysisStatus'] == 'ready'
     assert len(calls) == 2 and calls[1]['validationErrors'][0]['loc'] == ('lessons', 0, 'evidenceIds')
-    assert calls[1]['dossier'] == d
+    assert calls[1]['dossier']['original'] == d['original']
+    assert calls[1]['dossier']['facts'][1]['id'] == 'f2'
+    assert result['drivers'][0]['evidenceIds'] == [d['facts'][1]['id']]
 
 
 def test_failed_correction_is_never_published(tmp_path, monkeypatch):
@@ -149,3 +159,33 @@ def test_failed_correction_is_never_published(tmp_path, monkeypatch):
         reviews.build_review('football', 'fixture', d, True)
     assert len(calls) == 2
     assert not list(tmp_path.glob('evidence-reviews/football/*/*.json'))
+
+
+def test_readable_model_references_restore_stable_citations_and_preserve_evidence(tmp_path, monkeypatch):
+    import json
+    monkeypatch.setattr(reviews, 'STATE', tmp_path)
+    d = dossier()
+    d['snapshot'] = {'privateInput': 'kept for audit'}
+    d['timeline'] = [{'time': '20′', 'text': '伤退', 'evidenceIds': [d['facts'][1]['id']]}]
+    original = copy.deepcopy(d)
+    def model(rules, context, tokens):
+        assert context['facts'][1]['id'] == 'f2'
+        assert context['timeline'][0]['evidenceIds'] == ['f2']
+        return answer(context)
+    monkeypatch.setattr(reviews, 'request_json', model)
+    result = reviews.build_review('football', 'fixture', d, True)
+    assert d == original
+    assert result['drivers'][0]['evidenceIds'] == [d['facts'][1]['id']]
+    assert 'snapshot' not in result['dossier'] and 'evidenceSnapshot' not in result
+    saved = json.loads(next(tmp_path.glob('evidence-reviews/football/*/*.json')).read_text('utf-8'))
+    assert saved['evidenceSnapshot'] == original
+
+
+def test_missing_claim_links_are_empty_but_never_prove_method_error():
+    d = dossier()
+    a = answer(d)
+    a['lessons'][0].pop('claimIds')
+    assert reviews.validate_analysis(a, d)['lessons'][0]['claimIds'] == []
+    a['lessons'][0]['category'] = 'method'
+    with pytest.raises(ValueError, match='原判断'):
+        reviews.validate_analysis(a, d)
