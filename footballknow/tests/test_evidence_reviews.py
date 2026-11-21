@@ -86,6 +86,28 @@ def test_post_event_injury_alone_cannot_prove_a_pregame_omission():
         reviews.validate_analysis(a, d)
 
 
+def test_hypothesis_cannot_be_labelled_as_observed_fact():
+    d = dossier()
+    a = answer(d)
+    a['drivers'][0]['kind'] = 'observed'
+    with pytest.raises(ValueError, match='inference'):
+        reviews.validate_analysis(a, d)
+    a['drivers'][0]['kind'] = 'inference'
+    assert reviews.validate_analysis(a, d)['drivers'][0]['kind'] == 'inference'
+
+
+def test_analysis_revision_creates_new_report_without_changing_original(tmp_path, monkeypatch):
+    monkeypatch.setattr(reviews, 'STATE', tmp_path)
+    d = dossier()
+    monkeypatch.setattr(reviews, 'request_json', lambda *args: answer(d))
+    first = reviews.build_review('football', 'fixture', d, True)
+    monkeypatch.setattr(reviews, 'ANALYSIS_REVISION', 'new-audit-rules')
+    second = reviews.build_review('football', 'fixture', d, True)
+    assert first['revision'] != second['revision']
+    assert first['dossier']['original'] == second['dossier']['original']
+    assert len(list(tmp_path.glob('evidence-reviews/football/*/*.json'))) == 2
+
+
 def test_revision_file_is_complete_before_becoming_visible(tmp_path, monkeypatch):
     path = tmp_path / 'revision.json'
     link = reviews.os.link

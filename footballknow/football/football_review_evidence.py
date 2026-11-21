@@ -165,6 +165,7 @@ def _odds(d, match, ident, folder):
     for (provider, market, via, phase), quotes in sorted(groups.items()):
         quotes.sort(key=lambda v: v[0])
         prior = None
+        accepted = []
         for _, stamp, q in quotes:
             signature = (stamp, q.get('line'), tuple(sorted(q['prices'].items())))
             if prior and signature == prior[0]:
@@ -183,8 +184,33 @@ def _odds(d, match, ident, folder):
                     text += '同公司同市场同盘口价格变化：' + '，'.join(f'{PRICE_LABELS[k]} {prev["prices"][k]}→{prices[k]}' for k in prices)
                 else:
                     text += f"盘口线变动 {prev.get('line')}→{q.get('line')}；不同盘口价格不作同线升降水比较。"
-            add_fact(d, text, [source], category='market', time=stamp, before_event=True)
+            fid = add_fact(d, text, [source], category='market', time=stamp, before_event=True)
+            accepted.append((stamp, q, source, fid))
             prior = (signature, q)
+        # Compare each exact line separately; a different settlement line is not a price move.
+        lines = defaultdict(list)
+        for item in accepted:
+            lines[item[1].get('line')].append(item)
+        for line, samples in lines.items():
+            if len(samples) < 2:
+                continue
+            first, last = samples[0], samples[-1]
+            changes = '；'.join(
+                f'{PRICE_LABELS[k]} {first[1]["prices"][k]:g}→{last[1]["prices"][k]:g}'
+                f'（变化 {last[1]["prices"][k] - first[1]["prices"][k]:+.4f}，'
+                f'{(last[1]["prices"][k] / first[1]["prices"][k] - 1) * 100:+.2f}%）'
+                for k in first[1]['prices'])
+            line_text = f'盘口 {line:g}；' if line is not None else ''
+            text = (f'{provider} {MARKET_LABELS[market]}（{PHASE_LABELS.get(phase, phase)}）同线采样汇总：'
+                    f'{line_text}{len(samples)} 条记录；首个 {first[0]}；末个 {last[0]}；{changes}。'
+                    '以上是已留存采样的首末值，不是正式开盘或封盘，不能代表中间没有反复。')
+            if market == 'total-goals':
+                under = sum(q['prices']['U'] < q['prices']['O'] for _, q, _, _ in samples)
+                over = sum(q['prices']['O'] < q['prices']['U'] for _, q, _, _ in samples)
+                text += (f'按记录条数计，大球价格较低 {over} 条，小球价格较低 {under} 条，'
+                         f'相同 {len(samples) - under - over} 条；采样不等距，条数不是持续时间或成交量。')
+            add_fact(d, text, list(dict.fromkeys(s[2] for s in samples)),
+                     category='market-summary', time=f'{first[0]} / {last[0]}', before_event=True)
     d['gaps'].append(f'赔率仅采用开球前、同场且身份及时间有效的采集；排除 {excluded} 条缺时、赛中、异场或类型不明记录。首次/末次记录不自动等于开盘/临场封盘。')
     d['gaps'].append('赔率变动不能单独证明资金流入或庄家意图；无成交额、限额及可靠消息时间线时，原因未证实。历史交锋盘口仅是另一场背景样本，不能拼作本场变化。')
     if not groups:

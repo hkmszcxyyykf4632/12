@@ -27,6 +27,7 @@ export function evidenceReviewHtml(report){
   const facts=list(dossier.facts),sources=list(dossier.sources);
   const factIndex=new Map(facts.map((fact,index)=>[fact.id,index]));
   const sourceIndex=new Map(sources.map((source,index)=>[source.id,index]));
+  const prose=value=>{let text=String(value??'');for(const [id,index] of factIndex)text=text.split(id).join(`证据 ${index+1}`);return esc(text);};
   const citations=ids=>{
     const indexes=[...new Set(list(ids).map(id=>factIndex.get(id)).filter(index=>index!==undefined))];
     return indexes.length?`<span class="er-citations">${indexes.map(index=>`<a data-evidence-anchor href="#${base}-fact-${index+1}" aria-label="查看证据 ${index+1}">证据 ${index+1}</a>`).join('')}</span>`:'';
@@ -40,7 +41,7 @@ export function evidenceReviewHtml(report){
   const badge=(text,tone='neutral')=>`<span class="er-badge er-${tone}">${esc(text)}</span>`;
   const status=report.analysisStatus==='ready'?'已整理详细复盘':report.analysisStatus==='limited'?'证据不足，详细原因分析尚未完成':'详细原因分析尚未完成';
   let html=`<div class="evidence-review" aria-label="详细复盘"><header class="er-header"><h2>事实、判断与改进</h2>${badge(status,report.analysisStatus==='ready'?'neutral':'pending')}</header>`;
-  html+=`<div class="er-summary">${list(report.summary).map(text=>`<p>${esc(text)}</p>`).join('')}</div>`;
+  html+=`<div class="er-summary">${list(report.summary).map(text=>`<p>${prose(text)}</p>`).join('')}</div>`;
   if(report.generatedAt)html+=`<p class="er-meta">复盘整理时间：${esc(stamp(report.generatedAt))}</p>`;
   const timeline=list(dossier.timeline);
   html+=section('实际发生了什么',timeline.length?`<ol class="er-timeline">${timeline.map(event=>`<li><span class="er-time">${esc(stamp(event.time)||'时间未提供')}</span><div><p>${esc(event.text)}</p>${citations(event.evidenceIds)}</div></li>`).join('')}</ol>`:'<p class="er-muted">目前没有可核对的事件时间线。</p>');
@@ -48,14 +49,14 @@ export function evidenceReviewHtml(report){
   const audits=new Map(list(report.claimAudits).map(audit=>[audit.claimId,audit]));
   html+=section('原判断逐条核对',claims.length?`<div class="er-stack">${claims.map((claim,index)=>{
     const audit=audits.get(claim.id),verdict=verdicts[audit?.verdict]?audit.verdict:'unresolved';
-    return card(`原判断 ${index+1}`,`<blockquote>${esc(claim.text)}</blockquote><p>${esc(audit?.explanation||'原判断已保留，详细核对尚未完成。')}</p>${citations(audit?.evidenceIds)}`,badge(verdicts[verdict],verdict));
+    return card(`原判断 ${index+1}`,`<blockquote>${esc(claim.text)}</blockquote><p>${prose(audit?.explanation||'原判断已保留，详细核对尚未完成。')}</p>${citations(audit?.evidenceIds)}`,badge(verdicts[verdict],verdict));
   }).join('')}</div>`:`<p class="er-muted">${dossier.original?'原记录没有保存可逐条核对的分析原文。':'没有保存的原预测；这里只整理事实，不补写当时的判断或声称漏看了什么。'}</p>`);
-  html+=section('关键转折与可能原因',list(report.drivers).length?`<div class="er-stack">${report.drivers.map(driver=>card(driver.title,`<p>${esc(driver.explanation)}</p>${citations(driver.evidenceIds)}`,badge(driver.kind==='observed'?'已核实事实':'可能解释',driver.kind==='observed'?'neutral':'pending'))).join('')}</div>`:'<p class="er-muted">目前尚无足够证据形成详细原因分析。</p>');
-  html+=section(dossier.domain==='stocks'?'价格与市场对照':'盘口与赔率研究',list(report.marketReview).length?`<div class="er-stack">${report.marketReview.map(item=>card(item.title,`<p>${esc(item.explanation)}</p>${citations(item.evidenceIds)}`)).join('')}</div>`:'<p class="er-muted">目前没有足够的可比记录形成市场变化研究，具体缺项见下方。</p>');
+  html+=section('关键转折与可能原因',list(report.drivers).length?`<div class="er-stack">${report.drivers.map(driver=>card(driver.title,`<p>${prose(driver.explanation)}</p>${citations(driver.evidenceIds)}`,badge(driver.kind==='observed'?'已核实事实':'可能解释',driver.kind==='observed'?'neutral':'pending'))).join('')}</div>`:'<p class="er-muted">目前尚无足够证据形成详细原因分析。</p>');
+  html+=section(dossier.domain==='stocks'?'价格与市场对照':'盘口与赔率研究',list(report.marketReview).length?`<div class="er-stack">${report.marketReview.map(item=>card(item.title,`<p>${prose(item.explanation)}</p>${citations(item.evidenceIds)}`)).join('')}</div>`:'<p class="er-muted">目前没有足够的可比记录形成市场变化研究，具体缺项见下方。</p>');
   const lessons=list(report.lessons).filter(lesson=>lesson.category!=='method'||claims.length);
   html+=section('下次怎样检验改进',`<p class="er-policy">改进建议均为待验证的候选检查项，需要用后续样本检验；不能因一次结果就认定有效，也不改写原预测。</p>${lessons.length?`<div class="er-stack">${lessons.map(lesson=>{
     const related=claims.filter(claim=>list(lesson.claimIds).includes(claim.id));
-    return card(lesson.title,`<p>${esc(lesson.explanation)}</p>${related.map(claim=>`<blockquote><span class="er-muted">对应原判断：</span>${esc(claim.text)}</blockquote>`).join('')}<div class="er-next"><h5>下一次检查与验证</h5><p>${esc(lesson.nextCheck)}</p></div>${citations(lesson.evidenceIds)}`,badge(categories[lesson.category]||categories.unresolved,'pending'));
+    return card(lesson.title,`<p>${prose(lesson.explanation)}</p>${related.map(claim=>`<blockquote><span class="er-muted">对应原判断：</span>${esc(claim.text)}</blockquote>`).join('')}<div class="er-next"><h5>下一次检查与验证</h5><p>${prose(lesson.nextCheck)}</p></div>${citations(lesson.evidenceIds)}`,badge(categories[lesson.category]||categories.unresolved,'pending'));
   }).join('')}</div>`:'<p class="er-muted">暂未形成有证据支持的具体改进建议。</p>'}`);
   html+=section('尚缺哪些资料',list(dossier.gaps).length?`<ul class="er-gaps">${dossier.gaps.map(gap=>`<li>${esc(gap)}</li>`).join('')}</ul>`:'<p class="er-muted">当前记录没有列出具体缺项；这不代表资料完整。</p>');
   html+=`<details class="er-evidence"><summary>查看逐项证据（${facts.length}）</summary><ol class="er-facts">${facts.map((fact,index)=>`<li id="${base}-fact-${index+1}" tabindex="-1"><h4>证据 ${index+1}</h4>${fact.time?`<p class="er-meta">记录时点：${esc(stamp(fact.time))}</p>`:''}<p>${esc(fact.text)}</p><div class="er-source-refs">${sourceRefs(fact.sourceIds)||'来源未提供'}</div></li>`).join('')}</ol></details>`;

@@ -131,6 +131,22 @@ class FootballDossierTests(unittest.TestCase):
         self.match['quotes'].append(self.quote(prices=None))
         self.assertEqual(len(self.build()['facts']), 1)
 
+    def test_total_price_summary_preserves_direction_and_exact_line(self):
+        self.match['quotes'] = [
+            self.quote(market='total-goals', line=4.5, prices={'O': 2.05, 'U': 1.7143}),
+            self.quote('2026-11-01T13:30:00Z', market='total-goals', line=3.5, prices={'O': 2.2, 'U': 1.5}),
+            self.quote('2026-11-01T14:00:00Z', market='total-goals', line=4.5, prices={'O': 1.7692, 'U': 2.05}),
+            self.quote('2026-11-01T14:00:00Z', market='total-goals', line=4.5, prices={'O': 1.7692, 'U': 2.05})]
+        summaries = [f for f in self.build()['facts'] if f['category'] == 'market-summary']
+        self.assertEqual(len(summaries), 1)
+        text = summaries[0]['text']
+        self.assertIn('盘口 4.5；2 条记录', text)
+        self.assertIn('大球 2.05→1.7692（变化 -0.2808', text)
+        self.assertIn('小球 1.7143→2.05（变化 +0.3357', text)
+        self.assertIn('大球价格较低 1 条，小球价格较低 1 条', text)
+        self.assertNotIn('2.2', text)
+        self.assertTrue(summaries[0]['beforeEvent'])
+
     def test_histories_do_not_mix_fixtures_or_providers(self):
         (self.root / 'market-odds.json').write_text(json.dumps({'league': 'epl', 'history': {
             'espn:123': [self.quote(), self.quote('2026-11-01T14:00:00Z', provider='Other')],

@@ -52,6 +52,16 @@ test('all user-provided text is escaped and malformed links cannot inject execut
   assert.ok([...document.querySelectorAll('[id]')].every(node=>/^[a-zA-Z0-9_-]+$/.test(node.id)));
 });
 
+test('generated prose shows readable evidence numbers rather than storage identifiers',()=>{
+  const report=fixture();
+  report.summary=['依据 fact-private-id'];
+  report.drivers[0].explanation='进球记录（fact-private-id）。';
+  const document=dom(report).window.document;
+  assert.ok(document.querySelector('.er-summary').textContent.includes('证据 1'));
+  assert.ok(!document.body.textContent.includes('fact-private-id'));
+  assert.ok(document.querySelector('a[data-evidence-anchor]'));
+});
+
 test('source href allows HTTP(S) and safe single-slash paths only',()=>{
   for(const [url,allowed] of [
     ['https://example.org/a',true],['http://example.org/a',true],['/source/item?a=1',true],
