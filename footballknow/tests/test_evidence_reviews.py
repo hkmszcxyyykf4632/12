@@ -103,6 +103,25 @@ def test_hypothesis_cannot_be_labelled_as_observed_fact():
     assert reviews.validate_analysis(a, d)['drivers'][0]['kind'] == 'inference'
 
 
+def test_generator_downgrades_speculation_without_mutating_draft_or_losing_citations(monkeypatch):
+    d = dossier()
+    calls = []
+
+    def reply(rules, context, tokens):
+        value = answer(context)
+        value['drivers'][0]['kind'] = 'observed'
+        calls.append(value)
+        return value
+
+    monkeypatch.setattr(reviews, 'request_json', reply)
+    result = reviews._generate_analysis(d)
+    assert len(calls) == 1
+    assert calls[0]['drivers'][0]['kind'] == 'observed'
+    assert result['drivers'][0]['kind'] == 'inference'
+    assert result['drivers'][0]['explanation'] == calls[0]['drivers'][0]['explanation']
+    assert result['drivers'][0]['evidenceIds'] == [d['facts'][1]['id']]
+
+
 def test_analysis_revision_creates_new_report_without_changing_original(tmp_path, monkeypatch):
     monkeypatch.setattr(reviews, 'STATE', tmp_path)
     d = dossier()

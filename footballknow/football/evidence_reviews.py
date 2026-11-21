@@ -153,6 +153,17 @@ def _revision(dossier):
     return _hash({'version': VERSION, 'analysisRevision': ANALYSIS_REVISION, 'dossier': stable})
 
 
+def _conservative_labels(value):
+    result = copy.deepcopy(value)
+    if not isinstance(result, dict) or not isinstance(result.get('drivers'), list):
+        return result
+    for item in result['drivers']:
+        if isinstance(item, dict) and item.get('kind') == 'observed' and isinstance(item.get('explanation'), str):
+            if any(word in item['explanation'] for word in ('可能', '替代解释', '推测', '假设')):
+                item['kind'] = 'inference'
+    return result
+
+
 def _generate_analysis(dossier):
     # Short request-local aliases avoid copy errors in long hashes; stored citations stay stable.
     context = copy.deepcopy(dossier)
@@ -165,14 +176,14 @@ def _generate_analysis(dossier):
     rules = professional_rules(dossier['domain'], RULES)
     draft = request_json(rules, context, 10000)
     try:
-        result = validate_analysis(draft, context)
+        result = validate_analysis(_conservative_labels(draft), context)
     except ValueError as error:
         issues = error.errors(include_input=False, include_url=False) if hasattr(error, 'errors') else str(error)
         correction = {'dossier': context, 'draftToCorrect': draft, 'validationErrors': issues}
         repaired = request_json(rules + '\n上一份草稿未通过校验。根据 validationErrors 修正，返回完整 JSON。'
                                 '没有事实支持的原因、建议或市场解释应删除该条；不能为了保留文字随意挂上不相关证据。'
                                 '没有原预测不构成方法遗漏的证据。缺项只在有相关事实支持时讨论，不能补造证据 ID。', correction, 10000)
-        result = validate_analysis(repaired, context)
+        result = validate_analysis(_conservative_labels(repaired), context)
     for section in ('claimAudits', 'drivers', 'lessons', 'marketReview'):
         for item in result[section]:
             item['evidenceIds'] = [stable_ids[e] for e in item['evidenceIds']]
