@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 
 from .files import PUBLIC, STATE, publish, read_json
 from .match_facts import build_facts
+from .score_reconciliation import reconcile, confirmed, prefer_incoming
 from .leagues import league_config, league_path
 from .rankings import COMPETITIONS, EPL_NAMES, normalize, player_code
 from .ucl import fetch_json
@@ -36,8 +37,9 @@ def fresh(value, seconds):
         return False
 
 
-def match_catalogue(league):
-    folder = league_path(PUBLIC, league)
+def match_catalogue(league, public=None):
+    root = PUBLIC if public is None else public
+    folder = league_path(root, league)
     data = read_json(folder / 'data.json')
     live = read_json(folder / 'live.json') if (folder / 'live.json').exists() else {}
     merged = {m['id']: m for m in data['matches']}
@@ -46,8 +48,14 @@ def match_catalogue(league):
             for key, old in list(merged.items()):
                 if (old['home'], old['away'], old['season'], old['competition']) == (m['home'], m['away'], m['season'], m['competition']):
                     del merged[key]
-        merged[m['id']] = m
-    return data, sorted(merged.values(), key=lambda m: (m['date'], m.get('kickoff') or ''), reverse=True)
+        old = next((a for a in data['matches'] if a['season'] == m['season'] and a['competition'] == m['competition'] and a['home'] == m['home'] and a['away'] == m['away'] and a.get('kickoff') == m.get('kickoff')), {})
+        merged[m['id']] = old if confirmed(old) and not prefer_incoming({**old, 'updatedAt': old.get('updatedAt') or data.get('updatedAt')}, {**m, 'updatedAt': m.get('updatedAt') or live.get('updatedAt')}) else m
+    try:
+        daily = read_json(root / 'daily-football.json')
+    except (OSError, ValueError):
+        daily = {}
+    rows = reconcile(list(merged.values()), data, daily, league, live.get('updatedAt') or data.get('updatedAt'))
+    return data, sorted(rows, key=lambda m: (m['date'], m.get('kickoff') or ''), reverse=True)
 
 
 def canonical(name, league):

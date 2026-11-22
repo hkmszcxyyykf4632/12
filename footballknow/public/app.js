@@ -73,7 +73,8 @@ export function updateView() {
 function render() {
  waitingForData=false;
  disposePage();disposePage=()=>{};updatePage=()=>{};
- const [current,id,second]=route(),page=current||'home';closeDrawer();
+ const [current,id,second]=route(),page=current==='live'?'matches':current||'home';
+ if(current==='live')history.replaceState(null,'','#/matches');closeDrawer();
  const racingPages=['racing','race','horse','horses','horse-going','bloodlines','racing-day','racing-rankings','racing-statistics','racing-paper'];
  document.documentElement.dataset.section=racingPages.includes(page)?'racing':['markets','cn-markets','us-stocks','stock-volume','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset'].includes(page)?'finance':['home','insights','recommendations','ask','portal-news','sponsors','admin','status','videos','video-admin'].includes(page)?'portal':'football';
  const active=['race','racing-day'].includes(page)?'racing':page==='horse'?'horses':['stock','asset'].includes(page)?'markets':['team','analysis','player'].includes(page)?'teams':page==='match'?'matches':page;
@@ -103,7 +104,7 @@ function render() {
  if(page==='sponsors'){renderSponsors();return;}
  if(page==='admin'){disposePage=renderAdmin();updateStatus();return;}
  if(page==='status'){disposePage=renderStatus();updateStatus();return;}
- if(page==='live'){document.querySelector('#breadcrumb').textContent='全球足球 / 每日赛事与即场赛果';disposePage=renderLive();return;}
+ if(page==='matches'){document.querySelector('#breadcrumb').textContent='足球 / 比赛中心';disposePage=renderLive({leagueId:id==='league'?second:null});return;}
  if(page==='news'){disposePage=renderNews(id||'');return;}
  if(page==='portal-news'){document.querySelector('#breadcrumb').textContent='峰弈科技 / 即时资讯';disposePage=renderPortalNews(id);return;}
  if(page==='home')updatePage=renderHome(loadError);
@@ -117,7 +118,7 @@ function render() {
  else if(page==='compare')updatePage=renderCompare(id,second);
  else if(page==='player')updatePage=renderPlayer(id,second);
  else if(page==='quality')updatePage=renderQuality();
- else if(page==='matches')updatePage=renderMatches();
+
  else if(page==='following'){updatePage=renderMatches(true);mountAlertPanel(main);}
  else if(page==='match')disposePage=renderMatch(id,second);
  else if(page==='teams')renderTeams();

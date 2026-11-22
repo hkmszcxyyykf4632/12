@@ -1,3 +1,4 @@
+import {mountMatchResearch} from './match-centre-research.mjs';
 import {api} from './api.mjs';
 import {data} from './repository.mjs';
 import {main,esc,cn,pageHeading,timeText} from './ui.mjs';
@@ -42,7 +43,7 @@ function lineupEvidence(value){
 }
 
 export function renderAnalysis(id) {
-  const controller=new AbortController();
+  const controller=new AbortController();let stopResearch=()=>{};
   const request=(path,options={})=>api(path,{...options,signal:controller.signal});
   main.innerHTML=`${pageHeading('下一场比赛','正在整理本场结论…')}<div class="loading">读取分析资料…</div>`;
   const load=async()=>{
@@ -51,9 +52,10 @@ export function renderAnalysis(id) {
     const report=payload.report,match=report.match;
     if(!match){main.innerHTML=`${pageHeading('下一场比赛','尚未找到这支球队下一场已排期的比赛。')}<a class="button secondary" href="#/team/${Number(id)}">返回球队资料</a>`;return;}
     main.innerHTML=`<a class="back-link" href="#/team/${Number(id)}">← 返回 ${esc(report.team.cn)} 资料</a>${pageHeading(`${esc(cn(match.home))} <span class="versus">vs</span> ${esc(cn(match.away))}`,`${league.name}${match.phase?' · '+match.phase:''}${match.neutral?' · 中立场':''}。先看本场结论，再按需要展开依据。`,`<span class="tag">${esc(timeText(match.kickoff))}</span>`)}
-      <section id="ai-section" class="analysis-result"><div class="section-head"><h2>本地模型辅助分析</h2>${session.authenticated?'<button class="button" id="generate-analysis">生成 / 更新结论</button>':'<a class="button secondary" href="#/admin">管理员登录后生成</a>'}</div><div id="ai-answer" aria-live="polite"></div><p id="analysis-error" class="form-error" role="alert"></p></section>
+      <section id="team-match-analysis" class="analysis-result"></section><details class="analysis-disclosure"><summary>统计模型辅助参考</summary><section id="ai-section" class="analysis-result"><div class="section-head"><h2>本地模型辅助分析</h2>${session.authenticated?'<button class="button" id="generate-analysis">生成 / 更新结论</button>':'<a class="button secondary" href="#/admin">管理员登录后生成</a>'}</div><div id="ai-answer" aria-live="polite"></div><p id="analysis-error" class="form-error" role="alert"></p></section></details>
       <details id="analysis-details" class="analysis-disclosure"><summary><span>更多详细资料</span><small>数据、计算与来源</small></summary><div class="analysis-evidence"><div id="ai-detail-answer"></div><p class="note">球队资料：${timestamp(report.dataUpdatedAt)} · 赛程资料：${timestamp(report.liveUpdatedAt)} · 开赛时间按本地时区显示。</p>${baselinePanel(report)}${comparison(report)}
       ${lineupEvidence(payload.lineupEvidence)}<section><div class="section-head"><h2>人员情况</h2><a class="button quiet" href="#/team/${Number(id)}">转会与领队记录 ↗</a></div>${report.unavailablePlayers.length?`<div class="availability-list">${report.unavailablePlayers.map(p=>{const player=data.players.find(row=>row.code===p.code);return `<div><strong>${esc(player?playerLabel(player):p.web_name)}</strong><p>${esc(p.news||'人员动态待补充。')}</p></div>`;}).join('')}</div>`:'<p class="note">当前名单暂无额外出场状态标记。</p>'}</section>${evaluationPanel(payload.evaluation)}<p class="note"><a href="#/sources">查看资料来源与统计口径 ↗</a></p></div></details>`;
+    stopResearch=mountMatchResearch(main.querySelector('#team-match-analysis'),match);
     const answer=main.querySelector('#ai-answer');
     function showAI(result,matches=true) {
       const current=matches&&Array.isArray(result?.summary)&&result.summary.length>=2&&result.summary.length<=3&&result.summary.every(item=>typeof item==='string'&&item.trim()&&item.length<=240);
@@ -72,5 +74,5 @@ export function renderAnalysis(id) {
     });
   };
   load().catch(error=>{if(!controller.signal.aborted)main.innerHTML=`${pageHeading('分析资料暂时无法载入','请稍后重试；球队与模拟记录仍可使用。')}<div class="error-box">${esc(error.message)}</div><a class="button secondary" href="#/team/${Number(id)}">返回球队资料</a>`;});
-  return ()=>controller.abort();
+  return ()=>{controller.abort();stopResearch();};
 }

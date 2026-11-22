@@ -198,3 +198,20 @@ def test_baseline_ignores_future_and_missing_scores():
     assert result['expectedGoals'] == [1.5,1.5]
     r['teams']['away']['form']['matches'] = []
     assert not ff.baseline(r, AT)['available']
+
+
+def test_compact_index_preserves_picks_without_mutating_full_review():
+    value = {'supported': True, 'eventId': '123', 'teams': {'home': '1', 'away': '2'},
+             'stages': {'final': {'message': 'saved', 'report': {'score': [2, 1], 'asianSide': 'H',
+                        'issuedAt': AT.isoformat(), 'quote': {'line': -.5, 'prices': {'H': 1.9, 'A': 1.9}},
+                        'summary': ['long analysis'], 'details': [{'text': 'evidence'}],
+                        'review': {'status': 'evaluated', 'analysis': {'text': 'full postmatch evidence'}}}},
+                        'initial': {'report': None}}}
+    before = deepcopy(value)
+    small = ff.compact_status(value)
+    assert small['eventId'] == '123' and small['teams'] == value['teams']
+    assert small['stages']['final']['report']['score'] == [2, 1]
+    assert small['stages']['final']['report']['quote'] == {'line': -.5}
+    assert small['stages']['final']['report']['review'] == {'status': 'evaluated'}
+    assert 'details' not in small['stages']['final']['report']
+    assert small['stages']['initial']['report'] is None and value == before

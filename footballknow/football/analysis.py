@@ -6,7 +6,6 @@ from typing import Final
 from pydantic import BaseModel, ConfigDict, Field
 
 from .files import PUBLIC
-from .live import LiveSnapshot
 from .leagues import league_config, league_path
 
 METHOD: Final = 'poisson-shrinkage-v1'
@@ -108,18 +107,11 @@ def load_archive(league: str = 'epl') -> tuple[Archive, str | None]:
     config = league_config(league)
     folder = league_path(PUBLIC, league)
     archive = Archive.model_validate_json((folder / 'data.json').read_text(encoding='utf-8'))
-    live_path = folder / 'live.json'
-    if not live_path.exists():
-        return archive, None
-    live = LiveSnapshot.model_validate_json(live_path.read_text(encoding='utf-8'))
-    if live.season != archive.season or live.competition != config.competition:
-        return archive, None
-    pairs = {(row.home, row.away) for row in live.matches}
-    ids = {row.id for row in live.matches}
-    matches = [row for row in archive.matches if not (row.competition == config.competition and row.season == live.season and
-               (row.id in ids if league == 'ucl' else (row.home, row.away) in pairs))]
-    matches += [Match.model_validate(row.model_dump()) for row in live.matches]
-    return archive.model_copy(update={'matches':matches}), live.updatedAt
+    from .match_details import match_catalogue
+    _, rows = match_catalogue(league, PUBLIC)
+    matches = [Match.model_validate(row) for row in rows]
+    updated = max((row.get('scoreUpdatedAt') or row.get('updatedAt') or '' for row in rows), default='')
+    return archive.model_copy(update={'matches': matches}), updated or archive.updatedAt
 
 
 def goals(row: Match) -> tuple[int, int]:

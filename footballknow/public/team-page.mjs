@@ -1,3 +1,4 @@
+import {mountTeamSections,foldResearch} from './team-sections.mjs';
 import {hydrateBriefs} from './review-briefs.mjs';
 import {bindHandicapTrend} from './handicap-trend.mjs';
 import {data,names,playerValues,markets} from './repository.mjs';
@@ -46,6 +47,8 @@ export function renderTeam(id) {
     <section id="availability-section"><div class="section-head"><h2>伤停与停赛</h2></div><div id="team-availability">${availabilityBlock(team)}</div></section>
     <section id="team-handicap-trend"></section><section id="calendar-section"><div class="section-head"><h2>赛程日历</h2><p>本赛季全部${league.name}比赛</p></div><div class="toolbar"><label class="small">主客场 <select class="filter-select" id="team-venue" aria-label="筛选球队主客场"><option value="all">全部</option><option value="home">主场</option><option value="away">客场</option></select></label><span class="small subtle">同时筛选赛程与最近二十场</span></div><div id="team-calendar">${calendarBlock(team)}</div></section>
     <section id="matches-section"><div class="section-head"><div><h2>最近二十场${league.historyLabel}</h2></div><p>最新在上 · 跨赛季</p></div><div class="toolbar"><p class="note">点击赔率，记录一次模拟判断</p><select class="filter-select" id="competition-filter" aria-label="筛选比赛赛事"><option value="all">${league.historyFilter}</option><option value="pl">仅${league.name}</option></select></div><div id="matches-table">${matchTable(recent(team),team)}</div><p class="note">比分和赔率按主队、客队排列。不足二十场时显示实际数量。${league.id==='ucl'?'已收录正式赛事按90分钟含补时统计；加时、点球与总比分分开，缺少可核对比分的场次不参与统计。':'当前范围不包含杯赛。'}缺少赔率可手动录入。</p></section>${historySections(team)}`;
+  const overview=()=>`<div class="section-head"><h2>最近五场赛果</h2><span class="small subtle">已确认完赛 · 最新在前</span></div>${recent(team).slice(0,5).map(m=>`<div class="team-recent-row"><time>${esc(m.date)}</time><span>${esc(cn(m.home))}</span><a href="#/match/${encodeURIComponent(m.id)}"><b>${m.homeGoals} : ${m.awayGoals}</b></a><span>${esc(cn(m.away))}</span><span class="tag">已完赛</span></div>`).join('')||'<p class="note">暂未收录已确认赛果。</p>'}<p class="note">查看完整赛程、亚洲盘与大小球结果，请切换「赛程与赛果」。</p>`;
+  mountTeamSections(main,`<div id="team-overview-results">${overview()}</div>`);
   const updateHandicap=bindHandicapTrend(main.querySelector('#team-handicap-trend'),()=>({matches:data.matches,teamName:team.name,snapshot:markets,season:data.season,competition:league.name}),cn);
   function filterPlayers() {
     const query=main.querySelector('#player-search').value.trim().toLowerCase();
@@ -68,7 +71,10 @@ export function renderTeam(id) {
     main.querySelector('#team-fixture').innerHTML=fixtureStrip(team);
     main.querySelector('#team-summary').innerHTML=summaryBlock(team);
     main.querySelector('#team-season').innerHTML=seasonBlock(team);main.querySelector('#team-availability').innerHTML=availabilityBlock(team);main.querySelector('#team-calendar').innerHTML=calendarBlock(team,venue());
-    updateHandicap();updateMatches();main.querySelector('#team-research').innerHTML=clubResearch(team);
+    updateHandicap();updateMatches();
+    main.querySelector('#team-overview-results').innerHTML=overview();
+    const research=main.querySelector('#team-research'),openIds=[...research.querySelectorAll('details[open]')].map(d=>d.dataset.clubSection);
+    research.innerHTML=clubResearch(team);foldResearch(research);research.querySelectorAll('details[data-club-section]').forEach(d=>d.open=openIds.includes(d.dataset.clubSection));
     if(rosterVersion!==data.updatedAt||namesVersion!==names?.updatedAt||valueVersion!==playerValues?.updatedAt){main.querySelector('#player-rows').innerHTML=playerRows(team);filterPlayers();hydratePlayerPortraits(main,league.id);rosterVersion=data.updatedAt;namesVersion=names?.updatedAt;valueVersion=playerValues?.updatedAt;}
   };
 }

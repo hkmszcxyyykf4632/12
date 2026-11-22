@@ -1,14 +1,19 @@
+import {preferIncomingScore,confirmedScore} from './score-reconciliation.mjs';
 export function mergeMatches(archive, live, previous=[]) {
   const key = row => archive.league==='ucl'?`${row.competition}|${row.id}`:`${row.season}|${row.competition}|${row.home}|${row.away}`;
   const prior = new Map(previous.map(row=>[key(row),row]));
-  const current = new Map(archive.matches.map(row=>[key(row),row]));
+  const current = new Map(archive.matches.map(row=>[key(row),{...row,updatedAt:row.updatedAt||archive.updatedAt}]));
   if(live?.season===archive.season) {
     for(const row of live.matches) {
       const archived=current.get(key(row));
       const old=prior.get(key(row));
       const aliases=[...new Set([row.id,archived?.id,old?.id,...(old?.aliases||[])].filter(Boolean))];
-      current.set(key(row),{...archived,...row,odds:row.odds?.length?row.odds:archived?.odds||old?.odds||[],
-        oddsSource:archived?.oddsSource||archived?.source||old?.oddsSource,aliases});
+      let merged={...archived,...row,updatedAt:row.updatedAt||live.updatedAt,odds:row.odds?.length?row.odds:archived?.odds||old?.odds||[],
+        oddsSource:archived?.oddsSource||archived?.source||old?.oddsSource,aliases};
+      for(const previous of [archived,old])if(confirmedScore(previous)&&previous.kickoff===merged.kickoff&&!preferIncomingScore(previous,merged)){
+        for(const field of ['started','finished','provisional','homeGoals','awayGoals','result','scoreScope','state','status','clock','updatedAt','scoreUpdatedAt','scoreSource'])if(previous[field]!==undefined)merged[field]=previous[field];
+      }
+      current.set(key(row),merged);
     }
   }
   return [...current.values()].sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.id.localeCompare(a.id));

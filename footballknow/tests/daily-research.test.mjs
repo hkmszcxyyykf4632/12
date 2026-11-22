@@ -40,8 +40,8 @@ test('global fixtures sort chronologically within the Hong Kong calendar day',()
 });
 
 test('matching Chinese labels merge source name aliases only at the exact kickoff',()=>{
-  const local={id:'local-city',home:'Man City',away:'Fulham',kickoff:'2026-11-21T12:30:00Z',competition:'英超'};
-  const feed={league:'epl',data:{teams:[{name:'Man City',cn:'曼城'},{name:'Fulham',cn:'富勒姆'}]},live:{matches:[local]}};
+  const local={id:'local-city',home:'Man City',away:'Fulham',kickoff:'2026-11-21T12:30:00Z',competition:'英超',season:'2026/27'};
+  const feed={league:'epl',data:{season:'2026/27',matches:[],teams:[{name:'Man City',cn:'曼城'},{name:'Fulham',cn:'富勒姆'}]},live:{season:'2026/27',matches:[local]}};
   const global={id:'123',league:'epl',kickoff:local.kickoff,day:'2026-11-21',teams:{home:{id:'1',name:'Manchester City',label:'曼城'},away:{id:'2',name:'Fulham',label:'富勒姆'}}};
   const options={date:'2026-11-21',now:Date.parse('2026-11-21T00:00:00Z')};
   const rows=dailyRows({matches:[global]},[feed],options);

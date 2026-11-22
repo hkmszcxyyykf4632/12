@@ -51,3 +51,12 @@ export function forecastsHtml(m,value,at=Date.now()){
     return `<div class="forecast-card ${r?'has-forecast':''}"><h3>${label}<span>${r?'已保存':ended?'未留存赛前记录':'等待生成'}</span></h3>${r?`${reference}<p class="forecast-result"><strong>${esc(direction)}</strong><b>${r.score.map(esc).join(' : ')}</b></p><p class="note">比分主队在前 · ${esc(timeText(r.issuedAt))}</p>${scoreRelationship(m,r)}${narrative.summary}<details class="er-disclosure" data-disclosure="forecast-${stage}-basis"><summary>更多预测依据</summary>${narrative.details}<p class="note">${esc(r.baseline?.method||'')} · ${esc(r.model)} · 资料核对 ${esc(timeText(r.researchAt))}</p>${q?`<p class="note">主队${line(q.line)} · 主 ${Number(q.prices.H).toFixed(2)} / 客 ${Number(q.prices.A).toFixed(2)} · ${esc(q.provider)} · 采集 ${esc(timeText(q.fetchedAt))} ${source(q.source)}</p>`:'<p class="note">本版没有可核对的即时亚洲盘，保留比分预测。</p>'}</details>${r.review?.status==='evaluated'?`<p class="forecast-review">${esc(r.review.text)} ${source(r.review.source)}</p>`:r.review?.text?`<p class="note">${esc(r.review.text)}</p>`:''}`:`<p class="note">${esc(message)}</p>`}</div>`;
   }).join('')}</div><p class="note forecast-policy">初版默认开赛前6小时生成；开赛前两小时优先检查，正式首发齐全后生成临场版。两版独立留存，赛后分别对照。</p>${valid?[['initial','初步预测'],['final','首发确认后预测']].map(([stage,label])=>{const review=value.stages?.[stage]?.report?.review?.analysis;return review?`<section class="forecast-evidence-review"><h2>${label} · 赛后复盘</h2>${evidenceReviewHtml(review,{compact:true,disclosurePrefix:`forecast-${stage}-review`})}</section>`:'';}).join(''):''}</section>`;
 }
+
+export function forecastSummaryHtml(m,value){
+  if(!forecastMatches(value,m))return '<span class="subtle">本场尚无已保存预测</span>';
+  const stage=value.stages?.final?.report?'final':'initial',report=value.stages?.[stage]?.report;
+  if(!report)return '<span class="subtle">本场尚无已保存预测</span>';
+  const side=report.asianSide==='H'?'home':'away',name=m.teams?.[side]?.label||m[side+'Label']||m[side];
+  const pick=report.asianSide==='pass'?'亚洲盘暂不选边':report.quote&&['H','A'].includes(report.asianSide)?`${name} ${line(side==='home'?report.quote.line:-report.quote.line)}`:'亚洲盘未记录';
+  return `<span class="forecast-brief-stage">${stage==='final'?'临场版':'初步版'}</span><strong>${esc(pick)}</strong><span>预测比分 <b>${report.score.map(esc).join(' : ')}</b></span>${m.finished&&report.review?.status==='evaluated'?'<span class="tag">已复盘</span>':''}`;
+}

@@ -320,7 +320,20 @@ def resolved_result(row, catalogues=None):
             'teams': {s: {**row['teams'][s], 'goals': match[s + 'Goals']} for s in ('home', 'away')}}
 
 
-def read_index():
+def compact_status(value):
+    result = {k: v for k, v in value.items() if k != 'stages'}
+    result['stages'] = {}
+    for name, stage in value.get('stages', {}).items():
+        report = stage.get('report')
+        short = {k: report.get(k) for k in ('score', 'asianSide', 'issuedAt')} if report else None
+        if short is not None:
+            short['quote'] = {'line': report['quote']['line']} if report.get('quote') else None
+            short['review'] = {'status': (report.get('review') or {}).get('status')}
+        result['stages'][name] = {**{k: v for k, v in stage.items() if k != 'report'}, 'report': short}
+    return result
+
+
+def read_index(compact=False):
     catalogues = {}
     rows = [resolved_result(r, catalogues) for r in load(PUBLIC / 'daily-football.json').get('matches', []) if supported(r)]
     keys = [identity(r) for r in rows]
@@ -338,8 +351,9 @@ def read_index():
                 if report is not None:
                     report.setdefault('amendments', []).append(json.loads(r['content']))
     at, paused = now(), not read_control()['enabled']
-    return {'updatedAt': at.isoformat(), 'matches': {r['id']: status(r, at, reports.get(identity(r), {}),
-                attempts.get(identity(r), {}), paused) for r in rows}}
+    values = {r['id']: status(r, at, reports.get(identity(r), {}), attempts.get(identity(r), {}), paused) for r in rows}
+    return {'updatedAt': at.isoformat(), 'compact': compact,
+            'matches': {key: compact_status(value) for key, value in values.items()} if compact else values}
 
 
 def claim(row, stage, at):

@@ -4,7 +4,8 @@ from typing import Final
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
-from .files import PUBLIC, fetch_text, publish
+from .files import PUBLIC, fetch_text, publish, read_json
+from .score_reconciliation import reconcile, confirmed, prefer_incoming
 
 FIXTURES_URL: Final = 'https://fantasy.premierleague.com/api/fixtures/'
 
@@ -55,6 +56,9 @@ class LiveMatch(BaseModel):
     phase: str = ''
     neutral: bool = False
     scoreScope: str = '90 分钟含补时'
+    scoreUpdatedAt: str | None = None
+    scoreSource: str | None = None
+    dailyId: str | None = None
 
 
 class LiveSnapshot(BaseModel):
@@ -99,5 +103,18 @@ def refresh_live() -> LiveSnapshot:
     catalogue = Catalogue.model_validate_json((PUBLIC / 'data.json').read_text(encoding='utf-8'))
     fixtures = TypeAdapter(list[Fixture]).validate_json(fetch_text(FIXTURES_URL))
     snapshot = build_snapshot(fixtures, catalogue)
+    raw_catalogue = read_json(PUBLIC / 'data.json')
+    try:
+        daily = read_json(PUBLIC / 'daily-football.json')
+    except (OSError, ValueError):
+        daily = {}
+    try:
+        previous = read_json(PUBLIC / 'live.json')
+    except (OSError, ValueError):
+        previous = {}
+    rows = reconcile([m.model_dump() for m in snapshot.matches], raw_catalogue, daily, 'epl', snapshot.updatedAt)
+    old = {m['id']: m for m in previous.get('matches', []) if m.get('season') == catalogue.season}
+    rows = [old[m['id']] if m['id'] in old and old[m['id']].get('kickoff') == m.get('kickoff') and confirmed(old[m['id']]) and not prefer_incoming(old[m['id']], {**m, 'updatedAt': snapshot.updatedAt}) else m for m in rows]
+    snapshot = snapshot.model_copy(update={'matches': [LiveMatch.model_validate(m) for m in rows]})
     publish(PUBLIC / 'live.json', snapshot.model_dump(mode='json'))
     return snapshot

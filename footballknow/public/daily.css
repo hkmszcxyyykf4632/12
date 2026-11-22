@@ -12,3 +12,48 @@
 .forecast-review{padding:8px;background:var(--brand-soft);border-radius:var(--radius-sm)}
 .forecast-policy{font-size:12px}
 @media(max-width:600px){.forecast-grid{grid-template-columns:1fr}.forecast-card{padding:12px}}
+/* The centre has one agenda and one compact match summary per fixture. */
+.centre-mode{display:flex;gap:8px;margin:0 0 20px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.centre-mode button{border:0;background:transparent;color:var(--muted);padding:10px 18px;border-radius:6px;font-weight:650;cursor:pointer}
+.centre-mode button.active{background:var(--brand);color:#fff}
+.centre-source-options{font-size:12px;color:var(--muted);margin:0 0 12px}
+.centre-source-options label{display:flex;align-items:center;gap:12px;margin:12px 0}
+.daily-summary{gap:6px;background:transparent;border:0;border-radius:0;margin:14px 0}
+.daily-summary>button{display:flex;align-items:center;gap:8px;border:1px solid var(--line);padding:9px 15px;border-radius:6px;background:var(--surface);color:var(--muted);cursor:pointer}
+.daily-summary>button[aria-pressed=true]{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
+.daily-summary b{font-size:14px;color:inherit}
+#daily-date-controls[hidden],#season-filters[hidden],.match-filters label[hidden]{display:none}
+#combined-fixtures .live-match{padding:14px 18px;margin-bottom:10px}
+#combined-fixtures .live-match-pair{margin:10px 0;font-size:16px;grid-template-columns:1fr 100px 1fr}
+#combined-fixtures .live-match-pair>strong:first-child{text-align:right}
+#combined-fixtures .live-match-pair>strong:last-child{text-align:left}
+#combined-fixtures .live-match-top{font-size:12px;gap:10px}
+.forecast-brief{display:flex;align-items:center;justify-content:center;gap:8px 18px;flex-wrap:wrap;padding:8px 0;font-size:13px}
+.forecast-brief strong{color:var(--brand)}
+.forecast-brief-stage{color:var(--muted);font-size:11px}
+.centre-analysis{border-top:1px solid var(--line);padding-top:8px}
+.centre-analysis>summary{color:var(--brand);font-weight:600;font-size:13px;cursor:pointer;padding:4px 0}
+.centre-analysis>summary span{font-size:11px;font-weight:400;color:var(--muted);float:right}
+.centre-analysis[open]>summary{margin-bottom:14px}
+.live-match.is-finished .live-match-pair>b{color:var(--ink)}
+.live-match>small{display:block;font-size:11px;margin-top:8px}
+.team-panel[hidden]{display:none}
+.team-section-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 16px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.team-section-tabs button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:6px;padding:10px 16px;cursor:pointer;font-weight:600}
+.team-section-tabs button[aria-selected=true]{color:#fff;background:var(--brand);border-color:var(--brand)}
+.team-panel>section:first-child{margin-top:0}
+.team-panel>.analysis-disclosure{margin:12px 0}
+.analysis-result details{margin:12px 0}
+.analysis-result summary{cursor:pointer;font-weight:600;padding:8px 0}
+@media(max-width:600px){
+  #combined-fixtures .live-match{padding:12px}
+  #combined-fixtures .live-match-pair{grid-template-columns:1fr 70px 1fr;font-size:14px;gap:9px}
+  .daily-summary{gap:5px}.daily-summary>button{padding:8px 10px;font-size:12px}
+  .forecast-brief{justify-content:flex-start;gap:7px 12px;font-size:12px}
+  .team-section-tabs{gap:5px}.team-section-tabs button{font-size:12px;padding:8px 10px}
+}
+.team-recent-row{display:grid;grid-template-columns:100px 1fr 70px 1fr 70px;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);background:var(--surface);font-size:14px}
+.team-recent-row>a{text-align:center;font-size:18px;font-variant-numeric:tabular-nums}
+.team-recent-row>span:nth-child(2){text-align:right}.team-recent-row time{color:var(--muted);font-size:12px}
+.team-panel .analysis-disclosure>section{padding:16px;background:var(--surface);border:1px solid var(--line);border-top:0;margin:0}
+@media(max-width:600px){.team-recent-row{grid-template-columns:1fr 64px 1fr;gap:6px;font-size:12px}.team-recent-row time{grid-column:1/-1}.team-recent-row>.tag{display:none}}

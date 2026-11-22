@@ -494,9 +494,9 @@ def review_briefs(domain: Literal['football', 'racing']):
 
 
 @app.get('/api/football-forecasts')
-def football_forecast_index():
+def football_forecast_index(compact: bool = False):
     from football.football_forecasts import read_index
-    return read_index()
+    return read_index(compact=compact)
 
 
 @app.get('/api/daily-football/{ident}/forecast')

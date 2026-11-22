@@ -1,3 +1,4 @@
+import {reconcileDailyMatches} from './score-reconciliation.mjs';
 import {league} from './league.mjs';
 import {mergeMatches,validLive,freshness} from './live-core.mjs';
 import {validTable,validLeaders} from './rankings-core.mjs';
@@ -8,7 +9,7 @@ export let standings=null,rankings=null,rankingsFailed=false;
 export let odds=null,markets=null,profiles=null,playerValues=null;
 // Optional snapshots: the site works without them and shows their sections once the synchronizer has produced them.
 export let facts=null,changes=null,oddsHistory=null;
-let archive=null, busy=false;
+let archive=null, daily=null, busy=false;
 // One cadence for everything: the server checks every source each minute and the page re-reads every snapshot each minute.
 export const SYNC_MS=60000;
 export const syncState={lastAttempt:0,lastSuccess:0,nextAt:0,busy:false,paused:false};
@@ -36,7 +37,7 @@ export async function refresh(force=false) {
       } catch(error) {if(!archive)throw error;}
     }
     const snapshotKeys=['live','names','history','standings','rankings','odds','match-facts','changes','odds-history','market-odds','profiles','player-values'];
-    const snapshots=await Promise.allSettled([...snapshotKeys.map(readSnapshot),fetch('/api/status',{cache:'no-store',signal:AbortSignal.timeout(8000)}).then(r=>r.json())]);
+    const snapshots=await Promise.allSettled([...snapshotKeys.map(readSnapshot),fetch('./daily-football.json',{cache:'no-cache',signal:AbortSignal.timeout(10000)}).then(r=>{if(!r.ok)throw Error();return r.json();}),fetch('/api/status',{cache:'no-store',signal:AbortSignal.timeout(8000)}).then(r=>r.json())]);
     const syncStatus=snapshots.at(-1);if(syncStatus.status==='fulfilled')syncState.paused=syncStatus.value.paused===true;
     const result=snapshots[0];
     if(result.status==='fulfilled'&&validLive(result.value,archive)) {live=result.value;liveFailed=false;}
@@ -46,7 +47,9 @@ export async function refresh(force=false) {
       if(n.status==='fulfilled'&&n.value.version===1&&n.value.season===archive.season&&n.value.names&&Array.isArray(n.value.unresolved))names=n.value;
       if(h.status==='fulfilled'&&h.value.version===1&&h.value.season===archive.season&&Array.isArray(h.value.transfers)&&Array.isArray(h.value.managers))history=h.value;
     }
-    data={...archive,matches:mergeMatches(archive,live,data?.matches||[])};
+    const dailyResult=snapshots[snapshotKeys.length];
+    if(dailyResult.status==='fulfilled'&&Array.isArray(dailyResult.value?.matches))daily=dailyResult.value;
+    data={...archive,matches:reconcileDailyMatches(mergeMatches(archive,live,data?.matches||[]),archive,daily,league.id,live?.updatedAt||archive.updatedAt)};
     const table=snapshots[snapshotKeys.indexOf('standings')],leaders=snapshots[snapshotKeys.indexOf('rankings')];
     const tableOK=table.status==='fulfilled'&&validTable(table.value,archive,league.id),leadersOK=leaders.status==='fulfilled'&&validLeaders(leaders.value,archive,league.id);
     if(tableOK)standings=table.value;
