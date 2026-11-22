@@ -1,0 +1,18 @@
+{
+  "revision": "f78d3167d8d1660cde34fca5921565ea527a00d6",
+  "baseRevision": "60dc9f781bdaf42616d59b52c90b2c5a63ab5298",
+  "archive": "releases/research-interaction-f78d3167d8d1.tar.gz",
+  "sha256": "d3d656197b1d4a3dbab5786d09fc8e63ac74ca4f2636f994a9af394546d21e07",
+  "fileCount": 54,
+  "validation": {
+    "pythonTests": 427,
+    "javascriptTests": 154
+  },
+  "features": [
+    "research-homepage",
+    "prediction-statistics",
+    "paper-ledgers",
+    "recommendations",
+    "interactive-qa"
+  ]
+}
