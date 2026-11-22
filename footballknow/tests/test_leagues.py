@@ -76,6 +76,7 @@ def test_official_states_do_not_invent_kickoff_or_settle_provisional_scores():
     rows = laliga.parse_round(data, catalogue(), 'https://www.laliga.com/')
     assert rows[0]['started'] and not rows[0]['finished'] and rows[0]['result'] is None
     assert rows[1]['finished'] and rows[1]['result'] == 'D'
+    assert rows[1]['scoreScope'] == '90分钟含补时'
     assert rows[2]['kickoff'] is None and rows[3]['kickoff'] is None
     data['matches'][1]['home_score'] = None
     with pytest.raises(OSError):

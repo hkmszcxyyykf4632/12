@@ -88,8 +88,10 @@ def read_statistics() -> Statistics:
                 records.append(receipt.model_copy(update={'status': 'void', 'reason': '取消、延期或中断'}))
                 continue
             score = tuple(result.get('teams', {}).get(s, {}).get('goals') for s in ('home', 'away'))
-            scope, finished = result.get('scoreScope', ''), result.get('state') == 'finished' and result.get('finished')
-            if match and match.get('finished') and not match.get('provisional'):
+            scope, finished = result.get('scoreScope') or '', result.get('state') == 'finished' and result.get('finished')
+            if (match and match.get('finished') and not match.get('provisional')
+                    and (match.get('scoreScope') or '').replace(' ', '') == '90分钟含补时'
+                    and all(type(match.get(k)) is int and match[k] >= 0 for k in ('homeGoals', 'awayGoals'))):
                 score = (match.get('homeGoals'), match.get('awayGoals'))
                 scope, finished = match.get('scoreScope', ''), True
                 receipt = receipt.model_copy(update={'source': match.get('source') or receipt.source})

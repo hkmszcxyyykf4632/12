@@ -138,7 +138,7 @@ def historical_rows(raw: str, url: str, year: int, competition: str, clubs: set[
         home, away = row['HomeTeam'], row['AwayTeam']
         rows.append({'id': f'{date}|{home}|{away}', 'date': date, 'home': home, 'away': away,
                      'homeGoals': int(row['FTHG']), 'awayGoals': int(row['FTAG']), 'result': row['FTR'],
-                     'finished': True, 'competition': competition, 'season': f'{year}/{str(year + 1)[2:]}',
+                     'finished': True, 'scoreScope': '90分钟含补时', 'competition': competition, 'season': f'{year}/{str(year + 1)[2:]}',
                      'odds': odds, 'source': url})
     return rows
 
@@ -211,7 +211,7 @@ def parse_round(data: dict, catalogue: dict, url: str) -> list[dict]:
                         'kickoff': kickoff, 'home': home, 'away': away,
                         'homeGoals': hg if scored else None, 'awayGoals': ag if scored else None,
                         'started': status in {'FirstHalf', 'HalfTime', 'SecondHalf', 'FullTime', 'Suspended', 'Abandoned', 'ExtraTime'},
-                        'finished': bool(done), 'provisional': False,
+                        'finished': bool(done), 'provisional': False, 'scoreScope': '90分钟含补时',
                         'result': ('H' if hg > ag else 'A' if ag > hg else 'D') if done else None,
                         'competition': '西甲', 'season': catalogue['season'], 'source': url,
                         'round': int(data['gameweek']['week']), 'status': status})

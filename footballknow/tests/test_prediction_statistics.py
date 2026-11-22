@@ -50,6 +50,21 @@ def test_full_ledger_survives_daily_rollover_and_retains_both_stages(ledger,monk
     assert all(r.exactHit and r.asianResult=='赢半' for r in rows)
 
 
+@pytest.mark.parametrize('catalogue_scope', [None, '', '含加时或点球阶段'])
+def test_catalogue_without_regulation_score_does_not_erase_finished_daily_result(ledger, monkeypatch, catalogue_scope):
+    row = save_football(ledger, side='A', line=-2.5)
+    (ledger/'daily-football.json').write_text(json.dumps({'matches': [result(row)]}))
+    match = {'id': '2026-11-21|Man City|Fulham', 'date': '2026-11-21',
+             'kickoff': row['kickoff'], 'home': 'Man City', 'away': 'Fulham',
+             'finished': True, 'homeGoals': 3, 'awayGoals': 1, 'scoreScope': catalogue_scope,
+             'source': 'https://example.test/catalogue'}
+    monkeypatch.setattr(fs, 'match_catalogue', lambda league: ({}, [match]))
+    receipt = fs.read_statistics().records[0]
+    assert receipt.status == 'settled'
+    assert receipt.actual == (2, 1) and receipt.exactHit and receipt.asianResult == '赢盘'
+    assert receipt.source != match['source']
+
+
 @pytest.mark.parametrize('side,line,score,expected',[
     ('H',-.75,(2,1),'赢半'),('A',-.75,(2,1),'输半'),('H',-1,(2,1),'走盘'),
     ('A',-1.5,(2,1),'赢盘'),('H',.25,(0,0),'赢半'),('A',.25,(0,0),'输半')])
