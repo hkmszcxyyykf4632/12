@@ -33,7 +33,7 @@ async function runScenario(scenario){
       body=fixture;
     }else if(path==='./odds-history.json')await oddsGate;
     else if(path==='/api/visits')body={total:42};
-    else if(path==='./editorial-articles.json')body={updatedAt:'2026-11-22',articles:[{id:'test',title:'测试专题分析',image:'gold.jpg',category:'测试',dek:'观点',imageAlt:'金条'}]};
+    else if(path==='./editorial-articles.json')body={updatedAt:'2026-11-22',articles:[{id:'test',title:'测试专题分析',image:'gold.jpg',analysis:'这是测试用的单段分析。',imageAlt:'金条',caption:'测试资料图',credit:'测试图片',imageSource:'https://example.test/image',sources:[{label:'测试来源',url:'https://example.test/source'}]}]};
     else if(path==='/api/status')body={jobs:{}};
     return {ok:true,status:200,json:async()=>body};
   };

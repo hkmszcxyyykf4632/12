@@ -21,5 +21,5 @@ test('dialogue posts a JSON object, carries followup history and clears local co
 test('all published editorials have sources and actual local photographs',async()=>{
  const data=JSON.parse(await readFile(new URL('../public/editorial-articles.json',import.meta.url),'utf8'));
  assert.equal(data.articles.length,5);
- for(const a of data.articles){assert.ok(a.sections.length>=3&&a.scenarios.length>=3&&a.watch.length>=3);assert.ok(a.facts.every(f=>a.sources[f.source]?.url.startsWith('https://')));const image=await readFile(new URL('../public/editorial/'+a.image,import.meta.url));assert.ok(image.length>10000);}
+ for(const a of data.articles){assert.ok(a.analysis.length>150);assert.ok(a.sources.length&&a.sources.every(s=>s.url.startsWith('https://')));const image=await readFile(new URL('../public/editorial/'+a.image,import.meta.url));assert.ok(image.length>10000);}
 });
