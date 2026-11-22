@@ -23,3 +23,7 @@ The listing requests `/api/football-forecasts?compact=true`. Long reports are fe
 ## Backfill audit (not a completion claim)
 
 At 22:36 on 2026-11-22: HK and mainland catalogue contained 8,042 symbols; 1,609 had company data and 1,553 had the six tracked sections. Horse research catalogue contained 1,463 horses, with 683 completing the tracked workout/sectional checks. These counts do not imply that all photos, fields or all historical records are complete. Both jobs reported unpaused.
+
+
+## Production follow-up
+The first production smoke check found that the compact index still built every detailed review before trimming output (35.26 seconds on the server). The follow-up skips detailed dossiers in compact mode while preserving result settlement; single-match responses keep the full review. A regression test asserts compact reads make no dossier calls and single-match reads retain their evidence. Raw provider status codes are also translated for display.

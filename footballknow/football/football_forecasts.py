@@ -245,7 +245,7 @@ def record_baseline_amendment(row, stage, reason):
     return amendment
 
 
-def review(report, row):
+def review(report, row, *, detailed=True):
     if row.get('state') in {'postponed', 'cancelled', 'abandoned'}:
         return {'status': 'void', 'text': '延期、取消或中断，暂不计结果'}
     if not row.get('finished') or row.get('state') != 'finished':
@@ -256,15 +256,17 @@ def review(report, row):
     direction = lambda v: (v[0] > v[1]) - (v[0] < v[1])
     q = report.get('quote')
     ah = settlement(score, q['line'], report['asianSide']) if q and report['asianSide'] != 'pass' else '未选边'
-    from .reviews import football_forecast_review
-    audit = football_forecast_review(row, report)
+    audit = None
+    if detailed:
+        from .reviews import football_forecast_review
+        audit = football_forecast_review(row, report)
     return {'status': 'evaluated', 'score': score, 'exactScore': score == report['score'], 'analysis': audit,
             'resultHit': direction(score) == direction(report['score']), 'asianResult': ah,
             'text': f'完场{score[0]}:{score[1]}；比分' + ('命中' if score == report['score'] else '未命中') + f'；亚洲盘{ah}。',
             'source': row.get('source')}
 
 
-def status(row, at=None, saved=None, tries=None, paused=None):
+def status(row, at=None, saved=None, tries=None, paused=None, *, detailed_review=True):
     at = at or now()
     if not supported(row):
         return {'supported': False}
@@ -282,7 +284,7 @@ def status(row, at=None, saved=None, tries=None, paused=None):
                    '已过开赛时间，未留下本阶段预测' if not pregame(row, at) else
                    attempt.get('message') or ('开赛前6小时自动生成' if stage == 'initial' else '开赛前120分钟开始准备并检查，双方正式首发确认后生成'))
         stages[stage] = {'report': {**report, 'baselineExplanation': baseline_explanation(report), 'amendments': report.get('amendments', []),
-                                   'review': review(report, row)} if report else None,
+                                   'review': review(report, row, detailed=detailed_review)} if report else None,
                          'message': message, 'retryAt': attempt.get('retry_at')}
     return {'supported': True, 'eventId': row['id'], 'kickoff': row['kickoff'],
             'teams': {s: str(row['teams'][s]['id']) for s in ['home', 'away']},
@@ -351,7 +353,8 @@ def read_index(compact=False):
                 if report is not None:
                     report.setdefault('amendments', []).append(json.loads(r['content']))
     at, paused = now(), not read_control()['enabled']
-    values = {r['id']: status(r, at, reports.get(identity(r), {}), attempts.get(identity(r), {}), paused) for r in rows}
+    values = {r['id']: status(r, at, reports.get(identity(r), {}), attempts.get(identity(r), {}), paused,
+                             detailed_review=not compact) for r in rows}
     return {'updatedAt': at.isoformat(), 'compact': compact,
             'matches': {key: compact_status(value) for key, value in values.items()} if compact else values}
 

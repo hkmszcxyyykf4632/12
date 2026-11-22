@@ -215,3 +215,25 @@ def test_compact_index_preserves_picks_without_mutating_full_review():
     assert small['stages']['final']['report']['review'] == {'status': 'evaluated'}
     assert 'details' not in small['stages']['final']['report']
     assert small['stages']['initial']['report'] is None and value == before
+
+
+def test_compact_index_skips_detailed_dossiers_but_single_match_keeps_them(sandbox, monkeypatch):
+    from football import reviews
+    assert ff.generate(sandbox, 'initial')
+    sandbox.update(state='finished', finished=True, started=True)
+    sandbox['teams']['home']['goals'], sandbox['teams']['away']['goals'] = 2, 1
+    publish(ff.PUBLIC/'daily-football.json', {'matches': [sandbox]})
+    monkeypatch.setattr(ff, 'resolved_result', lambda row, catalogues=None: row)
+    calls = []
+    def dossier(row, report):
+        calls.append(row['id'])
+        return {'evidence': 'full postmatch dossier'}
+    monkeypatch.setattr(reviews, 'football_forecast_review', dossier)
+    compact = ff.read_index(compact=True)['matches']['123']['stages']['initial']['report']
+    assert compact['review']['status'] == 'evaluated'
+    assert compact['score'] == [2, 1] and compact['asianSide'] == 'H'
+    assert calls == []
+    full = ff.status(sandbox)['stages']['initial']['report']['review']
+    assert full['analysis'] == {'evidence': 'full postmatch dossier'}
+    assert full['exactScore'] is True and full['asianResult'] == '赢半'
+    assert calls == ['123']

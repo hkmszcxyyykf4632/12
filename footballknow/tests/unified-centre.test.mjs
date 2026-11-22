@@ -4,7 +4,7 @@ import {JSDOM} from 'jsdom';
 import {readFile} from 'node:fs/promises';
 const dom=new JSDOM('<main id="main"></main>',{url:'http://localhost/'});
 Object.assign(globalThis,{document:dom.window.document,window:dom.window,location:dom.window.location,localStorage:dom.window.localStorage});
-const {dailyRows}=await import('../public/daily-core.mjs');
+const {dailyRows,matchStatus}=await import('../public/daily-core.mjs');
 const {renderLive}=await import('../public/daily-page.mjs');
 const {mountTeamSections}=await import('../public/team-sections.mjs');
 
@@ -51,4 +51,14 @@ test('team categories retain controls and support keyboard navigation',()=>{
  root.querySelector('[data-team-tab="fixtures"]').dispatchEvent(new dom.window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));
  assert.equal(root.querySelector('#team-panel-players').hidden,false);
  assert.equal(root.querySelector('[data-team-tab="players"]').getAttribute('aria-selected'),'true');
+});
+
+
+test('source status codes are displayed in Chinese without hiding special states',()=>{
+ assert.equal(matchStatus({state:'live',started:true,status:'STATUS_FIRST_HALF'}),'上半场');
+ assert.equal(matchStatus({state:'live',started:true,status:'STATUS_SECOND_HALF'}),'下半场');
+ assert.equal(matchStatus({state:'live',started:true,status:'STATUS_HALFTIME'}),'中场休息');
+ assert.equal(matchStatus({state:'scheduled',status:'PreMatch'}),'未开赛');
+ assert.equal(matchStatus({state:'postponed',status:'STATUS_POSTPONED'}),'延期');
+ assert.equal(matchStatus({finished:true,status:'PreMatch'}),'已完赛');
 });
