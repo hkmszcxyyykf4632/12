@@ -1,0 +1,12 @@
+{
+  "revision": "f4e4dc6889dc5b352d89a4ab6da75e13d11ab43c",
+  "baseRevision": "0c9c241a0f027b8f4f0b6f82fa9d4d7f80afb848",
+  "archive": "releases/settlement-fix-f4e4dc6889dc.tar.gz",
+  "sha256": "f77a5d13b571499e82ed0e7476e223c475ff5471165425a488a1b35f34ce3f05",
+  "fileCount": 17,
+  "validation": {
+    "pythonTests": 430,
+    "subtests": 8
+  },
+  "fix": "Preserve verified daily regulation score; label LaLiga 90-minute results"
+}
