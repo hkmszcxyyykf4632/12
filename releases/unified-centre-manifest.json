@@ -1,0 +1,12 @@
+{
+  "revision": "09e5ba87ba763d47802bb8a56981a478d8899817",
+  "baseRevision": "f4e4dc6889dc5b352d89a4ab6da75e13d11ab43c",
+  "archive": "releases/unified-centre-09e5ba87ba76.tar.gz",
+  "sha256": "aef60dba1d7da43d20320c43b0d1e2ded6a317de93740b1fea97475e23238579",
+  "fileCount": 34,
+  "validation": {
+    "javascriptTests": 161,
+    "pythonTests": 439,
+    "subtests": 8
+  }
+}
