@@ -25,7 +25,7 @@ async function runScenario(scenario){
   const requests=[];
   globalThis.fetch=async path=>{
     path=String(path);requests.push(path);
-    if(path==='./finance/assets.json'||path==='./portal-news.json')await feedsGate;
+    if(path==='./finance/assets.json'||path==='./editorial-articles.json')await feedsGate;
     let body={};
     if(path==='./data.json'){
       await dataGate;
@@ -33,7 +33,7 @@ async function runScenario(scenario){
       body=fixture;
     }else if(path==='./odds-history.json')await oddsGate;
     else if(path==='/api/visits')body={total:42};
-    else if(path==='./portal-news.json')body={updatedAt:new Date().toISOString(),categories:{football:{articles:[{title:'测试足球资讯',url:'https://example.com/story',source:'测试来源',publishedAt:new Date().toISOString()}]}}};
+    else if(path==='./editorial-articles.json')body={updatedAt:'2026-11-22',articles:[{id:'test',title:'测试专题分析',image:'gold.jpg',category:'测试',dek:'观点',imageAlt:'金条'}]};
     else if(path==='/api/status')body={jobs:{}};
     return {ok:true,status:200,json:async()=>body};
   };
@@ -44,19 +44,19 @@ async function runScenario(scenario){
     if(!initialHash){
       assert.ok(main.querySelector('.portal-masthead'));
       assert.match(main.querySelector('#home-markets').textContent,/正在读取市场行情/);
-      assert.match(main.querySelector('#home-news').textContent,/正在读取最新资讯/);
+      assert.match(main.querySelector('#home-insights').textContent,/正在读取专题分析/);
       await capture('feeds-pending');
     }
     releaseFeeds();await tick();
     if(initialHash){
       assert.equal(w.location.hash,initialHash);assert.match(main.textContent,/正在读取球队资料/);assert.equal(main.querySelector('.portal-masthead'),null);
     }else{
-      assert.ok(main.querySelector('.portal-masthead'));assert.ok(main.querySelector('#home-news'));assert.ok(main.querySelector('#home-markets'));
+      assert.ok(main.querySelector('.portal-masthead'));assert.ok(main.querySelector('#home-insights'));assert.ok(main.querySelector('#home-markets'));
       assert.match(main.querySelector('#home-lead').textContent,/正在读取足球/);
-      assert.match(main.querySelector('#home-news').textContent,/测试足球资讯/);
+      assert.match(main.querySelector('#home-insights').textContent,/测试专题分析/);
       assert.match(main.querySelector('#home-markets').textContent,/市场行情/);
       assert.match(main.querySelector('#home-visits').textContent,/42/);
-      assert.ok(requests.includes('./finance/assets.json'));assert.ok(requests.includes('./portal-news.json'));assert.ok(requests.includes('/api/visits'));
+      assert.ok(requests.includes('./finance/assets.json'));assert.ok(requests.includes('./editorial-articles.json'));assert.ok(requests.includes('/api/visits'));
       assert.equal(w.location.hash,'');
     }
     await capture('pending');
@@ -76,7 +76,7 @@ async function runScenario(scenario){
       assert.ok(main.querySelector('#home-kpi .kpi-strip'));assert.doesNotMatch(main.querySelector('#home-lead').textContent,/正在读取足球/);assert.equal(w.location.hash,'');
     }else if(scenario==='home-failure'){
       assert.equal(main.firstElementChild,identity);assert.match(main.querySelector('#home-lead').textContent,/test football unavailable/);
-      assert.match(main.querySelector('#home-news').textContent,/测试足球资讯/);assert.match(main.querySelector('#home-markets').textContent,/市场行情/);
+      assert.match(main.querySelector('#home-insights').textContent,/测试专题分析/);assert.match(main.querySelector('#home-markets').textContent,/市场行情/);
       w.location.hash='#/teams';await tick();assert.match(main.textContent,/test football unavailable/);
       w.location.hash='#/';await tick();assert.ok(main.querySelector('.portal-masthead'));assert.match(main.querySelector('#home-lead').textContent,/test football unavailable/);
     }else if(scenario.includes('sponsors')){

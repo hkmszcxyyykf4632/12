@@ -44,7 +44,7 @@ def load_archive(path, digest, revision):
             allowed |= parts[0] == 'football' and relative.endswith('.py')
             allowed |= relative == 'football/cities.json'
             allowed |= relative.startswith('football/hkjc_queries/') and relative.endswith('.graphql')
-            allowed |= parts[0] == 'public' and Path(relative).suffix in {'.html', '.css', '.js', '.mjs', '.json', '.svg', '.png', '.webp', '.ico'}
+            allowed |= parts[0] == 'public' and Path(relative).suffix in {'.html', '.css', '.js', '.mjs', '.json', '.svg', '.png', '.jpg', '.jpeg', '.webp', '.ico'}
             allowed |= relative in {f'deploy/{name}' for name in UNITS} | {'deploy/update.py', 'deploy/Caddyfile'}
             if allowed:
                 if member.size > 20000000:

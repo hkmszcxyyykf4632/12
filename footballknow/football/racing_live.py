@@ -5,7 +5,7 @@ from .files import publish
 from .hkjc_public import query
 from .racing import BASE, FOLDER, HORSE_ID, load, now, number, race_url
 
-TYPES = {'WIN', 'PLA', 'QIN'}
+TYPES = {'WIN', 'PLA', 'QIN', 'QPL'}
 
 
 def combination(value):
@@ -108,7 +108,7 @@ def sync_live_racing():
             current = {p['oddsType']: merge_pool(previous.get(p['oddsType'], {}), p, now()) for p in all_pools
                        if p['oddsType'] in TYPES and p.get('leg', {}).get('races') == [raw['no']]}
             race['pools'] = [current.get(kind) or {**previous[kind], 'quoteRetained': True}
-                             for kind in ['WIN', 'PLA', 'QIN'] if kind in current or kind in previous]
+                             for kind in ['WIN', 'PLA', 'QIN', 'QPL'] if kind in current or kind in previous]
             divs = [{'type': p['oddsType'], 'combination': combination(d['winComb']) or d['winComb'],
                      'amount': number(d['div']), 'display': str(d['div']), 'unit': 10, 'currency': 'HKD'}
                     for m in payouts for p in m.get('resPools', []) if p.get('leg', {}).get('races') == [raw['no']]

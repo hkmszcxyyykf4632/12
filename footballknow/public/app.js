@@ -1,3 +1,8 @@
+import {renderInteractiveQA} from './interactive-qa.mjs';
+import {renderRecommendations} from './recommendations.mjs';
+import {renderEditorial} from './editorial.mjs';
+import {renderPredictionStats} from './prediction-stats-page.mjs';
+import {hydrateBriefs} from './review-briefs.mjs';
 import {data,refresh,findMatch,startPolling} from './repository.mjs';
 import {storeProblem,STORAGE_KEY,reloadStore,reconcile} from './personal-store.mjs';
 import {main,esc,toast} from './ui.mjs';
@@ -61,7 +66,7 @@ function recordsChanged() {
 export function updateView() {
  if(!data)return;
  try {if(reconcile(data.matches)){recordsChanged();toast('已按确认完赛结果更新模拟记录。');}}catch(error){toast(error.message);}
- updateStatus();updatePage();enhanceTables(main,routeKey());
+ updateStatus();updatePage();enhanceTables(main,routeKey());hydrateBriefs(main,'football');
  try {checkAlerts();}catch {/* Alerts are optional and must never block a refresh. */}
 }
 
@@ -69,11 +74,15 @@ function render() {
  waitingForData=false;
  disposePage();disposePage=()=>{};updatePage=()=>{};
  const [current,id,second]=route(),page=current||'home';closeDrawer();
- const racingPages=['racing','race','horse','horses','horse-going','bloodlines','racing-day','racing-rankings'];
- document.documentElement.dataset.section=racingPages.includes(page)?'racing':['markets','cn-markets','us-stocks','stock-volume','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset'].includes(page)?'finance':['home','portal-news','sponsors','admin','status','videos','video-admin'].includes(page)?'portal':'football';
+ const racingPages=['racing','race','horse','horses','horse-going','bloodlines','racing-day','racing-rankings','racing-statistics','racing-paper'];
+ document.documentElement.dataset.section=racingPages.includes(page)?'racing':['markets','cn-markets','us-stocks','stock-volume','stock-rankings','stock-following','global-indices','commodities','forex','stock','asset'].includes(page)?'finance':['home','insights','recommendations','ask','portal-news','sponsors','admin','status','videos','video-admin'].includes(page)?'portal':'football';
  const active=['race','racing-day'].includes(page)?'racing':page==='horse'?'horses':['stock','asset'].includes(page)?'markets':['team','analysis','player'].includes(page)?'teams':page==='match'?'matches':page;
  document.querySelectorAll('[data-nav]').forEach(nav=>{nav.classList.toggle('active',nav.dataset.nav===active);if(nav.dataset.nav===active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');});
  document.querySelector('#breadcrumb').textContent=({home:'峰弈科技 / 首页',racing:'香港赛马 / 赛事与马匹',race:'香港赛马 / 赛事研究',horse:'香港赛马 / 马匹档案',sponsors:'峰弈科技 / 赞助商',markets:'市场 / 港股与报价',stock:'市场 / 股票详情',asset:'市场 / 品种走势',live:'全球足球 / 每日赛事与即场赛果',news:'五项赛事 / 球队新闻',status:'系统 / 同步监控',quality:'系统 / 数据质量',player:`${league.name} / 球员档案`,compare:`${league.name} / 球队对比`,teams:`${league.country} / ${league.fullName}`,team:`${league.country} / 球队档案`,rankings:`${league.name} / 数据中心`,matches:`${league.name} / 比赛中心`,match:`${league.name} / 比赛详情`,following:'个人研究室 / 我的关注',analysis:'个人研究室 / 赛前分析',simulator:'个人研究室 / 模拟投注',records:'个人研究室 / 我的记录',sources:'足球资料库 / 数据说明',admin:'峰弈科技 / 管理后台'})[page]||'足球资料库';
+ if(['football-statistics','racing-statistics','football-paper','racing-paper'].includes(page)){const domain=page.startsWith('football')?'football':'racing',paper=page.endsWith('-paper');document.querySelector('#breadcrumb').textContent=(domain==='football'?'足球':'香港赛马')+' / '+(paper?'模拟投注':'分析统计');disposePage=renderPredictionStats(domain,{paper});return;}
+ if(page==='ask'){document.querySelector('#breadcrumb').textContent='峰弈科技 / AI互动问答';disposePage=renderInteractiveQA();return;}
+ if(page==='recommendations'){document.querySelector('#breadcrumb').textContent='峰弈科技 / 精选推荐';disposePage=renderRecommendations();return;}
+ if(page==='insights'){document.querySelector('#breadcrumb').textContent='峰弈科技 / 专题分析';disposePage=renderEditorial(id);return;}
  if(page==='racing'){disposePage=renderRacingHub();return;}
  if(page==='horses'){document.querySelector('#breadcrumb').textContent='香港赛马 / 马匹资料';disposePage=renderHorseDirectory(id,second);return;}
  if(page==='racing-day'){document.querySelector('#breadcrumb').textContent='香港赛马 / 赛马日';disposePage=renderRacingDay(id,second);return;}
@@ -120,7 +129,7 @@ function render() {
  else main.innerHTML='<div class="empty">页面不存在。<a href="#/">回到联赛总览</a></div>';
  if(storeProblem)main.insertAdjacentHTML('afterbegin',`<div class="error-box">${esc(storeProblem)}</div>`);
  if(data?.warnings?.length)main.insertAdjacentHTML('afterbegin','<p class="notice">部分历史资料来源暂未更新，正在显示最近成功记录。<a href="#/sources">查看来源</a></p>');
- updateStatus();enhanceTables(main,routeKey());hydratePlayerPortraits(main,league.id);
+ updateStatus();enhanceTables(main,routeKey());hydrateBriefs(main,'football');hydratePlayerPortraits(main,league.id);
 }
 
 async function sharePage() {

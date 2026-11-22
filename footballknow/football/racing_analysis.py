@@ -319,6 +319,7 @@ def generate(ident, phase: Literal['pre', 'post']):
         if phase == 'pre':
             content['preparationSnapshot'] = preparation
             content['marketSnapshot'] = market
+            content['runnerSnapshot'] = [{k: h.get(k) for k in ('id', 'number', 'name')} for h in race.get('entries', []) if h.get('id') in content.get('shortlist', [])]
             content['reviewChecks'] = context['reviewLessons']
         digest = hashlib.sha256(json.dumps(context, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
         with connect() as db:

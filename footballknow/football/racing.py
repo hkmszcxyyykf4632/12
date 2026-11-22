@@ -105,7 +105,7 @@ def parse_dividends(soup):
     for row in soup.select('.dividend_tab .position_left table tbody tr'):
         cells = row.find_all('td', recursive=False)
         if len(cells) == 3:
-            kind = {'獨贏': 'WIN', '位置': 'PLA', '連贏': 'QIN'}.get(text(cells[0]))
+            kind = {'獨贏': 'WIN', '位置': 'PLA', '連贏': 'QIN', '位置Q': 'QPL', '位置Ｑ': 'QPL', '位置連贏': 'QPL'}.get(text(cells[0]))
         if kind and len(cells) in (2, 3):
             payouts.append({'type': kind, 'combination': text(cells[-2]), 'amount': number(text(cells[-1])),
                             'display': text(cells[-1]), 'unit': 10, 'currency': 'HKD'})
@@ -130,7 +130,7 @@ def parse_race(html, source, result=False, expected=None):
             return {'id': ident, 'date': day, 'course': course, 'courseName': '沙田' if course == 'ST' else '跑马地',
                     'raceNo': int(race_no), 'name': '赛事取消', 'status': 'cancelled', 'cancellationOfficial': True,
                     'resultOfficial': False, 'entries': [], 'offTime': None, 'distance': None, 'track': '', 'class': '',
-                    'dividends': [{'type': kind, 'combination': '—', 'amount': None, 'display': '退款', 'unit': 10, 'currency': 'HKD'} for kind in ['WIN', 'PLA', 'QIN']],
+                    'dividends': [{'type': kind, 'combination': '—', 'amount': None, 'display': '退款', 'unit': 10, 'currency': 'HKD'} for kind in ['WIN', 'PLA', 'QIN', 'QPL']],
                     'source': source, 'updatedAt': now()}, race_links(soup, source)
         if not dm or info is None:
             raise ValueError('正式赛果尚未发布。')

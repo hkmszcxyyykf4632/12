@@ -1,3 +1,4 @@
+import {hydrateBriefs} from './review-briefs.mjs';
 import {bindHandicapTrend} from './handicap-trend.mjs';
 import {data,names,playerValues,markets} from './repository.mjs';
 import {valuationHtml} from './player-values.mjs';
@@ -56,7 +57,7 @@ export function renderTeam(id) {
     main.querySelector('#names-coverage').textContent=`本队 ${roster.length} 名球员，${roster.filter(p=>names?.names?.[String(p.code)]).length} 名已有普通话与香港译名来源；暂用音译已逐项标注。`;
   }
   const venue=()=>main.querySelector('#team-venue').value;
-  const updateMatches=()=>{main.querySelector('#matches-table').innerHTML=matchTable(recent(team,main.querySelector('#competition-filter').value==='pl',venue()),team);};
+  const updateMatches=()=>{main.querySelector('#matches-table').innerHTML=matchTable(recent(team,main.querySelector('#competition-filter').value==='pl',venue()),team);hydrateBriefs(main,'football');};
   main.querySelector('#team-venue').addEventListener('change',()=>{main.querySelector('#team-calendar').innerHTML=calendarBlock(team,venue());updateMatches();});
   main.querySelector('#player-search').addEventListener('input',filterPlayers);
   main.querySelector('#position-filter').addEventListener('change',filterPlayers);

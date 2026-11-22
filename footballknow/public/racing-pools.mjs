@@ -1,7 +1,7 @@
 import {esc} from './ui.mjs';
 import {table,val,stamp,horseLink} from './racing-ui.mjs';
 
-const labels={WIN:'独赢',PLA:'位置',QIN:'连赢'};
+const labels={WIN:'独赢',PLA:'位置',QIN:'连赢',QPL:'位置连赢'};
 export function quoteFor(race,type,no){return race.pools?.find(p=>p.type===type)?.quotes?.find(q=>q.combination===String(Number(no)));}
 export function quoteMarkup(q,missing='待公布'){
   if(!q)return `<span class="muted">${esc(missing)}</span>`;

@@ -1,3 +1,5 @@
+import {paintRecommendationPreview} from './recommendations.mjs';
+import {paintCelebrations} from './prediction-celebrations.mjs';
 import {paintMarketPreview} from './finance-page.mjs';
 import {data,rankings} from './repository.mjs';
 import {main,esc,cn,team,monogram,pageHeading,matchTable,timeText,oddsText} from './ui.mjs';
@@ -6,7 +8,7 @@ import {league} from './league.mjs';
 import {standingsPreview} from './rankings-page.mjs';
 import {impliedProbabilities,seasonStats,leadMatch,countdownText,statusSummary} from './insights.mjs';
 import {readStatus} from './status-page.mjs';
-import {paintPortalNews} from './portal-news.mjs';
+import {paintEditorial} from './editorial.mjs';
 import {mountVisitCounter} from './visit-counter.mjs';
 
 const percent=value=>`${Math.round(value*100)}%`;
@@ -52,8 +54,8 @@ async function paintSync() {
 }
 
 export function renderHome(loadError=null) {
-  main.innerHTML=`<div class="portal-masthead"><div class="portal-identity"><h1 class="brand-seal brand-seal-home" aria-label="峰弈科技"><span>峰弈</span><span>科技</span></h1><div><span class="eyebrow">足球 · 香港赛马 · 全球市场</span><p>涵盖足球、赛马、黄金、原油、股票与比特币的综合资料分析网站。</p></div></div><div class="portal-sponsors">赞助开发<a href="#/sponsors">茗是观茶业 · 自在堂唐卡 ↗</a></div></div>
-  <section id="home-markets"></section><div class="section-head portal-section-head"><h2>即时资讯</h2><a class="button quiet" href="#/portal-news">全部中文新闻 →</a></div><div id="home-news"></div><div class="portal-shortcuts"><a href="#/live"><span>足球</span><strong>即场比赛与赔率 →</strong></a><a href="#/racing"><span>香港赛马</span><strong>赛马日与即时赛果 →</strong></a><a href="#/markets"><span>港股</span><strong>报价与公司资料 →</strong></a><a href="#/horses"><span>马匹资料</span><strong>马房、马主与往绩 →</strong></a></div><div class="section-head"><h2>${league.name}赛程与数据</h2><a href="#/matches">比赛中心 →</a></div><div id="home-lead"></div><div id="home-kpi"></div>
+  main.innerHTML=`<div class="portal-masthead"><div class="portal-identity"><h1 class="brand-seal brand-seal-home" aria-label="峰弈科技"><span>峰弈</span><span>科技</span></h1><div><span class="eyebrow">足球 · 香港赛马 · 全球市场</span><h2 class="portal-motto">逆境生存</h2><p class="portal-rally">峰弈科技带领大家杀出一条血路</p><p>涵盖足球、赛马、黄金、原油、股票与比特币的综合资料分析网站。</p></div></div><div class="portal-sponsors">赞助开发<a href="#/sponsors">茗是观茶业 · 自在堂唐卡 ↗</a></div></div>
+  <section id="home-markets"></section><div class="section-head portal-section-head"><h2>峰弈专题分析</h2><a class="button quiet" href="#/insights">全部分析 →</a></div><div id="home-insights"></div><div class="section-head"><h2>峰弈推荐</h2><a href="#/recommendations">精选与持续成绩 →</a></div><div id="home-recommendations"></div><p class="note">有不同看法，或想进一步追问？<a href="#/ask">进入AI互动问答 →</a></p><div class="portal-shortcuts"><a href="#/live"><span>足球</span><strong>即场比赛与赔率 →</strong></a><a href="#/racing"><span>香港赛马</span><strong>赛马日与即时赛果 →</strong></a><a href="#/markets"><span>港股</span><strong>报价与公司资料 →</strong></a><a href="#/horses"><span>马匹资料</span><strong>马房、马主与往绩 →</strong></a></div><div class="section-head"><h2>${league.name}赛程与数据</h2><a href="#/matches">比赛中心 →</a></div><div id="home-lead"></div><div id="home-kpi"></div>
   <div class="dash-grid"><div>
     <div class="section-head"><h2>比赛动态与赛程</h2><a class="button quiet" href="#/matches">比赛中心</a></div><div id="home-fixtures"></div>
     <div class="section-head"><h2>最近完赛</h2><a class="button quiet" href="#/matches">全部赛果</a></div><div id="home-recent"></div>
@@ -63,10 +65,13 @@ export function renderHome(loadError=null) {
   </div></div>
   <p class="note">开球时间按本地时区显示。比分、胜平负按 90 分钟含补时统计。<a href="#/sources">查看数据来源与统计口径</a></p>`;
   main.querySelector('#home-markets').innerHTML='<div class="section-head"><h2>市场行情</h2><a class="button quiet" href="#/markets">港股与市场 →</a></div><div class="loading" role="status">正在读取市场行情…</div>';
-  main.querySelector('#home-news').innerHTML='<div class="loading" role="status">正在读取最新资讯…</div>';
+  main.querySelector('#home-insights').innerHTML='<div class="loading" role="status">正在读取专题分析…</div>';
+  main.querySelector('.portal-masthead').insertAdjacentHTML('afterend','<div id="home-celebrations"></div>');
   const update=(error=loadError)=>{
     if(!main.querySelector('#home-lead'))return;
-    paintMarketPreview(main.querySelector('#home-markets'));paintPortalNews(main.querySelector('#home-news'));
+    paintCelebrations(main.querySelector('#home-celebrations'));
+    paintRecommendationPreview(main.querySelector('#home-recommendations'));
+    paintMarketPreview(main.querySelector('#home-markets'));paintEditorial(main.querySelector('#home-insights'));
     if(!data){
       main.querySelector('#home-lead').innerHTML=error?`<div class="error-box"><h2>暂时无法载入球队资料</h2><p>${esc(error.message)}。已有个人记录仍保存在本浏览器。</p><button class="button" id="reload">重新载入</button> <a class="button secondary" href="#/admin">管理后台</a></div>`:'<div class="loading" role="status">正在读取足球赛程与数据…</div>';
       main.querySelector('#reload')?.addEventListener('click',()=>location.reload());

@@ -33,7 +33,7 @@ def test_dividend_rowspans_keep_pool_identity():
         '<tr><td>連贏</td><td>2,12</td><td>367.50</td></tr>'
         '<tr><td>位置Q</td><td>2,8</td><td>55</td></tr></tbody></table></div></div>', 'html.parser')
     result = racing.parse_dividends(soup)
-    assert [(p['type'], p['amount']) for p in result] == [('WIN', 347), ('PLA', 73.5), ('PLA', 13.5), ('QIN', 367.5)]
+    assert [(p['type'], p['amount']) for p in result] == [('WIN', 347), ('PLA', 73.5), ('PLA', 13.5), ('QIN', 367.5), ('QPL', 55)]
     assert all(p['unit'] == 10 for p in result)
 
 
@@ -43,7 +43,7 @@ def test_cancelled_race_is_a_real_outcome_not_a_missing_result():
     value, links = racing.parse_race(html, racing.race_url(ident, True), True, ident)
     assert value['status'] == 'cancelled' and value['cancellationOfficial']
     assert value['entries'] == [] and not value['resultOfficial']
-    assert [d['display'] for d in value['dividends']] == ['退款'] * 3
+    assert [d['display'] for d in value['dividends']] == ['退款'] * 4
     with pytest.raises(ValueError, match='取消场次'):
         racing.parse_race(html, racing.race_url(ident, True), True, '2026-11-14-ST-7')
 

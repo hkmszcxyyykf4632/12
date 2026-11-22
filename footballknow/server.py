@@ -1,3 +1,5 @@
+from football.interactive_qa import Question
+from typing import Literal
 """Football Know API; private state is never mounted as static content."""
 import os
 import http.client
@@ -452,6 +454,43 @@ def edit_video(ident: str, value: videos.VideoInput, account: auth.Administrator
         return videos.save(value, ident)
     except LookupError as error:
         raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.post('/api/ask')
+def interactive_question(payload: Question, request: Request):
+    from football.interactive_qa import ask, BusyError
+    try:
+        return ask(payload, request.client.host if request.client else 'unknown')
+    except BusyError as error:
+        raise HTTPException(status_code=429, detail=str(error)) from None
+    except ValueError:
+        raise HTTPException(status_code=502, detail='AI暂时未能完成回答，请稍后重试或缩小问题范围。') from None
+    except (OSError, http.client.HTTPException):
+        raise HTTPException(status_code=503, detail='AI服务连接暂时不稳定，请稍后重试。') from None
+
+
+@app.get('/api/recommendations')
+def recommendations():
+    from football.recommendations import read_recommendations
+    return read_recommendations()
+
+
+@app.get('/api/statistics/football')
+def football_statistics():
+    from football.football_statistics import read_statistics
+    return read_statistics()
+
+
+@app.get('/api/statistics/racing')
+def racing_statistics():
+    from football.racing_statistics import read_statistics
+    return read_statistics()
+
+
+@app.get('/api/review-briefs/{domain}')
+def review_briefs(domain: Literal['football', 'racing']):
+    from football.review_briefs import read_briefs
+    return read_briefs(domain)
 
 
 @app.get('/api/football-forecasts')
