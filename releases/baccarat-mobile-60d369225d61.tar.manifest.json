@@ -1,0 +1,30 @@
+{
+  "revision": "60d369225d61f120fdf7448e83740151868c4ff2",
+  "archive": "releases/baccarat-mobile-60d369225d61.tar.gz",
+  "sha256": "b1058ba20270123d4582978b0806f51be507af255988535e2e5b4b5c7f365683",
+  "files": {
+    "server.py": "e0875f9fc4503e996d22e0ce4fa6eac64ca4b65e892d744b67733913e0aa04be",
+    "public/rankings-page.mjs": "26040af33d3f4d1522af88b636692ac8ba2e0ff79503d4ff60819bb2b1575993",
+    "public/baccarat.css": "c6599a2a3cec671013c5bd4ad1430baea43aeb6468709af2f3e3c00aad7334a4",
+    "public/baccarat-page.mjs": "c606cd35ba09702fd64a24d570fc915177f94164c072fe82e549d669cb05f689",
+    "deploy/update.py": "9c59e454837e1ed9da139ff54f3bdaad39aa25a38bab87e090c6f32f4e92545d",
+    "deploy/footballknow-web.service": "3ab350f2f7a7dd5cd9a0febaff6260f4258a2df2042b02659291980b40766723",
+    "deploy/footballknow-worker.service": "22fdb0bcbcb2af6a012b3fe32a2b82d43f7be953b44ae5507e0f68521836e7f5",
+    "public/data.json": "3122c8281243b8aa41c97f4ffcfe410abe1e15b80caf475d92bf08f97787d393",
+    "public/standings.json": "98a97684e47a738aff7fd3943787a02915d152a23222f78b43e33377500f6fa6",
+    "public/laliga/data.json": "e23fe5c2dd25aff5064180c807a84545b15f5f2102bc116c3c6dc5a3510a6f43",
+    "public/laliga/standings.json": "5180bbd39c80e6e508acc1ce2d8136b57782152d1d0a4ef0e3906eba8b14f8a4",
+    "public/ucl/data.json": "86b87d195d929d579110ec4ba31799e88133d80e4135f0e3d38725e608bcbcf1",
+    "public/ucl/standings.json": "ee09a5ce2df4bd356383f574314b2606ed70f66829ebd6861f318fcd1ea0ac85",
+    "public/seriea/data.json": "ab7cc54bd4abaf28ab5dd61d20858994bf416e79d9e920d614df6124b291930d",
+    "public/seriea/standings.json": "62ec870f834c9ac34f4829fb646ed106a9aa7d94d900ae18023fb1bf3cb0eb19",
+    "public/bundesliga/data.json": "aba9b3bbc1bc30ee3deaf77e574eb0bdb3268bdb1a58ec90e46ef161e976d5ea",
+    "public/bundesliga/standings.json": "19aca807dfb4d3353c10f7433c1361f799ed6e083bf4b10fa12f7c2be962ad74"
+  },
+  "checks": [
+    "Baccarat page and core: 12 tests passed",
+    "390px and 360px mobile plus 1280px desktop reviewed",
+    "Selected hand 42 roads contain only hands 1 through 41",
+    "All four entry roads expanded; bead plate absent"
+  ]
+}
