@@ -1,0 +1,29 @@
+{
+  "fullDecodePassed": true,
+  "durationSeconds": 12.333344,
+  "streams": [
+    {
+      "type": "video",
+      "codec": "h264",
+      "width": 1344,
+      "height": 768,
+      "sampleRate": null,
+      "channels": null
+    },
+    {
+      "type": "audio",
+      "codec": "aac",
+      "width": null,
+      "height": null,
+      "sampleRate": "32000",
+      "channels": 2
+    }
+  ],
+  "visualReview": "Checked opening, middle and ending frames: approved brown and white characters, fur, star eyes, pendant, silver wings and warm room retained; independent speaking/listening poses and gestures.",
+  "userApproved": true,
+  "sourceVideoUnmodified": true,
+  "watermarkRetained": true,
+  "humanListeningPerformed": false,
+  "speechReview": "Independent machine transcription contains all six turns; phonetic transcription errors affect foreign team names and the final score. Do not treat ASR as a human naturalness assessment.",
+  "subtitleState": "No burned-in captions in the approved generated video; catalogue description identifies the historical recommendation."
+}

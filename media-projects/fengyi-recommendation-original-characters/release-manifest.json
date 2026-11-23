@@ -1,0 +1,49 @@
+{
+  "videoId": "1edbe78bf8154245ae46033233cdf629",
+  "expectedPreviousUrl": "https://inwesting.shop/media/videos/fengyi-recommendation-bologna-20261122-3d-v1.mp4",
+  "title": "峰弈推荐｜博洛尼亚 vs 乌迪内斯｜双人对话·历史样板",
+  "description": "2026年11月22日历史推荐示范。大首领与大天使三问三答：博洛尼亚让乌迪内斯半球，原始预测比分2:1。约12秒，国语双人对话。片中“今晚”为历史对白，不是当前赛事推荐。",
+  "category": "football",
+  "durationSeconds": 12.333344,
+  "files": [
+    {
+      "name": "fengyi-recommendation-bologna-20261122-original-v3.mp4",
+      "bytes": 8023125,
+      "sha256": "69247c0d171cdd24548002d00c9380eed9179689a72dfad7beb2528e24f29ca2"
+    },
+    {
+      "name": "fengyi-recommendation-bologna-20261122-original-v3.jpg",
+      "bytes": 198855,
+      "sha256": "e6ece5183e066ea29d8256ca61f4973e085f8d974a4c8b4456b2562ef8d52beb"
+    }
+  ],
+  "qa": {
+    "fullDecodePassed": true,
+    "durationSeconds": 12.333344,
+    "streams": [
+      {
+        "type": "video",
+        "codec": "h264",
+        "width": 1344,
+        "height": 768,
+        "sampleRate": null,
+        "channels": null
+      },
+      {
+        "type": "audio",
+        "codec": "aac",
+        "width": null,
+        "height": null,
+        "sampleRate": "32000",
+        "channels": 2
+      }
+    ],
+    "visualReview": "Checked opening, middle and ending frames: approved brown and white characters, fur, star eyes, pendant, silver wings and warm room retained; independent speaking/listening poses and gestures.",
+    "userApproved": true,
+    "sourceVideoUnmodified": true,
+    "watermarkRetained": true,
+    "humanListeningPerformed": false,
+    "speechReview": "Independent machine transcription contains all six turns; phonetic transcription errors affect foreign team names and the final score. Do not treat ASR as a human naturalness assessment.",
+    "subtitleState": "No burned-in captions in the approved generated video; catalogue description identifies the historical recommendation."
+  }
+}

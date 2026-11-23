@@ -1,0 +1,276 @@
+{
+  "language": "zh",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 2.28,
+      "text": "喂 今晚有什麼好料啊",
+      "words": [
+        {
+          "word": "喂",
+          "start": 0.0,
+          "end": 0.48,
+          "probability": 0.7308366894721985
+        },
+        {
+          "word": " 今",
+          "start": 0.96,
+          "end": 1.18,
+          "probability": 0.9273051023483276
+        },
+        {
+          "word": "晚",
+          "start": 1.18,
+          "end": 1.3,
+          "probability": 0.9948428273200989
+        },
+        {
+          "word": "有",
+          "start": 1.3,
+          "end": 1.44,
+          "probability": 0.9954492449760437
+        },
+        {
+          "word": "什麼",
+          "start": 1.44,
+          "end": 1.62,
+          "probability": 0.7639356255531311
+        },
+        {
+          "word": "好",
+          "start": 1.62,
+          "end": 1.8,
+          "probability": 0.9809727668762207
+        },
+        {
+          "word": "料",
+          "start": 1.8,
+          "end": 1.98,
+          "probability": 0.9746451377868652
+        },
+        {
+          "word": "啊",
+          "start": 1.98,
+          "end": 2.28,
+          "probability": 0.8281044960021973
+        }
+      ]
+    },
+    {
+      "start": 2.28,
+      "end": 4.0,
+      "text": "今晚買博洛尼亞",
+      "words": [
+        {
+          "word": "今",
+          "start": 2.28,
+          "end": 2.92,
+          "probability": 0.9423008561134338
+        },
+        {
+          "word": "晚",
+          "start": 2.92,
+          "end": 3.12,
+          "probability": 0.9978209733963013
+        },
+        {
+          "word": "買",
+          "start": 3.12,
+          "end": 3.34,
+          "probability": 0.8030667304992676
+        },
+        {
+          "word": "博",
+          "start": 3.34,
+          "end": 3.52,
+          "probability": 0.74922214448452
+        },
+        {
+          "word": "洛",
+          "start": 3.52,
+          "end": 3.62,
+          "probability": 0.7470798045396805
+        },
+        {
+          "word": "尼",
+          "start": 3.62,
+          "end": 3.76,
+          "probability": 0.840966522693634
+        },
+        {
+          "word": "亞",
+          "start": 3.76,
+          "end": 4.0,
+          "probability": 0.805355966091156
+        }
+      ]
+    },
+    {
+      "start": 4.5,
+      "end": 5.6,
+      "text": "怎麼讓啊",
+      "words": [
+        {
+          "word": "怎麼",
+          "start": 4.5,
+          "end": 4.9,
+          "probability": 0.4390565752983093
+        },
+        {
+          "word": "讓",
+          "start": 4.9,
+          "end": 5.22,
+          "probability": 0.7257227301597595
+        },
+        {
+          "word": "啊",
+          "start": 5.22,
+          "end": 5.6,
+          "probability": 0.8799412250518799
+        }
+      ]
+    },
+    {
+      "start": 5.6,
+      "end": 8.38,
+      "text": "博洛尼亞讓物敵內斯伴球啊",
+      "words": [
+        {
+          "word": "博",
+          "start": 5.6,
+          "end": 6.18,
+          "probability": 0.9567446112632751
+        },
+        {
+          "word": "洛",
+          "start": 6.18,
+          "end": 6.3,
+          "probability": 0.9986408650875092
+        },
+        {
+          "word": "尼",
+          "start": 6.3,
+          "end": 6.5,
+          "probability": 0.9994297325611115
+        },
+        {
+          "word": "亞",
+          "start": 6.5,
+          "end": 6.66,
+          "probability": 0.998648464679718
+        },
+        {
+          "word": "讓",
+          "start": 6.66,
+          "end": 6.9,
+          "probability": 0.6687437891960144
+        },
+        {
+          "word": "物",
+          "start": 6.9,
+          "end": 7.08,
+          "probability": 0.27372604608535767
+        },
+        {
+          "word": "敵",
+          "start": 7.08,
+          "end": 7.2,
+          "probability": 0.7499896585941315
+        },
+        {
+          "word": "內",
+          "start": 7.2,
+          "end": 7.36,
+          "probability": 0.7755001187324524
+        },
+        {
+          "word": "斯",
+          "start": 7.36,
+          "end": 7.5,
+          "probability": 0.8146218657493591
+        },
+        {
+          "word": "伴",
+          "start": 7.5,
+          "end": 7.68,
+          "probability": 0.9015851318836212
+        },
+        {
+          "word": "球",
+          "start": 7.68,
+          "end": 7.94,
+          "probability": 0.7023430466651917
+        },
+        {
+          "word": "啊",
+          "start": 7.94,
+          "end": 8.38,
+          "probability": 0.5495269298553467
+        }
+      ]
+    },
+    {
+      "start": 8.38,
+      "end": 10.02,
+      "text": "買幾筆記啊",
+      "words": [
+        {
+          "word": "買",
+          "start": 8.38,
+          "end": 8.94,
+          "probability": 0.9040643572807312
+        },
+        {
+          "word": "幾",
+          "start": 8.94,
+          "end": 9.14,
+          "probability": 0.9901172518730164
+        },
+        {
+          "word": "筆",
+          "start": 9.14,
+          "end": 9.24,
+          "probability": 0.8800760805606842
+        },
+        {
+          "word": "記",
+          "start": 9.24,
+          "end": 9.42,
+          "probability": 0.11727162450551987
+        },
+        {
+          "word": "啊",
+          "start": 9.42,
+          "end": 10.02,
+          "probability": 0.7549427151679993
+        }
+      ]
+    },
+    {
+      "start": 10.02,
+      "end": 10.92,
+      "text": "二筆呀",
+      "words": [
+        {
+          "word": "二",
+          "start": 10.02,
+          "end": 10.46,
+          "probability": 0.7511084675788879
+        },
+        {
+          "word": "筆",
+          "start": 10.46,
+          "end": 10.6,
+          "probability": 0.9949675500392914
+        },
+        {
+          "word": "呀",
+          "start": 10.6,
+          "end": 10.92,
+          "probability": 0.09559228271245956
+        }
+      ]
+    }
+  ],
+  "note": "Automatic speech verification; not a human listening evaluation."
+}

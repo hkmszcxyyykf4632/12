@@ -1,0 +1,14 @@
+{
+  "source": "C:\\Users\\acer\\AppData\\Local\\Temp\\codex-clipboard-67d7db97-7a58-420e-94ab-b797bc71fe8b.png",
+  "sha256": "e36ef8a9ac47fea3b4babf15d06920b300fdb6ccaba75e337b92c50a971fbc28",
+  "requirements": [
+    "Use the exact two characters and background from locked-reference.png",
+    "No custom Blender character models",
+    "Preserve exact six dialogue lines with Angel ah endings",
+    "Historical recommendation sample, not a new live prediction"
+  ],
+  "rejectedVersions": [
+    "local-production",
+    "local-production-warm-v2"
+  ]
+}

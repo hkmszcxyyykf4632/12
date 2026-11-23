@@ -1,0 +1,44 @@
+{
+  "version": "original-characters-v3",
+  "videoId": "58d7839d7ff14d69ba1fdf9a1ab23a37",
+  "createdAt": "2026-11-23T17:46:01.702Z",
+  "status": "completed",
+  "sourceImage": "locked-reference.png",
+  "sourceSha256": "e36ef8a9ac47fea3b4babf15d06920b300fdb6ccaba75e337b92c50a971fbc28",
+  "uploadedAssetId": "9b8a3caea8264f01b7b59b99aa01222e",
+  "uploadedImagePixelsMatchUserReference": true,
+  "service": "HeyGen image-to-video",
+  "method": "Animate the exact supplied first frame; no custom replacement character models",
+  "generationArgs": {
+    "image": {
+      "type": "asset_id",
+      "asset_id": "9b8a3caea8264f01b7b59b99aa01222e"
+    },
+    "model": "heygen-video-1",
+    "duration": 12,
+    "resolution": "768p",
+    "promptEnhancement": "quality",
+    "prompt": "Create one continuous 12-second 16:9 animated dialogue from the supplied first frame. The two characters must remain EXACTLY the characters in the supplied image, not new similar characters: same faces, fur, ears, eyes with star highlights, pointed little teeth, facial proportions, accessories, warm window lighting and sage-green room. Left character is fluffy dark brown, wears a gold pendant and asks the questions; right character is fluffy cream-white, with tiny shiny silver wings, and answers. Keep both characters seated at the same wood table. Camera is a steady cinematic medium two-shot with an almost imperceptible slow push in. No style change, no remodeled plastic toys, no new background.\n\nNatural expressive animation: right and left characters look at each other, blink at separate times, move their mouths with their OWN spoken words, and have different small facial reactions. The left one opens with a curious eyebrow lift and a relaxed palm-up gesture, lowers the hand while listening, then leans in slightly to ask the handicap. The right one replies warmly, nods once with a playful confident smile, makes a small hand gesture for the handicap, and smiles at the final score. Stop mouth movement when listening. No constant bobbing or flapping. Preserve every identifying detail from the image.\n\nAll dialogue is natural Mandarin Chinese, easy conversational whole sentences, a friendly slightly low male voice for LEFT and a warm female voice for RIGHT. Never imitate a real person. Precisely six lines, in this order, with short natural turn-taking pauses and no overlap. The right character's final 啊 must be gently audible in every answer:\n0.25-2.35 LEFT: \"喂，今晚有什么好料啊？\"\n2.55-4.15 RIGHT: \"今晚买博洛尼亚啊。\"\n4.35-5.15 LEFT: \"怎么让啊？\"\n5.35-7.65 RIGHT: \"博洛尼亚让乌迪内斯半球啊。\"\n7.9-9.1 LEFT: \"买几比几啊？\"\n9.35-10.35 RIGHT: \"二比一啊。\"\n10.35-12.0 both share an amused smile and a relaxed final reaction.\n\nNo additional words, no added captions or typography, no logo, no music competing with voices, no new props, no extra characters, no scene changes. Clean clear dialogue audio, natural rhythm, no syllable-by-syllable robotic speech. This is a fictional presentation of a historical sports recommendation, not a claim of a current live prediction."
+  },
+  "generationResult": {
+    "video_id": "58d7839d7ff14d69ba1fdf9a1ab23a37",
+    "status": "completed",
+    "model": "heygen-video-1",
+    "duration": 12,
+    "width": 1344,
+    "height": 768,
+    "seed": 244231217
+  },
+  "preview": "https://app.heygen.com/videos/58d7839d7ff14d69ba1fdf9a1ab23a37",
+  "publishedToInvestmentSite": false,
+  "visualIdentityVerifiedOnFinalVideo": true,
+  "spokenDialogueVerifiedOnFinalVideo": "automatic transcription only",
+  "reviewRequired": [
+    "Keep exact source identities and warm room",
+    "Six lines in correct order, angel ah endings",
+    "Review actual motion and audio before replacing website sample"
+  ],
+  "doNotAutoRegenerate": true,
+  "approvedByUser": true,
+  "sourceVideoUnmodified": true
+}
