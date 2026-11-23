@@ -1,0 +1,44 @@
+[
+  {
+    "type": "WordBoundary",
+    "offset": 976250,
+    "duration": 4285830,
+    "text": "喂"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 8952500,
+    "duration": 2619160,
+    "text": "今晚"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 11809580,
+    "duration": 714160,
+    "text": "有"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 12523750,
+    "duration": 1547500,
+    "text": "什么"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 14190410,
+    "duration": 1190410,
+    "text": "好"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 15380830,
+    "duration": 1428750,
+    "text": "料"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 16809580,
+    "duration": 2262080,
+    "text": "啊"
+  }
+]

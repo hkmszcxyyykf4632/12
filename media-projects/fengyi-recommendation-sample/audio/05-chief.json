@@ -1,0 +1,32 @@
+[
+  {
+    "type": "WordBoundary",
+    "offset": 976250,
+    "duration": 2857080,
+    "text": "买"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 3833330,
+    "duration": 1547500,
+    "text": "几"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 5380830,
+    "duration": 1309580,
+    "text": "比"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 6690410,
+    "duration": 1547500,
+    "text": "几"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 8237910,
+    "duration": 3214160,
+    "text": "啊"
+  }
+]

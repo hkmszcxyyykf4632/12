@@ -1,0 +1,93 @@
+{
+  "sourceUrl": "https://inwesting.shop/api/recommendations",
+  "sourceRecord": {
+    "domain": "football",
+    "group": "seriea|2026/27|第12轮",
+    "event": "401875047",
+    "identity": "ecf1e89dc53af4ce979fc25b95ab3761fe21a3807aae70db63ae35ae4106919b",
+    "stage": "initial",
+    "issuedAt": "2026-11-22T08:01:49.264615Z",
+    "kickoff": "2026-11-22T14:00:00Z",
+    "priority": 30.0769,
+    "reasons": [
+      "双方至少10场赛前往绩可核对",
+      "已保存亚洲盘方向、盘口及赔率",
+      "首发尚未确认，保留阵容变化风险",
+      "比分与统计基线一致"
+    ],
+    "summary": [
+      "本场主选博洛尼亚2:1乌迪内斯（90分钟主胜），亚洲盘取主队让半球（-0.5）的博洛尼亚方向：主队净胜1球即赢盘。赢球与赢盘一致。",
+      "依据为博洛尼亚近10场5胜2平3负、近5场4胜1负，乌迪内斯近10场0胜2平8负、近5场0胜1平4负且失球偏多；统计基线预期进球2.07比1.08、首选比分2:1。改判条件：若临场确认博洛尼亚关键进攻球员缺阵或盘口退回平半以下，重新评估；本版无正式首发、伤停及quotedAt，只有采集时点。"
+    ],
+    "receipt": {
+      "identity": "ecf1e89dc53af4ce979fc25b95ab3761fe21a3807aae70db63ae35ae4106919b",
+      "eventId": "401875047",
+      "matchId": "espn:401875047",
+      "league": "seriea",
+      "kickoff": "2026-11-22T14:00:00Z",
+      "day": "2026-11-22",
+      "home": "博洛尼亚",
+      "away": "乌迪内斯",
+      "season": "2026/27",
+      "round": "第12轮",
+      "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=12&s=2026-2027",
+      "roundComplete": false,
+      "homeName": "Bologna",
+      "awayName": "Udinese",
+      "stage": "initial",
+      "issuedAt": "2026-11-22T08:01:49.264615Z",
+      "score": [
+        2,
+        1
+      ],
+      "asianSide": "H",
+      "line": -0.5,
+      "asianPrice": 1.7142857142857144,
+      "scorePrice": null,
+      "scoreQuoteAt": "",
+      "scoreProvider": "",
+      "scoreSource": "",
+      "provider": "DraftKings",
+      "quoteAt": "2026-11-22T07:59:42.733745+00:00",
+      "status": "settled",
+      "reason": "",
+      "actual": [
+        1,
+        1
+      ],
+      "exactHit": false,
+      "resultHit": false,
+      "asianResult": "输盘",
+      "source": "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard?dates=2026&limit=1000"
+    },
+    "publishedAt": "2026-11-22T09:42:28.627868+00:00",
+    "methodVersion": "evidence-priority-v1"
+  },
+  "script": [
+    {
+      "speaker": "Chief",
+      "text": "喂，今晚有什么好料啊？"
+    },
+    {
+      "speaker": "Angel",
+      "text": "今晚买博洛尼亚啊。"
+    },
+    {
+      "speaker": "Chief",
+      "text": "怎么让啊？"
+    },
+    {
+      "speaker": "Angel",
+      "text": "博洛尼亚让乌迪内斯半球啊。"
+    },
+    {
+      "speaker": "Chief",
+      "text": "买几比几啊？"
+    },
+    {
+      "speaker": "Angel",
+      "text": "二比一啊。"
+    }
+  ],
+  "historicalLabel": "2026.11.22 · 历史推荐示范"
+}

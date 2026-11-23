@@ -1,0 +1,54 @@
+{
+  "title": "峰弈推荐｜博洛尼亚 vs 乌迪内斯｜三维双人问答样板",
+  "description": "2026年11月22日历史推荐示范，大首领与大天使三问三答：博洛尼亚让乌迪内斯半球，原始预测比分2:1。约11秒，国语配音、中文字幕和三维角色表演。片中“今晚”为历史对白，不是当前赛事推荐。",
+  "category": "football",
+  "durationSeconds": 10.958333,
+  "files": [
+    {
+      "name": "fengyi-recommendation-bologna-20261122-3d-v1.mp4",
+      "bytes": 2461464,
+      "sha256": "6742e5f9ec8b6124b783b28c0b12ee5a2c7b564f0c687b263b3ce82d4ba02993"
+    },
+    {
+      "name": "fengyi-recommendation-bologna-20261122-3d-v1.jpg",
+      "bytes": 134377,
+      "sha256": "d7011ce1ecfe3a4be1fad90fc23a653dbc0a85295cc5100b788a55fcf1b54fbc"
+    }
+  ],
+  "qa": {
+    "durationSeconds": 10.958333,
+    "bytes": 2461464,
+    "sha256": "6742e5f9ec8b6124b783b28c0b12ee5a2c7b564f0c687b263b3ce82d4ba02993",
+    "streams": [
+      {
+        "codec_type": "video",
+        "codec_name": "h264",
+        "width": 1280,
+        "height": 720,
+        "r_frame_rate": "24/1",
+        "sample_rate": null,
+        "channels": null,
+        "duration": "10.958333",
+        "nb_frames": "263"
+      },
+      {
+        "codec_type": "audio",
+        "codec_name": "aac",
+        "width": null,
+        "height": null,
+        "r_frame_rate": "0/0",
+        "sample_rate": "48000",
+        "channels": 2,
+        "duration": "10.940000",
+        "nb_frames": "514"
+      }
+    ],
+    "frames": 263,
+    "uniqueFrames": 263,
+    "fullDecodePassed": true,
+    "humanListeningPerformed": false,
+    "independentSpeechTranscription": "speech-transcription.json",
+    "speechNote": "Automatic transcription recognized the conversational structure and score; foreign team names have phonetic substitutions and some final particles were omitted by ASR. This is not a human naturalness rating.",
+    "visualReview": "Whole-frame captions and historical label verified; speaking and listening hosts have different mouth states and gestures; ears fit within frame."
+  }
+}

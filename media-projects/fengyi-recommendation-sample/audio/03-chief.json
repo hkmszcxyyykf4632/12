@@ -1,0 +1,20 @@
+[
+  {
+    "type": "WordBoundary",
+    "offset": 976250,
+    "duration": 2023750,
+    "text": "怎么"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 3119160,
+    "duration": 1785410,
+    "text": "让"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 4904580,
+    "duration": 3690410,
+    "text": "啊"
+  }
+]

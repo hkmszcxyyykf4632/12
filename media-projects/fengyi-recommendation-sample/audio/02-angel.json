@@ -1,0 +1,26 @@
+[
+  {
+    "type": "WordBoundary",
+    "offset": 967080,
+    "duration": 3855000,
+    "text": "今晚"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 4939160,
+    "duration": 1752500,
+    "text": "买"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 6691660,
+    "duration": 5724160,
+    "text": "博洛尼亚"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 12415830,
+    "duration": 1752500,
+    "text": "啊"
+  }
+]

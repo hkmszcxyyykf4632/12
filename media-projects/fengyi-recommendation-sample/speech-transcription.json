@@ -1,0 +1,283 @@
+{
+  "language": "zh",
+  "duration": 10.94,
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 2.14,
+      "text": "喂!今晚有什麼好料啊?",
+      "avgLogprob": -0.4875987634729983,
+      "words": [
+        {
+          "word": "喂!",
+          "start": 0.0,
+          "end": 0.6,
+          "probability": 0.3744186758995056
+        },
+        {
+          "word": "今",
+          "start": 1.02,
+          "end": 1.3,
+          "probability": 0.8516520857810974
+        },
+        {
+          "word": "晚",
+          "start": 1.3,
+          "end": 1.36,
+          "probability": 0.9964009523391724
+        },
+        {
+          "word": "有",
+          "start": 1.36,
+          "end": 1.48,
+          "probability": 0.9965366125106812
+        },
+        {
+          "word": "什麼",
+          "start": 1.48,
+          "end": 1.62,
+          "probability": 0.8385013341903687
+        },
+        {
+          "word": "好",
+          "start": 1.62,
+          "end": 1.74,
+          "probability": 0.9757983088493347
+        },
+        {
+          "word": "料",
+          "start": 1.74,
+          "end": 1.86,
+          "probability": 0.8593932390213013
+        },
+        {
+          "word": "啊?",
+          "start": 1.86,
+          "end": 2.14,
+          "probability": 0.3134097158908844
+        }
+      ]
+    },
+    {
+      "start": 2.42,
+      "end": 3.6,
+      "text": "今晚買博洛尼亞!",
+      "avgLogprob": -0.4875987634729983,
+      "words": [
+        {
+          "word": "今",
+          "start": 2.42,
+          "end": 2.66,
+          "probability": 0.9467582106590271
+        },
+        {
+          "word": "晚",
+          "start": 2.66,
+          "end": 2.82,
+          "probability": 0.9950026869773865
+        },
+        {
+          "word": "買",
+          "start": 2.82,
+          "end": 3.02,
+          "probability": 0.9256940484046936
+        },
+        {
+          "word": "博",
+          "start": 3.02,
+          "end": 3.18,
+          "probability": 0.8331010043621063
+        },
+        {
+          "word": "洛",
+          "start": 3.18,
+          "end": 3.3,
+          "probability": 0.5861904919147491
+        },
+        {
+          "word": "尼",
+          "start": 3.3,
+          "end": 3.4,
+          "probability": 0.814502626657486
+        },
+        {
+          "word": "亞!",
+          "start": 3.4,
+          "end": 3.6,
+          "probability": 0.9083837866783142
+        }
+      ]
+    },
+    {
+      "start": 3.98,
+      "end": 4.5,
+      "text": "怎麼讓?",
+      "avgLogprob": -0.4875987634729983,
+      "words": [
+        {
+          "word": "怎麼",
+          "start": 3.98,
+          "end": 4.34,
+          "probability": 0.7684533596038818
+        },
+        {
+          "word": "讓?",
+          "start": 4.34,
+          "end": 4.5,
+          "probability": 0.6454471945762634
+        }
+      ]
+    },
+    {
+      "start": 4.96,
+      "end": 7.1,
+      "text": "博洛尼亞讓無敵妹似伴球啊!",
+      "avgLogprob": -0.4875987634729983,
+      "words": [
+        {
+          "word": "博",
+          "start": 4.96,
+          "end": 5.22,
+          "probability": 0.991251528263092
+        },
+        {
+          "word": "洛",
+          "start": 5.22,
+          "end": 5.34,
+          "probability": 0.9990851581096649
+        },
+        {
+          "word": "尼",
+          "start": 5.34,
+          "end": 5.5,
+          "probability": 0.9995951950550079
+        },
+        {
+          "word": "亞",
+          "start": 5.5,
+          "end": 5.68,
+          "probability": 0.9994935989379883
+        },
+        {
+          "word": "讓",
+          "start": 5.68,
+          "end": 5.94,
+          "probability": 0.6466654539108276
+        },
+        {
+          "word": "無",
+          "start": 5.94,
+          "end": 6.12,
+          "probability": 0.3089403808116913
+        },
+        {
+          "word": "敵",
+          "start": 6.12,
+          "end": 6.2,
+          "probability": 0.9910715818405151
+        },
+        {
+          "word": "妹",
+          "start": 6.2,
+          "end": 6.34,
+          "probability": 0.1427958607673645
+        },
+        {
+          "word": "似",
+          "start": 6.34,
+          "end": 6.52,
+          "probability": 0.5830556005239487
+        },
+        {
+          "word": "伴",
+          "start": 6.52,
+          "end": 6.64,
+          "probability": 0.8315557837486267
+        },
+        {
+          "word": "球",
+          "start": 6.64,
+          "end": 6.86,
+          "probability": 0.8400540947914124
+        },
+        {
+          "word": "啊!",
+          "start": 6.86,
+          "end": 7.1,
+          "probability": 0.48205724358558655
+        }
+      ]
+    },
+    {
+      "start": 7.38,
+      "end": 8.44,
+      "text": "買幾比幾啊?",
+      "avgLogprob": -0.4875987634729983,
+      "words": [
+        {
+          "word": "買",
+          "start": 7.38,
+          "end": 7.62,
+          "probability": 0.9078852534294128
+        },
+        {
+          "word": "幾",
+          "start": 7.62,
+          "end": 7.84,
+          "probability": 0.951726496219635
+        },
+        {
+          "word": "比",
+          "start": 7.84,
+          "end": 7.96,
+          "probability": 0.4959900975227356
+        },
+        {
+          "word": "幾",
+          "start": 7.96,
+          "end": 8.14,
+          "probability": 0.9458529353141785
+        },
+        {
+          "word": "啊?",
+          "start": 8.14,
+          "end": 8.44,
+          "probability": 0.8062237501144409
+        }
+      ]
+    },
+    {
+      "start": 8.74,
+      "end": 9.4,
+      "text": "二比一啊!",
+      "avgLogprob": -0.4875987634729983,
+      "words": [
+        {
+          "word": "二",
+          "start": 8.74,
+          "end": 8.98,
+          "probability": 0.7992498874664307
+        },
+        {
+          "word": "比",
+          "start": 8.98,
+          "end": 9.12,
+          "probability": 0.9974070191383362
+        },
+        {
+          "word": "一",
+          "start": 9.12,
+          "end": 9.3,
+          "probability": 0.5328006148338318
+        },
+        {
+          "word": "啊!",
+          "start": 9.3,
+          "end": 9.4,
+          "probability": 0.8072474598884583
+        }
+      ]
+    }
+  ],
+  "note": "Independent machine transcription; not a human listening evaluation."
+}

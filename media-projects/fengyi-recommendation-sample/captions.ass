@@ -1,0 +1,33 @@
+﻿[Script Info]
+ScriptType: v4.00+
+PlayResX: 1280
+PlayResY: 720
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Main,Microsoft YaHei,36,&H00FFFFFF,&H00FFFFFF,&H00301E10,&H00000000,-1,0,0,0,100,100,0,0,1,1,0,5,35,35,35,1
+Style: Small,Microsoft YaHei,22,&H00FFFFFF,&H00FFFFFF,&H00301E10,&H00000000,0,0,0,0,100,100,0,0,1,0,0,5,35,35,35,1
+Style: Shape,Arial,20,&H00301E10,&H00301E10,&H00301E10,&H00000000,0,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:10.96,Shape,,0,0,0,,{\an7\pos(28,23)\p1\1c&H251A10&\1a&H20&}m 13 0 l 151 0 b 164 0 164 13 164 13 l 164 32 b 164 45 151 45 151 45 l 13 45 b 0 45 0 32 0 32 l 0 13 b 0 0 13 0 13 0{\p0}
+Dialogue: 2,0:00:00.00,0:00:10.96,Main,,0,0,0,,{\pos(110,45)\fs26\bord0\1c&HD1E7F8&}峰弈推荐
+Dialogue: 0,0:00:00.00,0:00:10.96,Shape,,0,0,0,,{\an7\pos(917,23)\p1\1c&H251A10&\1a&H20&}m 13 0 l 322 0 b 335 0 335 13 335 13 l 335 32 b 335 45 322 45 322 45 l 13 45 b 0 45 0 32 0 32 l 0 13 b 0 0 13 0 13 0{\p0}
+Dialogue: 2,0:00:00.00,0:00:10.96,Small,,0,0,0,,{\pos(1085,46)\fs20}2026.11.22 · 历史推荐示范
+Dialogue: 2,0:00:00.00,0:00:10.96,Small,,0,0,0,,{\pos(640,46)\fs21\bord1\1c&HFFFFFF&}博洛尼亚 vs 乌迪内斯
+Dialogue: 0,0:00:00.32,0:00:02.46,Shape,,0,0,0,,{\an7\pos(148,610)\p1\1c&H251A10&\1a&H20&}m 18 0 l 966 0 b 984 0 984 18 984 18 l 984 60 b 984 78 966 78 966 78 l 18 78 b 0 78 0 60 0 60 l 0 18 b 0 0 18 0 18 0{\p0}
+Dialogue: 2,0:00:00.32,0:00:02.46,Main,,0,0,0,,{\pos(640,649)\fs21\1c&H9BC8F1&}大首领  {\fs36\1c&HFFFFFF&}喂，今晚有什么好料啊？
+Dialogue: 0,0:00:02.46,0:00:04.14,Shape,,0,0,0,,{\an7\pos(148,610)\p1\1c&H251A10&\1a&H20&}m 18 0 l 966 0 b 984 0 984 18 984 18 l 984 60 b 984 78 966 78 966 78 l 18 78 b 0 78 0 60 0 60 l 0 18 b 0 0 18 0 18 0{\p0}
+Dialogue: 2,0:00:02.46,0:00:04.14,Main,,0,0,0,,{\pos(640,649)\fs21\1c&HDAE8C8&}大天使  {\fs36\1c&HFFFFFF&}今晚买博洛尼亚啊。
+Dialogue: 0,0:00:04.14,0:00:05.06,Shape,,0,0,0,,{\an7\pos(148,610)\p1\1c&H251A10&\1a&H20&}m 18 0 l 966 0 b 984 0 984 18 984 18 l 984 60 b 984 78 966 78 966 78 l 18 78 b 0 78 0 60 0 60 l 0 18 b 0 0 18 0 18 0{\p0}
+Dialogue: 2,0:00:04.14,0:00:05.06,Main,,0,0,0,,{\pos(640,649)\fs21\1c&H9BC8F1&}大首领  {\fs36\1c&HFFFFFF&}怎么让啊？
+Dialogue: 0,0:00:05.06,0:00:07.42,Shape,,0,0,0,,{\an7\pos(148,610)\p1\1c&H251A10&\1a&H20&}m 18 0 l 966 0 b 984 0 984 18 984 18 l 984 60 b 984 78 966 78 966 78 l 18 78 b 0 78 0 60 0 60 l 0 18 b 0 0 18 0 18 0{\p0}
+Dialogue: 2,0:00:05.06,0:00:07.42,Main,,0,0,0,,{\pos(640,649)\fs21\1c&HDAE8C8&}大天使  {\fs36\1c&HFFFFFF&}博洛尼亚让乌迪内斯半球啊。
+Dialogue: 0,0:00:07.42,0:00:08.78,Shape,,0,0,0,,{\an7\pos(148,610)\p1\1c&H251A10&\1a&H20&}m 18 0 l 966 0 b 984 0 984 18 984 18 l 984 60 b 984 78 966 78 966 78 l 18 78 b 0 78 0 60 0 60 l 0 18 b 0 0 18 0 18 0{\p0}
+Dialogue: 2,0:00:07.42,0:00:08.78,Main,,0,0,0,,{\pos(640,649)\fs21\1c&H9BC8F1&}大首领  {\fs36\1c&HFFFFFF&}买几比几啊？
+Dialogue: 0,0:00:08.78,0:00:10.96,Shape,,0,0,0,,{\an7\pos(148,610)\p1\1c&H251A10&\1a&H20&}m 18 0 l 966 0 b 984 0 984 18 984 18 l 984 60 b 984 78 966 78 966 78 l 18 78 b 0 78 0 60 0 60 l 0 18 b 0 0 18 0 18 0{\p0}
+Dialogue: 2,0:00:08.78,0:00:10.96,Main,,0,0,0,,{\pos(640,649)\fs21\1c&HDAE8C8&}大天使  {\fs36\1c&HFFFFFF&}二比一啊。
+Dialogue: 2,0:00:09.54,0:00:10.96,Small,,0,0,0,,{\pos(640,588)\fs23\bord2}博洛尼亚让半球 · 预测比分 2:1

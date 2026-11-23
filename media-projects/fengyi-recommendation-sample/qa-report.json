@@ -1,0 +1,36 @@
+{
+  "durationSeconds": 10.958333,
+  "bytes": 2461464,
+  "sha256": "6742e5f9ec8b6124b783b28c0b12ee5a2c7b564f0c687b263b3ce82d4ba02993",
+  "streams": [
+    {
+      "codec_type": "video",
+      "codec_name": "h264",
+      "width": 1280,
+      "height": 720,
+      "r_frame_rate": "24/1",
+      "sample_rate": null,
+      "channels": null,
+      "duration": "10.958333",
+      "nb_frames": "263"
+    },
+    {
+      "codec_type": "audio",
+      "codec_name": "aac",
+      "width": null,
+      "height": null,
+      "r_frame_rate": "0/0",
+      "sample_rate": "48000",
+      "channels": 2,
+      "duration": "10.940000",
+      "nb_frames": "514"
+    }
+  ],
+  "frames": 263,
+  "uniqueFrames": 263,
+  "fullDecodePassed": true,
+  "humanListeningPerformed": false,
+  "independentSpeechTranscription": "speech-transcription.json",
+  "speechNote": "Automatic transcription recognized the conversational structure and score; foreign team names have phonetic substitutions and some final particles were omitted by ASR. This is not a human naturalness rating.",
+  "visualReview": "Whole-frame captions and historical label verified; speaking and listening hosts have different mouth states and gestures; ears fit within frame."
+}

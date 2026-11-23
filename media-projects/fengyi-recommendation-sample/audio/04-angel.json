@@ -1,0 +1,32 @@
+[
+  {
+    "type": "WordBoundary",
+    "offset": 967080,
+    "duration": 6425410,
+    "text": "博洛尼亚"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 8327080,
+    "duration": 1518750,
+    "text": "让"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 9962500,
+    "duration": 5373750,
+    "text": "乌迪内斯"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 15453330,
+    "duration": 3621250,
+    "text": "半球"
+  },
+  {
+    "type": "WordBoundary",
+    "offset": 19074580,
+    "duration": 1635410,
+    "text": "啊"
+  }
+]
