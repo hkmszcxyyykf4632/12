@@ -1,0 +1,18 @@
+[
+  {"speaker":"chief","text":"我估佢贏，點知打和！","caption":"我估佢贏，點知打和！","beat":"question","expression":"surprised"},
+  {"speaker":"chief","text":"一句爆冷，就叫做復盤呀？","caption":"一句「爆冷」，就叫做復盤呀？","beat":"question","expression":"surprised"},
+  {"speaker":"angel","text":"梗係唔係啦。","caption":"梗係唔係啦。","beat":"evidence","expression":"talk"},
+  {"speaker":"angel","text":"要講清楚，場波究竟發生咗咩事。","caption":"要講清楚：場波究竟發生咗咩事。","beat":"evidence","expression":"talk"},
+  {"speaker":"angel","text":"先對返賽前判斷，","caption":"先對返賽前判斷：","beat":"before","expression":"talk"},
+  {"speaker":"angel","text":"正選、傷停，同埋盤口變化，","caption":"正選、傷停，同埋盤口變化，","beat":"before","expression":"talk"},
+  {"speaker":"angel","text":"邊啲已經知道，但我哋睇漏咗？","caption":"邊啲已經知道，但我哋睇漏咗？","beat":"before","expression":"talk"},
+  {"speaker":"angel","text":"再睇入球、紅牌，同換人之後，","caption":"再睇入球、紅牌，同換人之後，","beat":"match","expression":"talk"},
+  {"speaker":"angel","text":"攻守同陣式有咩改變。","caption":"攻守同陣式有咩改變。","beat":"match","expression":"talk"},
+  {"speaker":"angel","text":"賠率變動係線索，唔係賽果嘅原因。","caption":"賠率變動係線索，\n唔係賽果嘅原因。","beat":"odds","expression":"talk"},
+  {"speaker":"angel","text":"要同陣容、戰術同場面互相核對。","caption":"要同陣容、戰術同場面互相核對。","beat":"odds","expression":"talk"},
+  {"speaker":"angel","text":"最後分清楚，偶發事件，定係方法有問題。","caption":"最後分清楚：\n偶發事件，定係方法有問題。","beat":"method","expression":"talk"},
+  {"speaker":"angel","text":"唔可以輸咗，就全部怪運氣。","caption":"唔可以輸咗，就全部怪運氣。","beat":"method","expression":"talk"},
+  {"speaker":"angel","text":"證據夠，先下結論。","caption":"證據夠，先下結論。","beat":"next","expression":"talk"},
+  {"speaker":"angel","text":"再記低，下次賽前要加查啲乜。","caption":"再記低，下次賽前要加查啲乜。","beat":"next","expression":"talk"},
+  {"speaker":"chief","text":"咁先叫有用嘅復盤！","caption":"咁先叫有用嘅復盤！","beat":"ending","expression":"happy"}
+]

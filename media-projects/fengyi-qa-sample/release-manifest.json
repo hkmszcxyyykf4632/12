@@ -1,0 +1,25 @@
+{
+  "title": "预测错了，复盘看什么？｜粤语动态问答样板",
+  "description": "大首领提问，大天使解答：从正选、伤停、盘口变化到入球、红牌与换人，怎样区分偶发事件和分析方法的漏洞。约 59 秒，粤语双人配音、中文字幕，含夸张表情和说话动作。本片为问答形式样板。",
+  "category": "football",
+  "durationSeconds": 58.766667,
+  "files": [
+    {
+      "name": "fengyi-qa-cantonese-v1.mp4",
+      "bytes": 13989372,
+      "sha256": "2c2aba8972382de1b989ef27a4525cd0698b79439a2f2212b21db31149b0e111"
+    },
+    {
+      "name": "fengyi-qa-cantonese-v1.jpg",
+      "bytes": 205188,
+      "sha256": "e32eb33766bcbfe6c15bc5f8b07a3d875bbdc4a82f274a0e3d1e4dce9b84a72c"
+    }
+  ],
+  "qa": {
+    "frames": 1763,
+    "uniqueFrames": 1763,
+    "faststart": true,
+    "loudnessLUFS": -16.02,
+    "truePeakDbTP": -1.97
+  }
+}

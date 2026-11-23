@@ -1,0 +1,9 @@
+GOAL: Let the user evaluate a Cantonese animated question-and-answer format starring their selected Big Chief and Angel, explaining evidence-based post-match review.
+OUTPUT: 1920 x 1080, 30 fps, H.264 MP4 with AAC audio, about 50 seconds driven by measured voice durations.
+LOOK: Warm mint studio #e7eee6, walnut desk #835b38, cream centre discussion board #fff8e9, deep green ink #173e35 and orange emphasis #c7592e. Noto Sans CJK or bundled Microsoft YaHei, headline 76 px, subtitles 62 px. Characters about 650 px tall, with recognisable long ears, star eyes, triangular teeth and angel wings.
+OBJECTS: Brown ZIMOMO chief on the left, white ZIMOMO angel on the right, one shared discussion board, table with two microphones. All character images generated from inspected references; no generic replacements.
+MOTION: Speech amplitude drives mouth changes. Registered head/body layers create staggered nods and squash/stretch; regular blinks and exaggerated surprised/happy takes. Speaking character leans toward the other; listener reacts, then settles. Text lands and holds. Scene is one continuous studio, not alternating still-image slides.
+SHOTS: Opening shocked question; answer interrupts; board reveals pre-match evidence, match events, odds interpretation and method corrections; both end smiling. Actual timings written in timing.json.
+SOUND: Two distinct Cantonese synthetic voices. Voice-forward sample with no music because no soundtrack was supplied and the music service is not connected. No synthetic chimes.
+BANNED: Still images with only camera zoom; generic human presenters; incorrect character identities; tiny subtitles; walls of text; invented match facts or retrospective certainty; claims that odds cause a match result.
+QA: Inspect opening, active mouths, blink reactions, each board state and final frame; verify speech track, MP4 duration, browser playback on phone and public catalogue entry.
