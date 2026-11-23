@@ -26,3 +26,16 @@ test('category totals include unclassified stocks without inventing an industry'
   assert.equal(filterStocks(rows,{sector:'待分类'})[0].code,'09999');
   assert.equal(industryGroups(rows).reduce((sum,[,count])=>sum+count,0),rows.length);
 });
+
+
+test('other industry includes classified sectors outside the four shortcuts and combines with scope and search',()=>{
+  const extra=[...rows,
+    {code:'00992',name:'消费样本',sector:'消费',industryUpdatedAt:'2026-11-17',board:'主板',isHsi:true},
+    {code:'08001',name:'能源样本',sector:'能源资源',industryUpdatedAt:'2026-11-17',board:'GEM'},
+    {code:'09998',name:'无行业资料',sector:'未分类',industryUpdatedAt:'2026-11-17',board:'主板'}
+  ];
+  assert.deepEqual(filterStocks(extra,{sector:'其它'}).map(r=>r.code),['00992','08001']);
+  assert.deepEqual(filterStocks(extra,{sector:'其它',scope:'hsi'}).map(r=>r.code),['00992']);
+  assert.deepEqual(filterStocks(extra,{sector:'其它',query:'能源'}).map(r=>r.code),['08001']);
+  assert.deepEqual(filterStocks(extra,{sector:'待分类'}).map(r=>r.code),['09999','09998']);
+});

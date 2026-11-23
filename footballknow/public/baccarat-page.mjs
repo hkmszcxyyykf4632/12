@@ -1,0 +1,63 @@
+import {main,esc,pageHeading} from './ui.mjs';
+import {BET_NAMES,DEFAULT_RATES,STORAGE_KEY,newSession,restoreSession,dealShoe,amountCents,settleRound,ledgerTotals,cardLabel,validRates} from './baccarat-core.mjs';
+import {bigRoad,derivedRoad,roadProbe} from './baccarat-roads.mjs';
+const money=n=>(n/100).toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const profitText=n=>(n>0?'+':'')+money(n);
+const profitClass=n=>n>0?'bac-profit':n<0?'bac-loss':'bac-neutral';
+const ROAD_NAMES=['大眼仔','小路','曱甴路'];
+const RULE_SOURCE='https://www.alc.ca/content/dam/alc/images/casino/live-baccarat/How%20to%20Play%20-%20Live%20Baccarat%20-%20EN.pdf';
+const statusLabel={win:'赢',loss:'输',push:'退回本金'};
+function roadGrid(cells,type,small=false){
+ const columns=Math.max(small?16:24,...cells.map(c=>c.col+1));
+ return `<div class="bac-road-scroll"><div class="bac-road-grid ${small?'bac-road-small':''} road-${type}" style="--columns:${columns}" role="img" aria-label="${esc(type)}，${cells.length} 个标记">${cells.map(c=>`<span class="bac-road-cell" style="grid-column:${c.col+1};grid-row:${c.row+1}" title="第 ${c.hand} 口${c.ties?'，和 '+c.ties+' 次':''}"><i class="bac-mark ${c.color}">${type==='珠盘'?BET_NAMES[c.result]:''}</i>${c.ties?`<b class="bac-tie-count">${c.ties}</b>`:''}${c.bankerPair?'<i class="bac-pair banker"></i>':''}${c.playerPair?'<i class="bac-pair player"></i>':''}${c.lucky6||c.lucky7?`<em class="bac-lucky">${c.lucky6?'6':'7'}</em>`:''}</span>`).join('')}</div></div>`;
+}
+function lowerRoads(hands){return ROAD_NAMES.map((name,i)=>`<div class="bac-lower"><h3>${name}</h3>${roadGrid(derivedRoad(hands,i+1),name,true)}</div>`).join('');}
+function probeHtml(hands){return `<div class="bac-probe"><div><span>本口问路</span>${ROAD_NAMES.map(n=>'<small>'+n+'</small>').join('')}</div>${['B','P'].map(side=>`<div><strong>若开${BET_NAMES[side]}</strong>${roadProbe(hands,side).map((color,i)=>`<span class="road-${ROAD_NAMES[i]}"><i class="bac-mark ${color||'unstarted'}" aria-label="${color==='red'?'红':color==='blue'?'蓝':'尚未起路'}"></i></span>`).join('')}</div>`).join('')}</div><p class="note">问路显示两种结果对应的路型；红蓝表示路型变化。</p>`;}
+function cardsHtml(hand){if(!hand)return '<p class="note">投注后开牌，查看本口牌面与结果。</p>';return `<div class="bac-cards">${[['P','playerCards','player'],['B','bankerCards','banker']].map(([side,cards,total])=>`<div><strong>${BET_NAMES[side]} ${hand[total]} 点</strong><span>${hand[cards].map(c=>`<i class="playing-card ${[1,3].includes(Math.floor(c/13)%4)?'card-red':''}">${cardLabel(c)}</i>`).join('')}</span></div>`).join('')}<b class="bac-result result-${hand.result}">第 ${hand.number} 口 · ${BET_NAMES[hand.result]}${hand.result==='T'?'局':'赢'}</b></div>`;}
+export function renderBaccarat(){
+ let session,notice='',amount='100',type='B',ended=false,rateOpen=false;
+ try{const saved=localStorage.getItem(STORAGE_KEY);session=saved?restoreSession(saved):newSession();}catch{session=newSession();notice='之前的本机记录未能读取；当前新靴暂未保存。';}
+ let hands=dealShoe(session.deck);
+ function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(session));return true;}catch{notice='本机空间或权限不足，本次仅在当前页面保留。';return false;}}
+ function paint(){
+  if(ended)return;const visible=hands.slice(0,session.revealed),done=session.revealed===hands.length,rounds=session.rounds.map((r,i)=>settleRound(hands[i],r.bets,r.rates)),totals=ledgerTotals(rounds),last=rounds.at(-1),road=bigRoad(visible);
+  const counts={B:0,P:0,T:0,BP:0,PP:0,L6:0,L7:0};for(const h of visible){counts[h.result]++;counts.BP+=Number(h.bankerPair);counts.PP+=Number(h.playerPair);counts.L6+=Number(h.lucky6);counts.L7+=Number(h.lucky7);}
+  main.innerHTML=pageHeading('百家乐 · 随机路子','8 副牌 · 70 口 · 本机模拟投注','<button class="button secondary" data-bac="new">重新洗牌</button>')+
+  '<div id="bac-reset" class="notice" hidden>重新洗牌会替换当前靴，请先保存需要的统计。<button class="button" data-bac="reset">确认换一靴</button> <button class="button quiet" data-bac="cancel-reset">取消</button></div>'+
+  `<p id="bac-notice" class="note" role="status">${esc(notice)}</p><div class="bac-scoreboard"><div><small>本靴进度</small><strong>${session.revealed} <small>/ ${hands.length}</small></strong></div>${['B','P','T'].map(k=>`<div class="result-${k}"><small>${BET_NAMES[k]}</small><strong>${counts[k]}</strong></div>`).join('')}<div><small>总投入</small><strong>${money(totals.stake)}</strong></div><div class="${profitClass(totals.profit)}"><small>净盈亏</small><strong>${profitText(totals.profit)}</strong></div></div>`+
+  `<section class="bac-console" aria-label="投注与下三路"><div class="bac-ticket"><span class="eyebrow">${done?'本靴结束':'第 '+(session.revealed+1)+' 口 · 开牌前'}</span><h2>模拟投注</h2><form id="bac-bet-form"><label>选择项目<select id="bac-type" ${done?'disabled':''}>${Object.entries(BET_NAMES).map(([k,n])=>`<option value="${k}" ${type===k?'selected':''}>${n}</option>`).join('')}</select></label><label>金额<input id="bac-amount" type="text" inputmode="decimal" value="${esc(amount)}" ${done?'disabled':''} required></label><div class="bac-chips">${[10,50,100,500,1000].map(n=>`<button type="button" data-chip="${n}" ${done?'disabled':''}>${n}</button>`).join('')}</div><button class="button" ${done?'disabled':''}>加入本口</button></form><div class="bac-pending">${session.pending.length?session.pending.map(b=>`<div><strong>${BET_NAMES[b.type]}</strong><span>${money(b.stake)}</span><button class="button quiet compact" data-remove="${b.type}" aria-label="移除${BET_NAMES[b.type]}">移除</button></div>`).join(''):'<p class="note">可同时选择多个项目。</p>'}</div><div class="bac-play-actions"><button class="button bac-deal" data-bac="deal" ${done?'disabled':''}>${session.pending.length?'开牌并结算':'不投注，开下一口'}</button><button class="button secondary" data-bac="finish" ${done||session.pending.length?'disabled':''}>余下只看路</button></div><p class="note">${done?'已生成整靴统计。':'已开结果不能补买；“余下只看路”不会新增投注。'}</p><div id="bac-last" role="status">${last?`<strong class="${profitClass(last.profit)}">上口${last.tickets.length?'净盈亏 '+profitText(last.profit):'未投注'}</strong>`:''}</div></div><div class="bac-current-roads"><h2>当前下三路</h2>${probeHtml(visible)}<div class="bac-lower-grid">${lowerRoads(visible)}</div></div></section>`+
+  cardsHtml(visible.at(-1))+
+  `<section class="bac-board"><h2>大路</h2>${road.initialTies?'<p class="note">开靴连续 '+road.initialTies+' 次和局，等待首个庄闲结果。</p>':''}${roadGrid(road.cells,'大路')}<h2>珠盘路</h2>${roadGrid(visible.map((h,i)=>({...h,hand:h.number,row:i%6,col:Math.floor(i/6),color:h.result==='B'?'red':h.result==='P'?'blue':'green'})),'珠盘')}<p class="bac-legend"><span class="result-B">庄红</span><span class="result-P">闲蓝</span><span class="result-T">和绿</span><span>左上红点：庄对 ${counts.BP}</span><span>右下蓝点：闲对 ${counts.PP}</span><span>6：幸运6 ${counts.L6}</span><span>7：幸运7 ${counts.L7}</span></p></section>`+
+  statisticsHtml(rounds,visible,totals)+rulesHtml(session.rates,rateOpen);
+  main.querySelectorAll('.bac-current-roads .bac-road-scroll').forEach(scroll=>{
+   if(!scroll.clientWidth)return;
+   const cells=[...scroll.querySelectorAll('.bac-road-cell')],lastColumn=Math.max(0,...cells.map(c=>Number(c.style.gridColumn)));
+   const cellWidth=parseFloat(getComputedStyle(scroll.firstElementChild).getPropertyValue('--cell'))||15;
+   scroll.scrollLeft=Math.max(0,lastColumn*cellWidth-scroll.clientWidth);
+  });
+  bind();
+ }
+ function bind(){
+  main.querySelector('#bac-amount').oninput=e=>amount=e.target.value;
+  main.querySelector('#bac-type').onchange=e=>type=e.target.value;
+  main.querySelectorAll('[data-chip]').forEach(b=>b.onclick=()=>{amount=b.dataset.chip;main.querySelector('#bac-amount').value=amount;});
+  main.querySelector('#bac-bet-form').onsubmit=e=>{e.preventDefault();if(session.revealed>=hands.length)return;try{const stake=amountCents(amount),old=session.pending.find(b=>b.type===type);if(old&&old.stake+stake>100000000)throw Error('同一项目累计金额超过上限。');if(old)old.stake+=stake;else session.pending.push({type,stake});notice='已加入本口，开牌前可移除。';save();paint();}catch(err){main.querySelector('#bac-notice').textContent=err.message;}};
+  main.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{session.pending=session.pending.filter(x=>x.type!==b.dataset.remove);save();paint();});
+  main.querySelectorAll('[data-bac]').forEach(b=>b.onclick=()=>{
+   const action=b.dataset.bac;if(action==='new'){main.querySelector('#bac-reset').hidden=false;return;}if(action==='cancel-reset'){main.querySelector('#bac-reset').hidden=true;return;}
+   if(action==='reset'){session=newSession();hands=dealShoe(session.deck);notice='新靴已洗好，尚未开牌。';}
+   if(action==='deal'&&session.revealed<hands.length){session.rounds.push({bets:session.pending.map(b=>({...b})),rates:{...session.rates}});session.revealed++;session.pending=[];notice='第 '+session.revealed+' 口已结算。';}
+   if(action==='finish'&&!session.pending.length){while(session.revealed<hands.length){session.rounds.push({bets:[],rates:{...session.rates}});session.revealed++;}notice='余下牌局已展示，未新增投注。';}
+   save();paint();
+  });
+  main.querySelector('#bac-rules').ontoggle=e=>rateOpen=e.target.open;
+  main.querySelector('#bac-rates').onsubmit=e=>{e.preventDefault();const next=Object.fromEntries([...new FormData(e.target)].map(([k,v])=>[k,v.trim()===''?NaN:Number(v)]));if(!validRates(next)){main.querySelector('#bac-rate-message').textContent='请输入 0 至 1,000 的净赔率。';return;}session.rates=next;notice='新赔率仅用于此后开牌结算，过去记录保持原赔率。';save();paint();};
+ }
+ const storage=e=>{if(e.key!==STORAGE_KEY||!e.newValue)return;try{session=restoreSession(e.newValue);hands=dealShoe(session.deck);notice='已读取另一页面保存的模拟进度。';paint();}catch{}};
+ window.addEventListener('storage',storage);paint();return()=>{ended=true;window.removeEventListener('storage',storage);};
+}
+function statisticsHtml(rounds,hands,totals){
+ const headers=['口数','庄 / 闲点数','结果与标记','投注 / 净赔率','投入','返还（含本金）','净盈亏'];
+ return `<section class="bac-statistics"><div class="section-head"><h2>本靴投注统计</h2><span>${totals.rounds} 口有投注 · ${totals.tickets} 项</span></div><div class="bac-scoreboard"><div><small>总投入</small><strong>${money(totals.stake)}</strong></div><div><small>总返还</small><strong>${money(totals.returned)}</strong></div><div class="${profitClass(totals.profit)}"><small>净盈亏</small><strong>${profitText(totals.profit)}</strong></div><div><small>赢 / 输 / 退回</small><strong>${totals.wins} / ${totals.losses} / ${totals.pushes}</strong></div></div><details><summary>按投注项目统计</summary><div class="table-wrap"><table><thead><tr><th>项目</th><th>注数</th><th>赢 / 输 / 退回</th><th>投入</th><th>返还</th><th>净盈亏</th></tr></thead><tbody>${Object.entries(BET_NAMES).map(([key,label])=>{const t=ledgerTotals(rounds.map(r=>({...r,tickets:r.tickets.filter(b=>b.type===key)})));return `<tr><th>${label}</th><td>${t.tickets}</td><td>${t.wins} / ${t.losses} / ${t.pushes}</td><td>${money(t.stake)}</td><td>${money(t.returned)}</td><td class="${profitClass(t.profit)}">${profitText(t.profit)}</td></tr>`;}).join('')}</tbody></table></div></details><details><summary>每口牌面与结算明细（${rounds.length} 口）</summary>${rounds.length?`<div class="table-wrap"><table><thead><tr>${headers.map(h=>'<th>'+h+'</th>').join('')}</tr></thead><tbody>${rounds.map((r,i)=>{const h=hands[i];return `<tr><th>${h.number}</th><td>${h.banker} / ${h.player}<small>庄 ${h.bankerCards.map(cardLabel).join(' ')}<br>闲 ${h.playerCards.map(cardLabel).join(' ')}</small></td><td>${BET_NAMES[h.result]}${h.result==='T'?'局':'赢'}<small>${[h.bankerPair?'庄对':'',h.playerPair?'闲对':'',h.lucky6?'幸运6':'',h.lucky7?'幸运7':''].filter(Boolean).join(' · ')}</small></td><td>${r.tickets.map(b=>`<span class="bac-bet-result ${profitClass(b.profit)}">${BET_NAMES[b.type]} ${money(b.stake)} · ${b.rate}:1 · ${statusLabel[b.status]}</span>`).join('')||'未投注'}</td><td>${money(r.stake)}</td><td>${money(r.returned)}</td><td class="${profitClass(r.profit)}">${profitText(r.profit)}</td></tr>`;}).join('')}</tbody></table></div>`:'<p class="note">开牌后记录每口结果。</p>'}</details></section>`;
+}
+function rulesHtml(rates,open){return `<details id="bac-rules" ${open?'open':''}><summary>模拟规则与净赔率设置</summary><p>每靴 8 副共 416 张牌，随机洗牌后连续发牌，不放回；本练习不烧牌、不设截牌，目标 70 口。若剩余牌不足以完成下一口则结束本靴。</p><p>8、9 点例牌停止补牌，其余按<a href="${RULE_SOURCE}" target="_blank" rel="noopener noreferrer">庄闲补牌表</a>发牌。对子按首两张牌的牌面相同判定，J 与 Q 不算对子。幸运 6＝庄家以 6 点胜；幸运 7＝闲家三张牌合计 7 点胜。</p><p>以下是本站模拟净赔率，可自行调整；赢时返还本金加盈利。默认庄赢扣 5% 佣金，庄闲遇和退回本金；附加项独立结算。金额四舍五入至分。</p><form id="bac-rates" class="bac-rates">${Object.entries(rates).map(([k,v])=>`<label>${({L6two:'幸运6（两张）',L6three:'幸运6（三张）'})[k]||BET_NAMES[k]}<input name="${k}" type="number" min="0" max="1000" step="0.01" value="${v}" required><small>净赔 ${v} : 1</small></label>`).join('')}<button class="button secondary">保存本口起的赔率</button><span id="bac-rate-message" role="status"></span></form><p class="note">资料保存在本浏览器；这是虚拟金额练习。下三路记录已发生的路型，不代表下一口的胜率。</p></details>`;}

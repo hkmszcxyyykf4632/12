@@ -1,3 +1,4 @@
+import {prepareStockTables} from './stock-layout.mjs';
 // Column sorting and CSV export for every data table, applied after each render and each 60-second refresh.
 const sortState=new Map();
 
@@ -19,6 +20,7 @@ function applySort(table,{column,direction}) {
 }
 
 export function enhanceTables(root,routeKey) {
+  prepareStockTables(root);
   root.querySelectorAll('.table-wrap').forEach((wrap,index)=>{
     const table=wrap.querySelector('table');
     if(!table?.tHead||!table.tBodies[0])return;

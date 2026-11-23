@@ -50,11 +50,12 @@ export function renderMarkets(followingOnly=false){
     if(controller.signal.aborted||!catalogue)return;
     const hsi=quotes.quotes?.HSI,all=selected(),rows=visible();
     const groupStocks=available(),groups=industryGroups(groupStocks),counts=new Map(groups),followed=new Set(watchlist.codes);
+    counts.set('其它',filterStocks(groupStocks,{sector:'其它'}).length);
     main.querySelector('#stock-following-message').textContent=watchlist.problem;
     const followingLink=main.querySelector('#stock-following-link');if(followingLink)followingLink.textContent='我的关注（'+watchlist.codes.length+'）';
-    main.querySelector('#stock-industry').innerHTML='<option value="all">全部行业（'+groupStocks.length+'）</option>'+groups.map(([name,count])=>'<option value="'+esc(name)+'">'+esc(name)+'（'+count+'）</option>').join('');
+    main.querySelector('#stock-industry').innerHTML='<option value="all">全部行业（'+groupStocks.length+'）</option>'+'<option value="其它">其它（'+counts.get('其它')+'）</option>'+groups.filter(([name])=>name!=='其它').map(([name,count])=>'<option value="'+esc(name)+'">'+esc(name)+'（'+count+'）</option>').join('');
     main.querySelector('#stock-industry').value=sector;
-    main.querySelector('#stock-industry-quick').innerHTML=['all','地产','金融','博彩','科技'].map(name=>'<button type="button" data-stock-industry="'+name+'" aria-pressed="'+(sector===name)+'" class="'+(sector===name?'active':'')+'">'+(name==='all'?'全部行业':name)+'<span>'+(name==='all'?groupStocks.length:counts.get(name)||0)+'</span></button>').join('');
+    main.querySelector('#stock-industry-quick').innerHTML=['all','地产','金融','博彩','科技','其它'].map(name=>'<button type="button" data-stock-industry="'+name+'" aria-pressed="'+(sector===name)+'" class="'+(sector===name?'active':'')+'">'+(name==='all'?'全部行业':name)+'<span>'+(name==='all'?groupStocks.length:counts.get(name)||0)+'</span></button>').join('');
     main.querySelector('#market-assets').innerHTML=assetCards(assets);
     main.querySelector('#hsi-quote').innerHTML='<div class="market-index"><div><span>恒生指数 HSI</span><strong>'+figure(hsi?.price)+'<small> 点</small></strong></div><div class="'+direction(hsi?.changePercent)+'">'+signed(hsi?.change)+' · '+signed(hsi?.changePercent)+'%</div><div>'+quoteNote(hsi)+'</div></div>';
     main.querySelector('#capital-coverage').textContent='公司财务档案已收录 '+Object.keys(capital?.rows||{}).length+' / '+catalogue.stocks.length+' 个交易柜台；后台按全名单持续分批补录。财务分类未确定不等于没有公司资料，可进入详情查看已披露报表。'+(capital?.method||'按已披露现金、存款与借款债券租赁比较。');

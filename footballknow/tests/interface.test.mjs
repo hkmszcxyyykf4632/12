@@ -66,7 +66,7 @@ test('club search, manual odds, locked simulation, two-step settlement and backu
     const period=w.document.querySelector('#centre-period');period.value='all';period.dispatchEvent(new w.Event('change'));
     click('[data-centre-status="finished"]');
     assert.ok(w.document.querySelectorAll('.live-match.is-finished').length>0);
-    const detailLink=w.document.querySelector('.live-match-pair').getAttribute('href').split('#')[1];
+    const detailLink=w.document.querySelector('.live-match-pair > a').getAttribute('href').split('#')[1];
     await route(detailLink);await tick();
     assert.ok(w.document.querySelector('.lineup-pitch'));
     assert.equal(w.document.querySelector('#match-detail-body img'),null,'lineup names are escaped');

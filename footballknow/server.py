@@ -539,4 +539,19 @@ def commodity_history(ident: str):
         raise HTTPException(status_code=404, detail=str(error)) from None
 
 
+@app.get('/api/entities')
+def entity_links():
+    from football.entity_directory import entity_index
+    return entity_index()
+
+
+@app.get('/api/racing/person')
+def racing_person_profile(kind: str, id: str):
+    from football.entity_directory import racing_person
+    try:
+        return racing_person(kind, id)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
 app.mount('/',StaticFiles(directory=str(PUBLIC),html=True),name='website')

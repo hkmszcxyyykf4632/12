@@ -14,6 +14,7 @@ export function chartPoints(bars,limit=90){
 export function rateText(stats){return stats?.evaluated>0&&finite(stats.successRate)?figure(stats.successRate*100,1)+'%':'等待到期验证';}
 export function financialRows(financials,kind,date){return (financials?.statements?.[kind]||[]).filter(row=>row.date===date);}
 export function financialAmount(row){return finite(row?.amount)?figure(row.amount/1e8,2):'—';}
+export const primaryStockSectors=['地产','金融','博彩','科技'];
 export const sectorOrder=['地产','金融','博彩','科技','消费','医疗保健','工业制造','能源资源','电讯公用','旅游酒店','传媒娱乐','建筑工程','商业服务','交通运输','农业产品','综合企业','待分类'];
 export const stockSector=row=>row?.industryUpdatedAt&&row.sector&&row.sector!=='未分类'?row.sector:'待分类';
 export function industryGroups(stocks){
@@ -22,5 +23,5 @@ export function industryGroups(stocks){
 }
 export function filterStocks(stocks,{scope='all',sector='all',query='',quotes={}}={}){
   const term=query.trim().toLowerCase();
-  return (stocks||[]).filter(r=>(scope==='all'||scope==='hsi'&&r.isHsi||scope==='main'&&r.board==='主板'||scope==='gem'&&r.board==='GEM'||scope==='reit'&&r.category==='Real Estate Investment Trusts')&&(sector==='all'||stockSector(r)===sector)&&(!term||[r.code,r.name,r.englishName,quotes[r.code]?.name].filter(Boolean).join(' ').toLowerCase().includes(term)));
+  return (stocks||[]).filter(r=>(scope==='all'||scope==='hsi'&&r.isHsi||scope==='main'&&r.board==='主板'||scope==='gem'&&r.board==='GEM'||scope==='reit'&&r.category==='Real Estate Investment Trusts')&&(sector==='all'||(sector==='其它'?![...primaryStockSectors,'待分类'].includes(stockSector(r)):stockSector(r)===sector))&&(!term||[r.code,r.name,r.englishName,quotes[r.code]?.name].filter(Boolean).join(' ').toLowerCase().includes(term)));
 }
