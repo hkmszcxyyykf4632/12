@@ -1,0 +1,36 @@
+{
+  "revision": "e1249ffeafe2c03ede8cbfab49093ec4df3797b7",
+  "sha256": "cd159eeae4e8bb18f5b8273c613737e14e809821adc702fddcf7568acda0da32",
+  "bytes": 457268,
+  "files": [
+    "deploy/footballknow-web.service",
+    "deploy/footballknow-worker.service",
+    "deploy/update.py",
+    "public/baccarat-page.mjs",
+    "public/baccarat-study.mjs",
+    "public/baccarat.css",
+    "public/bundesliga/data.json",
+    "public/bundesliga/standings.json",
+    "public/dashboard.mjs",
+    "public/data.json",
+    "public/laliga/data.json",
+    "public/laliga/standings.json",
+    "public/prediction-celebrations.mjs",
+    "public/prediction-stats-core.mjs",
+    "public/prediction-stats-page.mjs",
+    "public/prediction-stats.mjs",
+    "public/rankings-page.mjs",
+    "public/seriea/data.json",
+    "public/seriea/standings.json",
+    "public/standings.json",
+    "public/ucl/data.json",
+    "public/ucl/standings.json",
+    "server.py"
+  ],
+  "purpose": "Complete 70-hand baccarat study, correct racing ticket hit rates, remove homepage congratulations",
+  "validation": {
+    "javascriptRegressionTests": 190,
+    "finalFocusedTests": 17,
+    "mobileWidth": 390
+  }
+}
