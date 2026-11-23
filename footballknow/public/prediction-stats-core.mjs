@@ -46,31 +46,11 @@ export function byDay(rows){
   for(const r of rows){if(!groups.has(r.day))groups.set(r.day,[]);groups.get(r.day).push(r);}
   return [...groups.entries()].sort(([a],[b])=>b.localeCompare(a));
 }
-export function celebrations(football,racing){
-  const items=[];
-  for(const [round,rows] of byRound(footballSelection(football))){
-    const t=footballTotals(rows),day=rows.map(r=>r.day).sort().at(-1);
-    if(t.pending||!rows.every(r=>r.round&&r.roundComplete))continue;
-    for(const [label,hits,n] of [['比分',t.exact,t.settled],['亚洲盘',t.asianHits,t.asian]])
-      if(n&&hits/n>.8)items.push({key:`football:${round}:${label}`,day,title:`足球${label}命中率 ${rate(hits,n)}`,text:`${round} · ${hits} / ${n} 场有效预测${n<10?' · 小样本':''}`,href:'#/football-statistics',kind:'rate'});
-  }
-  for(const [day,rows] of byDay(racing)){
-    if(rows.some(r=>r.status==='pending'||!r.meetingComplete))continue;
-    for(const type of Object.keys(poolNames)){
-      const t=poolTotals(rows,type);
-      if(!t.pending&&t.races&&t.hits/t.races>.8)items.push({key:`racing:${day}:${type}`,day,title:`赛马${poolNames[type]}命中率 ${rate(t.hits,t.races)}`,text:`${t.hits} / ${t.races} 场 · 原推荐名单${t.races<10?' · 小样本':''}`,href:'#/racing-statistics',kind:'rate'});
-    }
-  }
-  for(const r of racing.filter(r=>r.status==='settled'))for(const p of r.pools){
-    const threshold=({WIN:10,QIN:50})[p.type];if(!threshold)continue;
-    for(const t of p.tickets.filter(t=>t.status==='hit'&&t.multiple>=threshold)){
-      const names=t.combination.split(',').map(no=>{const h=r.runners.find(h=>Number(h.number)===Number(no));return `${no}号 ${h?.name||'马名未核实'}`;}).join(' ＋ ');
-      items.push({key:r.raceId+':'+p.type+':'+t.combination,day:r.day,title:`${p.type==='WIN'?'冷门独赢':'高派彩连赢'}命中 · ${t.multiple.toFixed(2)}倍`,
-        text:`${r.courseName} 第${r.raceNo}场 · ${names} · 每10元派${t.dividend.toFixed(2)}元（含本金）`,href:'#/race/'+encodeURIComponent(r.raceId),kind:'payout'});
-    }
-  }
-  return items.sort((a,b)=>b.day.localeCompare(a.day)||Number(b.kind==='payout')-Number(a.kind==='payout'));
+export function poolAccuracy(t,type){
+ return type==='WIN'?{hits:t.hits,total:t.races,unit:'场',label:'独赢场次命中率'}:
+  {hits:t.winningTickets,total:t.tickets,unit:type==='PLA'?'匹':'注',label:type==='PLA'?'位置逐匹命中率':poolNames[type]+'逐注命中率'};
 }
+export function celebrations(){return [];}
 
 export function byRound(rows){
  const groups=new Map();

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {footballSelection,footballTotals,poolTotals,paperTotals,celebrations,byRound} from '../public/prediction-stats-core.mjs';
+import {footballSelection,footballTotals,poolTotals,poolAccuracy,paperTotals,celebrations,byRound} from '../public/prediction-stats-core.mjs';
 const football=(id,hit=true,extra={})=>({identity:id,eventId:id,league:'epl',day:'2026-11-21',season:'2026/27',round:'第11轮',roundComplete:true,stage:'initial',issuedAt:'2026-11-21T10:00Z',status:'settled',exactHit:hit,resultHit:hit,asianResult:hit?'赢盘':'输盘',...extra});
 const ticket=(combination,status,dividend)=>({combination,status,dividend,multiple:dividend/10});
 const race={raceId:'2026-11-22-ST-1',day:'2026-11-22',courseName:'沙田',raceNo:1,status:'settled',runners:[{number:'1',name:'甲'},{number:'2',name:'乙'},{number:'3',name:'丙'}],pools:[{type:'WIN',tickets:[ticket('1','hit',110),ticket('2','miss',0),ticket('3','miss',0)]},{type:'PLA',tickets:[ticket('1','hit',20),ticket('2','hit',30),ticket('3','miss',0)]},...['QIN','QPL'].map(type=>({type,tickets:[ticket('1,2','hit',type==='QIN'?500:40),ticket('1,3','miss',0),ticket('2,3','miss',0)]}))]};
@@ -21,19 +21,10 @@ test('pending stake not declared lost; withdrawals refunded and removed from den
  const r=structuredClone(race);r.pools[0].tickets=[ticket('1','refund',10),ticket('2','pending',null),ticket('3','pending',null)];
  const t=paperTotals([r]);assert.equal(t.pending,200);assert.equal(t.refunds,100);assert.equal(t.stake,360);
 });
-test('celebrate strictly over 80 only after whole verified round finishes',()=>{
- const four=[0,1,2,3,4].map(i=>football(String(i),i<4));
- assert.equal(celebrations(four,[]).length,0);
- assert.equal(celebrations(four.map(r=>({...r,exactHit:true})),[]).length,1);
- assert.equal(celebrations(four.map(r=>({...r,roundComplete:false,exactHit:true})),[]).length,0);
- assert.equal(byRound([football('a'),football('b',true,{league:'ucl'})]).length,2);
+test('homepage celebrations remain disabled even for winning high-dividend meetings',()=>{
+ assert.deepEqual(celebrations([football('a')],[{...race,meetingComplete:true}]),[]);
+ assert.equal(byRound([football('a'),football('b',true,{round:'第12轮'})]).length,2);
 });
-test('large payouts specify race horses and amounts, no miss or pending celebration',()=>{
- const items=celebrations([],[race]).filter(r=>r.kind==='payout');assert.equal(items.length,2);
- assert.match(items[1].text,/第1场.*1号 甲.*2号 乙/);assert.match(items[0].title,/11.00倍/);
- assert.equal(celebrations([],[{...race,status:'pending'}]).length,0);
-});
-
 import {scopedRecords} from '../public/statistics-scope.mjs';
 import {footballPaper,footballPaperTotals} from '../public/prediction-stats-core.mjs';
 test('start at this round including already finished games; retain future seasons',()=>{
@@ -57,7 +48,16 @@ test('missing pregame prices cannot be used to fabricate money or losses',()=>{
  const r=football('x',false,{asianSide:'pass',scorePrice:null});
  const t=footballPaperTotals([r]);assert.equal(t.planned,50);assert.equal(t.stake,0);assert.equal(t.net,0);assert.equal(t.pending,50);assert.equal(t.unpriced,1);
 });
-test('meeting hit rate celebration waits for all card races, individual payout can appear first',()=>{
- assert.equal(celebrations([],[race]).filter(x=>x.kind==='rate').length,0);
- assert.equal(celebrations([],[{...race,meetingComplete:true}]).filter(x=>x.kind==='rate').length,4);
+test('win coverage is per race while place and pair hit rates count every valid selection',()=>{
+ const a=structuredClone(race),b=structuredClone(race);b.raceNo=2;
+ a.pools.find(p=>p.type==='PLA').tickets=[ticket('1','hit',11),ticket('2','miss',0),ticket('3','miss',0)];
+ b.pools.find(p=>p.type==='PLA').tickets=[ticket('1','hit',11),ticket('2','hit',11),ticket('3','miss',0)];
+ const one=poolAccuracy(poolTotals([a],'PLA'),'PLA'),two=poolAccuracy(poolTotals([b],'PLA'),'PLA'),all=poolTotals([a,b],'PLA');
+ assert.deepEqual(one,{hits:1,total:3,unit:'匹',label:'位置逐匹命中率'});assert.equal((one.hits/one.total*100).toFixed(1),'33.3');assert.equal((two.hits/two.total*100).toFixed(1),'66.7');
+ assert.deepEqual(poolAccuracy(all,'PLA'),{hits:3,total:6,unit:'匹',label:'位置逐匹命中率'});assert.equal(all.stake,600);assert.ok(Math.abs(all.returns-330)<1e-8);assert.ok(Math.abs(all.net+270)<1e-8);
+ assert.deepEqual(poolAccuracy(poolTotals([a,b],'WIN'),'WIN'),{hits:2,total:2,unit:'场',label:'独赢场次命中率'});
+ assert.equal(poolAccuracy(poolTotals([a,b],'QPL'),'QPL').total,6);
+ a.pools.find(p=>p.type==='PLA').tickets[2]=ticket('3','refund',10);
+ assert.equal(poolAccuracy(poolTotals([a],'PLA'),'PLA').total,2);
+ assert.equal(poolAccuracy(poolTotals([{...a,status:'excluded'}],'PLA'),'PLA').total,0);
 });

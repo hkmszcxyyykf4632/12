@@ -1,6 +1,6 @@
 import {api} from './api.mjs';
 import {main,esc,pageHeading,sourceLink} from './ui.mjs';
-import {competitions,poolNames,rate,footballSelection,footballTotals,poolTotals,byDay,percent,paperTotals,paperUnit,footballPaper,footballPaperTotals} from './prediction-stats-core.mjs';
+import {competitions,poolNames,rate,footballSelection,footballTotals,poolTotals,poolAccuracy,byDay,percent,paperTotals,paperUnit,footballPaper,footballPaperTotals} from './prediction-stats-core.mjs';
 import {briefHtml,loadBriefs} from './review-briefs.mjs';
 const stamp=x=>new Date(x).toLocaleString('zh-CN',{timeZone:'Asia/Hong_Kong',hour12:false});
 const score=x=>x?x.join(' : '):'—';
@@ -9,7 +9,7 @@ const stateNames={pending:'待赛果',excluded:'未计入',void:'作废',settled
 const ahNames={pending:'待赛果',unselected:'未选边',unverified:'盘口未核实'};
 const table=(head,body)=>`<div class="table-wrap"><table><thead><tr>${head.map(v=>`<th>${v}</th>`).join('')}</tr></thead><tbody>${body.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
 const kpi=(label,value,caption)=>`<div class="ps-kpi"><span>${label}</span><strong>${value}</strong><small>${caption}</small></div>`;
-const bar=(a,n)=>`<div class="ps-rate"><b>${rate(a,n)}</b><span>${a} / ${n} 场</span><meter min="0" max="100" value="${percent(a,n)}" aria-label="命中率">${rate(a,n)}</meter></div>`;
+const bar=(a,n,unit='场',label='命中率')=>`<div class="ps-rate"><b>${rate(a,n)}</b><span>${a} / ${n} ${unit}</span><meter min="0" max="100" value="${percent(a,n)}" aria-label="${label}">${rate(a,n)}</meter></div>`;
 const money=n=>n.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
 export function footballSummary(rows){const t=footballTotals(rows);return `<div class="ps-kpis">${kpi('累计分析',t.total+' 场',`已结算 ${t.settled} · 待赛果 ${t.pending} · 作废/未计 ${t.excluded}`)}${kpi('比分命中',t.exact+' 场',`${rate(t.exact,t.settled)} · ${t.exact} / ${t.settled} 场`)}${kpi('亚洲盘命中',t.asianHits+' 场',`${rate(t.asianHits,t.asian)} · ${t.asianHits} / ${t.asian} 场有效选边`)}${kpi('胜平负命中',t.result+' 场',`${rate(t.result,t.settled)} · 由原预测比分核算`)}</div>`;}
 function footballGroups(rows){return table(['赛事','分析 / 结算','比分命中','亚洲盘命中','全赢 / 赢半 / 走盘 / 输半 / 全输','未选边 / 盘口待核'],competitions.map(([id,name])=>{const t=footballTotals(rows.filter(r=>r.league===id));return [name,`${t.total} / ${t.settled}`,bar(t.exact,t.settled),bar(t.asianHits,t.asian),`${t.win} / ${t.halfWin} / ${t.push} / ${t.halfLoss} / ${t.loss}`,`${t.unselected} / ${t.unverified}`];}));}
@@ -17,7 +17,7 @@ function footballRows(rows,briefs,paper=false){const keep=r=>paper?r:r.filter((_
  const url=r.matchId?`./?league=${r.league}#/match/${encodeURIComponent(r.matchId)}`:'#/live',team=r.asianSide==='H'?r.home:r.away,line=r.line==null?null:r.line*(r.asianSide==='H'?1:-1);
  const ah=r.asianSide==='pass'?'未选边':line==null?'盘口未核实':`${esc(team)} ${line>0?'+':''}${line}`;
  return keep([`<a href="${url}"><strong>${esc(r.home)} vs ${esc(r.away)}</strong></a><small>${stamp(r.kickoff)} · ${competitions.find(x=>x[0]===r.league)?.[1]||''}</small>`,`${stages[r.stage]}<small>${stamp(r.issuedAt)}</small>`,`<b>${score(r.score)}</b> → ${score(r.actual)}`,r.status==='settled'?`<span class="ps-outcome ${r.exactHit?'ps-hit':'ps-miss'}">${r.exactHit?'命中':'未中'}</span>`:`${stateNames[r.status]}<small>${esc(r.reason)}</small>`,`${ah}<br><span class="ps-outcome ${['赢盘','赢半'].includes(r.asianResult)?'ps-hit':''}">${esc(ahNames[r.asianResult]||r.asianResult)}</span><details><summary>核对来源</summary><small>${esc(r.provider)} ${r.quoteAt?stamp(r.quoteAt):''}</small>${sourceLink(r.source,'赛果来源')}</details>`,footballPaperCell([r],true),briefHtml(briefs.find(b=>b.identity===r.league+':'+(r.matchId||r.eventId)),url)]);}));}
-function poolSummary(rows,paper=false){return `<div class="ps-pools">${Object.keys(poolNames).map(type=>{const t=poolTotals(rows,type);return `<article><h3>${poolNames[type]}</h3>${bar(t.hits,t.races)}<p>命中 ${t.winningTickets} / ${t.tickets} 注 · 退款 ${t.refunds} 注</p>${paper?`<p>已结算投入 $${money(t.stake)}<br>派回 $${money(t.returns)} · 净额 ${money(t.net)}元</p>`:''}<p>整组回报 <b>${t.multiple==null?'—':t.multiple.toFixed(2)+'倍'}</b></p><small>${t.pending} 场待派彩</small></article>`;}).join('')}</div>`;}
+function poolSummary(rows,paper=false){return `<div class="ps-pools">${Object.keys(poolNames).map(type=>{const t=poolTotals(rows,type),a=poolAccuracy(t,type);return `<article><h3>${a.label}</h3>${bar(a.hits,a.total,a.unit,a.label)}<p>逐注命中 ${t.winningTickets} / ${t.tickets} 注 · 退款 ${t.refunds} 注</p><p>已结算投入 $${money(t.stake)}<br>派回 $${money(t.returns)}<br>净盈亏 <b class="${t.net>0?'ps-hit':t.net<0?'ps-miss':''}">${t.net>0?'+':''}${money(t.net)}元</b></p><p>整组回报 <b>${t.multiple==null?'—':t.multiple.toFixed(2)+'倍'}</b></p><small>${t.pending} 场待派彩${type==='WIN'?' · 至少选中一匹冠军计中一场':''}</small></article>`;}).join('')}</div>`;}
 function poolCell(r,type){
  const p=r.pools.find(p=>p.type===type),t=poolTotals([r],type);
  if(r.status==='excluded')return '未计入';if(!p?.tickets.length)return '无组合';
@@ -29,7 +29,7 @@ function racingRows(rows,briefs,paper=false){const keep=r=>paper?r:r.filter((_,i
  return keep([`<a href="${url}"><strong>${r.day} · ${esc(r.courseName)} 第${r.raceNo}场</strong></a><small>${stateNames[r.status]} ${esc(r.reason)}</small>${sourceLink(r.source,'正式赛果')}`,`${r.runners.map(h=>`<small><b>${esc(h.number)}号 ${esc(h.name)}</b>${h.id===r.pick?' · 首选':''} · ${h.withdrawn?'退出':h.position||h.place||'待赛'}</small>`).join('')}<small>发布 ${stamp(r.issuedAt)}</small>`,...Object.keys(poolNames).map(type=>poolCell(r,type)),r.status==='excluded'?'未计入':paperCell([r]),briefHtml(briefs.find(b=>b.identity===r.raceId),url)]);
 }));}
 const footballRules='累计只计算已保存的赛前预测，不混入历史回测。固定模拟：亚洲盘100元、比分50元；未选边不投入亚洲盘。只用封存的赛前十进制赔率，未保存赔率的金额单列未结算，不编造派彩。采用版：同一场有确认首发版则取该版，否则取初步版，每场只算一次。比分按主客队90分钟含补时；亚洲盘按原选边与原盘口，赢盘和赢半计命中，走盘、未选边及未核实盘口不进亚洲盘命中率分母。各结果次数另列，避免把赢半当作全赢。按来源确认的原轮次统计，补赛仍归原轮次，不用日期猜轮次。';
-const racingRules='按原封存名单（最多三匹）回算：独赢、位置每匹各一注；连赢、位置连赢为两两不重复组合，三匹共三注。不是新增推荐，也不补选退赛马。只按官方派彩判定位置、死热与命中；缺派彩等待核对，不按前三名猜派彩。命中场数指当场至少一注命中。倍数为派彩÷本金，包含本金；模拟投注：每匹推荐马独赢100港元、位置100港元；连赢及位置连赢每个组合10港元。选满三匹每场计划660港元。整组回报计入同组未中注；退款不计有效投入，不含回扣，未结算金额不当作亏损。';
+const racingRules='按原封存名单（最多三匹）回算：独赢、位置每匹各一注；连赢、位置连赢为两两不重复组合，三匹共三注。不是新增推荐，也不补选退赛马。只按官方派彩判定位置、死热与命中；缺派彩等待核对，不按前三名猜派彩。独赢场次命中率按至少选中一匹冠军的场数÷已结算有效场数；位置按跑入位置的所选马匹数÷已结算有效所选马匹数；连赢及位置连赢按命中组合注数÷已结算有效组合注数。位置选三匹中一匹为33.3%、中两匹为66.7%，不按有中一匹就算全中。命中率与是否盈利分开核算。倍数为派彩÷本金，包含本金；模拟投注：每匹推荐马独赢100港元、位置100港元；连赢及位置连赢每个组合10港元。选满三匹每场计划660港元。整组回报计入同组未中注；退款不计有效投入，不含回扣，未结算金额不当作亏损。';
 export {footballGroups,footballRows,poolSummary,racingRows,kpi,table,bar,footballRules,racingRules,paperCell,footballPaperCell};
 
 function footballPaperCell(rows,detail=false){

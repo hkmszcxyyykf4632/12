@@ -1,5 +1,4 @@
 import {paintRecommendationPreview} from './recommendations.mjs';
-import {paintCelebrations} from './prediction-celebrations.mjs';
 import {paintMarketPreview} from './finance-page.mjs';
 import {data,rankings} from './repository.mjs';
 import {main,esc,cn,team,monogram,pageHeading,matchTable,timeText,oddsText} from './ui.mjs';
@@ -66,10 +65,8 @@ export function renderHome(loadError=null) {
   <p class="note">开球时间按本地时区显示。比分、胜平负按 90 分钟含补时统计。<a href="#/sources">查看数据来源与统计口径</a></p>`;
   main.querySelector('#home-markets').innerHTML='<div class="section-head"><h2>市场行情</h2><a class="button quiet" href="#/markets">港股与市场 →</a></div><div class="loading" role="status">正在读取市场行情…</div>';
   main.querySelector('#home-insights').innerHTML='<div class="loading" role="status">正在读取专题分析…</div>';
-  main.querySelector('.portal-masthead').insertAdjacentHTML('afterend','<div id="home-celebrations"></div>');
   const update=(error=loadError)=>{
     if(!main.querySelector('#home-lead'))return;
-    paintCelebrations(main.querySelector('#home-celebrations'));
     paintRecommendationPreview(main.querySelector('#home-recommendations'));
     paintMarketPreview(main.querySelector('#home-markets'));paintEditorial(main.querySelector('#home-insights'));
     if(!data){

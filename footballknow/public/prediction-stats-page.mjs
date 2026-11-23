@@ -1,6 +1,6 @@
 import {api} from './api.mjs';
 import {main,esc,pageHeading} from './ui.mjs';
-import {competitions,poolNames,rate,footballSelection,footballTotals,poolTotals,byDay,byRound} from './prediction-stats-core.mjs';
+import {competitions,poolNames,rate,footballSelection,footballTotals,poolTotals,poolAccuracy,byDay,byRound} from './prediction-stats-core.mjs';
 import {footballSummary,footballGroups,footballRows,poolSummary,racingRows,kpi,table,bar,footballRules,racingRules,paperCell,footballPaperCell} from './prediction-stats.mjs';
 import {loadBriefs} from './review-briefs.mjs';
 import {scopedRecords,startText} from './statistics-scope.mjs';
@@ -19,7 +19,7 @@ export function renderPredictionStats(domain,{paper=false}={}){
   const headings=football?['赛事 / 轮次','分析 / 结算',...(paper?['本轮投入与盈亏']:['比分命中','亚洲盘命中'])]:['赛马日','已分析',...(paper?['全天投入与盈亏']:Object.values(poolNames))];
   return table(headings,groups.map(([key,rows])=>{
    if(football){const t=footballTotals(rows);return [esc(key)+`<small>${rows.every(r=>r.roundComplete)?'本轮赛程已结束':'本轮进行中 · 已完场先统计'}</small>`,`${t.total} / ${t.settled}`,...(paper?[ledger(rows)]:[bar(t.exact,t.settled),bar(t.asianHits,t.asian)])];}
-   return [key,rows.length,...(paper?[ledger(rows)]:Object.keys(poolNames).map(p=>{const t=poolTotals(rows,p);return `${t.hits}/${t.races} 场 · ${rate(t.hits,t.races)}<small>整组 ${t.multiple==null?'—':t.multiple.toFixed(2)+'倍'}</small>`;}))];
+   return [key,rows.length,...(paper?[ledger(rows)]:Object.keys(poolNames).map(p=>{const t=poolTotals(rows,p),a=poolAccuracy(t,p);return `${a.hits}/${a.total} ${a.unit} · ${rate(a.hits,a.total)}<small>${a.label} · 整组 ${t.multiple==null?'—':t.multiple.toFixed(2)+'倍'}</small>`;}))];
   }));
  }
  function draw(){
