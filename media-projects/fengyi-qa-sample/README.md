@@ -16,3 +16,9 @@
 发布视频：`footballknow/public/media/videos/fengyi-qa-cantonese-v1.mp4`。只上架视频素材及视频目录记录，不改动现有应用和采集任务。
 
 角色参考由用户指定为 THE MONSTERS 大首领 / Angel in Clouds；图片素材为本次生成的动画素材，不表示 POP MART 官方合作。
+
+## 已上架
+
+https://inwesting.shop/#/videos/203843cd1a6c4c3f86606121255c0de2
+
+2026-11-23 发布。浏览器检查：视频播放推进至 56.91 秒，画面 1920×1080；390px 手机视口下视频宽 362px，无水平溢出。公开地址支持 HTTP 206 分段加载。未改动采集、比赛数据或现有服务。
