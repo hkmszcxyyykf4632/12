@@ -1,0 +1,20 @@
+{
+  "sourceRevision": "f2ed594432ac2aaf0f917cb00c8039f4c9192826",
+  "videoId": "1edbe78bf8154245ae46033233cdf629",
+  "page": "https://inwesting.shop/#/videos/1edbe78bf8154245ae46033233cdf629",
+  "url": "https://inwesting.shop/media/videos/fengyi-recommendation-bologna-20261122-3d-v1.mp4",
+  "serverPublicationCompletedAt": "2026-11-24T01:18:27+08:00",
+  "publicRangeStatus": 206,
+  "publicRangeBytes": 64,
+  "contentRange": "bytes 0-63/2461464",
+  "browserObservedPlayingSeconds": 8.007592,
+  "browserObservedEndedSeconds": 10.958333,
+  "browserMediaError": null,
+  "browserMuted": false,
+  "browserReadyState": 4,
+  "browserViewport": 829,
+  "browserDocumentWidth": 814,
+  "catalogueCountAfterPublish": 2,
+  "backup": "/var/backups/footballknow/video-catalogue-20261123T171826Z",
+  "proofImage": "local-production/website-proof.jpg"
+}
