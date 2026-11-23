@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {chartPoints,rateText,financialAmount} from '../public/finance-core.mjs';
+import {chartPoints,rateText,financialAmount,financialUnit} from '../public/finance-core.mjs';
 import {validMarket,manualMarket,marketComparisons,movementSummary} from '../public/markets-core.mjs';
 import {orderedEvents,opponentRecords,transferPattern} from '../public/research-core.mjs';
 import {statusSummary} from '../public/insights.mjs';
@@ -68,4 +68,13 @@ test('deliberately paused synchronization is explicitly labelled',()=>{
   const snapshot={running:true,paused:true,heartbeat:new Date().toISOString(),jobs:{one:{ok:true}}};
   assert.match(statusSummary(snapshot).text,/管理员已暂停/);
   assert.equal(statusSummary(snapshot).alive,true);
+});
+
+test("per-share earnings retain their reported scale",()=>{
+  const eps={name:"每股基本盈利",amount:0.920663};
+  assert.equal(financialAmount(eps),"0.9207");
+  assert.equal(financialUnit(eps),"元/股");
+  assert.equal(financialAmount({name:"每股摊薄盈利",amount:-0.0012}),"-0.0012");
+  assert.equal(financialAmount({name:"每股基本盈利",amount:null}),"—");
+  assert.equal(financialUnit({name:"现金及等价物"}),"亿元");
 });

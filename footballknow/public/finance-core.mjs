@@ -13,7 +13,8 @@ export function chartPoints(bars,limit=90){
 }
 export function rateText(stats){return stats?.evaluated>0&&finite(stats.successRate)?figure(stats.successRate*100,1)+'%':'等待到期验证';}
 export function financialRows(financials,kind,date){return (financials?.statements?.[kind]||[]).filter(row=>row.date===date);}
-export function financialAmount(row){return finite(row?.amount)?figure(row.amount/1e8,2):'—';}
+export const financialUnit=row=>/每股/.test(row?.name||'')?'元/股':'亿元';
+export function financialAmount(row){return finite(row?.amount)?financialUnit(row)==='元/股'?figure(row.amount,4):figure(row.amount/1e8,2):'—';}
 export const primaryStockSectors=['地产','金融','博彩','科技'];
 export const sectorOrder=['地产','金融','博彩','科技','消费','医疗保健','工业制造','能源资源','电讯公用','旅游酒店','传媒娱乐','建筑工程','商业服务','交通运输','农业产品','综合企业','待分类'];
 export const stockSector=row=>row?.industryUpdatedAt&&row.sector&&row.sector!=='未分类'?row.sector:'待分类';
