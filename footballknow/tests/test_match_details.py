@@ -74,7 +74,7 @@ def test_same_birth_date_does_not_confuse_twin_names():
 @pytest.mark.parametrize('source,stored', [
     ('Deportivo', 'La Coruna'), ('Real Valladolid', 'Valladolid'),
     ('Real Zaragoza', 'Zaragoza'), ('Sporting Gijón', 'Sp Gijon'),
-    ('Real Sociedad II', 'Sociedad B'),
+    ('Real Sociedad II', 'Sociedad B'), ('FC Andorra', 'Andorra'),
 ])
 def test_verified_spanish_source_aliases(source, stored):
     assert canonical(source, 'laliga') == canonical(stored, 'laliga')
@@ -94,7 +94,7 @@ def test_negative_match_cache_is_retried_after_mapping_upgrade(tmp_path, monkeyp
                  home='Alaves', away='La Coruna', competition='西甲', finished=True)
     key = hashlib.sha256(('laliga|' + match['id']).encode()).hexdigest()[:24]
     path = md.PUBLIC / 'laliga/match-details' / (key + '.json')
-    publish(path, {'status': 'unavailable', 'mappingVersion': 3, 'updatedAt': at.isoformat()})
+    publish(path, {'status': 'unavailable', 'mappingVersion': md.MAPPING_VERSION - 1, 'updatedAt': at.isoformat()})
     event = {'id': '401882806', 'date': '2026-11-21T13:00Z', 'competitions': [{'competitors': [
         {'homeAway': 'home', 'team': {'displayName': 'Alavés'}},
         {'homeAway': 'away', 'team': {'displayName': 'Deportivo'}}]}]}

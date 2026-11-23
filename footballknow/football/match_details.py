@@ -15,14 +15,14 @@ from .rankings import COMPETITIONS, EPL_NAMES, normalize, player_code
 from .ucl import fetch_json
 
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer'
-MAPPING_VERSION = 4
+MAPPING_VERSION = 5
 SPANISH_NAMES = {'Athletic Club': 'Ath Bilbao', 'Athletic Bilbao': 'Ath Bilbao', 'Atlético Madrid': 'Ath Madrid',
                  'Atletico Madrid': 'Ath Madrid', 'Celta Vigo': 'Celta', 'Alavés': 'Alaves', 'Espanyol': 'Espanol',
                  'Racing Santander': 'Santander', 'Racing de Santander': 'Santander', 'Deportivo La Coruña': 'La Coruna',
                  'Deportivo La Coruna': 'La Coruna', 'Real Betis': 'Betis', 'Real Sociedad': 'Sociedad',
                  'Rayo Vallecano': 'Vallecano', 'Real Oviedo': 'Oviedo', 'Deportivo': 'La Coruna',
                  'Real Valladolid': 'Valladolid', 'Real Zaragoza': 'Zaragoza',
-                 'Sporting Gijón': 'Sp Gijon', 'Sporting Gijon': 'Sp Gijon', 'Real Sociedad II': 'Sociedad B'}
+                 'Sporting Gijón': 'Sp Gijon', 'Sporting Gijon': 'Sp Gijon', 'Real Sociedad II': 'Sociedad B', 'FC Andorra': 'Andorra'}
 LOCKS = [threading.Lock() for _ in range(32)]
 EVENT_TYPES = {'goal': '进球', 'penalty---scored': '点球进球', 'own-goal': '乌龙球',
                'yellow-card': '黄牌', 'red-card': '红牌', 'yellow-red-card': '两黄变红',
