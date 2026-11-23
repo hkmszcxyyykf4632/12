@@ -4,7 +4,9 @@ from contextlib import closing
 from datetime import datetime, timezone
 from uuid import UUID
 
-def counter(event=None, path=None):
+BASE = 35_627_892
+
+def counter(event=None, path=None, *, initial_base=BASE):
     if event is not None:
         event = str(UUID(str(event)))
     if path is None:
@@ -14,7 +16,8 @@ def counter(event=None, path=None):
     with closing(sqlite3.connect(path, timeout=10)) as db, db:
         db.execute('CREATE TABLE IF NOT EXISTS totals(id INTEGER PRIMARY KEY CHECK(id=1), base INTEGER NOT NULL, added INTEGER NOT NULL)')
         db.execute('CREATE TABLE IF NOT EXISTS events(id TEXT PRIMARY KEY, day TEXT NOT NULL)')
-        db.execute('INSERT OR IGNORE INTO totals VALUES(1,100000,0)')
+        db.execute('INSERT OR IGNORE INTO totals VALUES(1,?,0)', (initial_base,))
+        db.execute('UPDATE totals SET base=? WHERE id=1 AND base=100000', (initial_base,))
         if event:
             changed = db.execute('INSERT OR IGNORE INTO events VALUES(?,?)', (event, datetime.now(timezone.utc).date().isoformat())).rowcount
             if changed:

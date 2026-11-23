@@ -21,3 +21,4 @@
  .stock-quote-table .button.stock-name{padding:0;text-align:left}
  .entity-profile-head{gap:12px}.entity-profile-head h1{font-size:25px}.entity-profile-head>.button{margin-left:0}
 }
+.stock-device-sync{margin:16px 0 24px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.stock-device-sync h2{font-size:17px;margin:0}.stock-device-sync summary{cursor:pointer;color:var(--brand)}.stock-device-sync form{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-top:12px}.stock-device-sync form label{display:grid;gap:6px;flex:1 1 180px;max-width:300px}.stock-device-sync [data-sync-code]{font-size:20px;font-weight:700;letter-spacing:1px;overflow-wrap:anywhere}.stock-device-sync [data-sync-error]{color:var(--danger,#b13a32)}

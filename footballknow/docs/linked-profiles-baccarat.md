@@ -14,10 +14,22 @@ The bet panel shows Big Eye Boy, Small Road and Cockroach Road alongside conditi
 
 ## Validation (2026-11-23)
 
-- Full JavaScript suite: 175 passed.
-- Full Python suite: 444 passed, 8 subtests passed.
+- Full JavaScript suite: 185 passed; final coach deduplication focused suite: 13 passed.
+- Full Python suite: 453 passed, 13 subtests passed.
 - Final focused suite after layout refinement: 15 passed.
 - Browser QA at desktop and 390×844: arbitrary 123.45 stake, opening settlement, retained progress on reload, 70-hand completion and unchanged prior wagers, lower roads and conditional probes beside mobile amount entry.
 - Browser QA: “其它” selected 2,008 of 2,822 local catalogue trading counters; mobile name/price/change visible with no page overflow; expanded watch controls remain visible.
 - Browser QA: match-centre Arsenal name opens team 1, score is a distinct match link; jockey → trainer → owner → horse links resolve to the corresponding routes.
 - The browser preview uses saved local snapshots plus read-only API proxying; its old data dates are not evidence of current production data completeness.
+
+## Private stock watchlist sync
+
+The former browser-only list now migrates into a private device group, with a durable local operation queue for offline changes. A one-use code connects another device for ten minutes. Initial pairing unions both lists; later additions and removals sync across connected devices. Unconnected visitors have separate lists. No administrator login is needed. Device cookies are HttpOnly, SameSite Strict and Secure in production; the database stores token hashes. Same-origin checks protect write routes. Idempotent operation IDs prevent a retried old add from resurrecting a later removal.
+
+Browser QA used two isolated localhost origins with separate cookies/storage, both talking to the same test backend. One saved HSBC and the other Tencent. Pairing produced both stocks on both pages. Removing HSBC on the second and syncing the first left Tencent only. These were test records, not the user's actual phone pairing. Existing team follows, simulation ledgers and coach follows remain local.
+
+## Coach observation and visits
+
+The coach page now displays every collected fixture in the tenure, using the immediate prior match as the lineup baseline. Cross-competition club identity merges fixtures while retaining correct match-detail routes. Confirmed complete elevens use stable player IDs, formation and source links. Missing baselines do not silently compare an older match. The 30-day filter excludes future and invalid dates. Identical manager changes are shown once in the all-competition view. Browser QA confirmed full lists, 30-day filtering and the Sporting lineup change from 3-4-1-2 to 4-3-3 with four entrants/exits in the saved dataset.
+
+The investment-site counter base becomes 35,627,892 while preserving stored added visits and deduplication IDs. The culture counter explicitly retains its existing 100,000 base; this release does not deploy culture-site files.

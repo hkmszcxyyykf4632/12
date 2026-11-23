@@ -1,3 +1,4 @@
+import {syncFollowing} from './stock-sync.mjs';
 import {esc} from './ui.mjs';
 import {readStockFollowing} from './stock-following.mjs';
 import {evidenceReviewHtml} from './evidence-review.mjs';
@@ -10,10 +11,11 @@ export function conciseReport(report,{compact=false}={}){
   return report?`<div class="research-summary">${(report.summary||[]).map(p=>`<p>${esc(p)}</p>`).join('')}${report.generatedAt?`<small class="subtle">整理 ${esc(stamp(report.generatedAt))}</small>`:''}<details${compact?' class="er-disclosure" data-disclosure="review-details"':''}><summary>更多详细资料</summary>${(report.details||[]).map(d=>`<h3>${esc(d.title)}</h3><p>${esc(d.text)}</p>`).join('')}</details></div>`:'';
 }
 export async function syncStockWatchlist(signal){
+  const synced=await syncFollowing();
   const state=readStockFollowing();
   if(state.problem)throw Error('当前浏览器关注名单不可读取，未更改服务器名单。');
   const r=await fetch('/api/stocks/watchlist',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({codes:state.codes}),signal});
-  const data=await r.json();if(!r.ok)throw Error(data.detail||'关注名单尚未同步');return data;
+  const data=await r.json();if(r.status===401)return synced;if(!r.ok)throw Error(data.detail||'关注名单尚未同步');return data;
 }
 export function bindReview(target,{kind,id,league,signal}){
   let busy=false;

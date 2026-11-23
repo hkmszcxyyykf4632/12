@@ -44,6 +44,8 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+from football.stock_following_api import router as stock_following_router
+app.include_router(stock_following_router)
 DEFAULT_ORIGINS = 'https://footballknow.art,https://www.footballknow.art,https://inwesting.shop,https://www.inwesting.shop'
 
 
@@ -535,6 +537,15 @@ def commodity_history(ident: str):
     from football.commodity_history import history
     try:
         return history(ident)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from None
+
+
+@app.get('/api/coaches/lineups')
+def coach_lineup_history(team_id: int, league: LeagueId = 'epl'):
+    from football.coach_lineups import coach_lineups
+    try:
+        return coach_lineups(league, team_id)
     except LookupError as error:
         raise HTTPException(status_code=404, detail=str(error)) from None
 

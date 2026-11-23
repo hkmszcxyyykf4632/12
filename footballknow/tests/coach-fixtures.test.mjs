@@ -47,7 +47,7 @@ test('overdue scheduled game stays provisional and does not shift the next expec
   assert.equal(result.next.label,'预计第3场');
 });
 
-test('Espanyol real snapshots and rendered links expose first win and expandable term list',async()=>{
+test('Espanyol real snapshots and rendered links expose first win and every tenure match by default',async()=>{
   const read=name=>readFile(new URL(`../public/laliga/${name}.json`,import.meta.url),'utf8').then(JSON.parse);
   const [data,live,history]=await Promise.all(['data','live','history'].map(read));
   const change=history.managers.find(row=>row.team==='Espanol');
@@ -65,12 +65,12 @@ test('Espanyol real snapshots and rendered links expose first win and expandable
   const html=coachFixturesHtml(record,now);
   dom.window.document.querySelector('main').innerHTML=html;
   const section=dom.window.document.querySelector('.coach-fixtures');
-  assert.equal(section.querySelectorAll(':scope > ul > li').length,3);
-  assert.ok(section.querySelector('details summary').textContent.includes('任期内全部'));
+  assert.equal(section.querySelectorAll(':scope > ul > li').length,sequence.rows.length);
+  assert.equal(section.querySelector(':scope > details'),null);
   const firstLink=[...section.querySelectorAll('a')].find(link=>link.textContent.includes('换帅后第1场'));
   assert.equal(firstLink.getAttribute('href'),'./?league=laliga#/match/2026-10-30%7CVillarreal%7CEspanol');
   assert.match(firstLink.textContent,/0:1/);
-  assert.match(section.textContent,/仅按本页已收录的西甲比赛编号/);
+  assert.match(section.textContent,/按已收录的西甲比赛顺序编号/);
   assert.match(coachFixturesHtml({...record,change:{leftAt:'2026-10-27'}},now),/继任日期未确认/);
   assert.doesNotMatch(coachFixturesHtml({...record,change:{leftAt:'2026-10-27'}},now),/#\/match/);
   if(process.env.COACH_EVIDENCE_DIR){
@@ -79,4 +79,16 @@ test('Espanyol real snapshots and rendered links expose first win and expandable
     await writeFile(`${process.env.COACH_EVIDENCE_DIR}/espanyol-snapshot-check.json`,JSON.stringify({change,now:new Date(now).toISOString(),coverageLimited:sequence.coverageLimited,rows:sequence.rows},null,2));
   }
   dom.window.close();
+});
+
+test('all tenure results and concise lineup changes are rendered with sources',async()=>{
+  const {managerComparison,coachFixturesHtml}=await import('../public/coaches-page.mjs');
+  const before=match('before','2026-09-30');
+  const matches=[before,...Array.from({length:12},(_,i)=>match('m'+i,'2026-10-'+String(i+1).padStart(2,'0')))];
+  assert.equal(managerComparison(matches,'Espanol','2026-10-01').after.played,12);
+  const starters=(replace=false)=>Array.from({length:11},(_,i)=>({id:String(replace&&i===10?99:i),name:replace&&i===10?'新首发':'球员'+i}));
+  const lineups=[before,matches[1]].map((m,i)=>({league:'laliga',matchId:m.id,date:m.date,home:m.home,away:m.away,formation:i?'4-4-2':'4-3-3',starters:starters(Boolean(i)),source:'https://example.com/lineups'}));
+  const record={league:'laliga',team:{name:'Espanol'},change:{joinedAt:'2026-10-01'},matches,lineups};
+  const html=coachFixturesHtml(record,now);
+  assert.match(html,/首发调整 1 人/);assert.match(html,/4-3-3 → 4-4-2/);assert.match(html,/进入首发.*新首发/);assert.match(html,/退出首发.*球员10/);assert.match(html,/（换帅前）/);assert.match(html,/本场首发来源/);assert.match(html,/换帅后第12场/);
 });

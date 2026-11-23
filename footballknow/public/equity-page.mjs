@@ -1,3 +1,4 @@
+import {bindFollowingSync} from './stock-sync.mjs';
 import {main,esc,pageHeading,sourceLink,toast} from './ui.mjs';
 import {figure,signed,direction} from './finance-core.mjs';
 import {readStockFollowing,toggleStockFollowing,STOCK_FOLLOWING_KEY} from './stock-following.mjs';
@@ -28,7 +29,7 @@ export function renderCNMarkets(){
   }
   for(const [id,set] of [['search',v=>query=v.trim().toLowerCase()],['board',v=>board=v],['sector',v=>sector=v],['sort',v=>sort=v],['volume',v=>volumeFilter=v]])main.querySelector('#cn-'+id).addEventListener(id==='search'?'input':'change',e=>{set(e.target.value);page=0;paint();});
   async function load(){try{const [c,q,v]=await Promise.all([snapshot('cn-stocks',controller.signal),snapshot('cn-quotes',controller.signal),snapshot('stock-volume',controller.signal).catch(()=>({rows:{}}))]);if(controller.signal.aborted)return;catalogue=c;quotes=q.quotes||{};volumes=v.rows||{};const select=main.querySelector('#cn-sector');select.innerHTML='<option value="">全部行业</option>'+[...new Set(c.stocks.map(r=>r.sector))].sort().map(s=>`<option>${esc(s)}</option>`).join('');select.value=sector;paint();}catch(e){if(!controller.signal.aborted)main.querySelector('#cn-count').textContent=e.message+' 保留最近读取的资料。';}}
-  const storage=e=>{if(e.key===STOCK_FOLLOWING_KEY)paint();};window.addEventListener('storage',storage);load();const timer=setInterval(()=>{if(!document.hidden)load();},60000);return()=>{controller.abort();clearInterval(timer);window.removeEventListener('storage',storage);};
+  const storage=e=>{if(e.type==='stock-following-changed'||e.key===STOCK_FOLLOWING_KEY)paint();};window.addEventListener('storage',storage);window.addEventListener('stock-following-changed',storage);const stopFollowingSync=bindFollowingSync();load();const timer=setInterval(()=>{if(!document.hidden)load();},60000);return()=>{controller.abort();clearInterval(timer);window.removeEventListener('storage',storage);window.removeEventListener('stock-following-changed',storage);stopFollowingSync();};
 }
 
 export function renderVolume(){

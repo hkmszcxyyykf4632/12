@@ -32,7 +32,7 @@ class CounterHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if urlsplit(self.path).path != '/api/visits':
             return self.reply(404, {'error': 'Not found'})
-        self.reply(200, {'total': counter(path=self.db_path)['total']})
+        self.reply(200, {'total': counter(path=self.db_path, initial_base=100000)['total']})
 
     def do_POST(self):
         if urlsplit(self.path).path != '/api/visits':
@@ -48,7 +48,7 @@ class CounterHandler(BaseHTTPRequestHandler):
             data = json.loads(self.rfile.read(size))
             if not isinstance(data, dict) or set(data) != {'event'} or not isinstance(data['event'], str):
                 raise ValueError('Invalid event')
-            result = counter(data['event'], self.db_path)
+            result = counter(data['event'], self.db_path, initial_base=100000)
         except (ValueError, TypeError, UnicodeError):
             return self.reply(400, {'error': 'Invalid event'})
         self.reply(200, {'total': result['total']})

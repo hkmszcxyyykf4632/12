@@ -1,6 +1,8 @@
+import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
+from contextlib import closing
 from unittest.mock import patch
 from uuid import uuid4
 from concurrent.futures import ThreadPoolExecutor
@@ -12,13 +14,24 @@ class SiteContentTests(unittest.TestCase):
     def test_visit_counter_is_persistent_and_retry_safe(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / 'counter.db'
-            self.assertEqual(visits.counter(path=path)['total'], 100000)
+            self.assertEqual(visits.counter(path=path)['total'], visits.BASE)
             event = str(uuid4())
-            self.assertEqual(visits.counter(event, path)['total'], 100001)
-            self.assertEqual(visits.counter(event, path)['total'], 100001)
+            self.assertEqual(visits.counter(event, path)['total'], visits.BASE + 1)
+            self.assertEqual(visits.counter(event, path)['total'], visits.BASE + 1)
             with ThreadPoolExecutor(max_workers=4) as pool:
                 list(pool.map(lambda _: visits.counter(str(uuid4()), path), range(20)))
-            self.assertEqual(visits.counter(path=path), {'total': 100021, 'base': 100000, 'added': 21})
+            self.assertEqual(visits.counter(path=path), {'total': visits.BASE + 21, 'base': visits.BASE, 'added': 21})
+
+    def test_visit_base_migration_preserves_added_and_retry_history(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / 'counter.db'
+            event = str(uuid4())
+            visits.counter(event, path)
+            with closing(sqlite3.connect(path)) as db, db:
+                db.execute('UPDATE totals SET base=100000,added=123 WHERE id=1')
+            self.assertEqual(visits.BASE, 35_627_892)
+            self.assertEqual(visits.counter(event, path), {'total': 35_628_015, 'base': 35_627_892, 'added': 123})
+            self.assertEqual(visits.counter(str(uuid4()), path)['added'], 124)
 
     def test_drafts_and_unpublishing(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(videos, 'PATH', Path(folder) / 'videos.json'):
