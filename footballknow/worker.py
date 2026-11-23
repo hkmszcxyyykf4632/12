@@ -1,9 +1,4 @@
-"""Independent refresh jobs on one shared cadence; failures retain the last published files.
-
-Every dataset is checked every SYNC_SECONDS (60 by default). A job that needs longer than
-one interval starts again as soon as it finishes; it never overlaps itself. A source that
-keeps failing is retried with a growing pause so a refusal is not answered with more load.
-"""
+"""Refresh live data frequently and let durable backfills share bounded background work."""
 import logging
 import os
 import shlex
@@ -113,14 +108,19 @@ def interval_overrides(environ: dict[str, str] | None = None) -> dict[str, int]:
 
 def job_table(environ: dict[str, str] | None = None) -> dict[str, Job]:
     base, overrides = sync_seconds(environ), interval_overrides(environ)
-    defaults = {**{f'{league}-profiles': 86400 for league in LEAGUES},
+    defaults = {name: {'catalogue': 3600, 'history': 21600, 'names': 86400,
+                      'rankings': 300, 'news': 900, 'odds': 300}.get(group, base)
+                for name, _, group in JOBS}
+    defaults.update({**{f'{league}-profiles': 86400 for league in LEAGUES},
+                **{name: 900 for name in ['live', *[f'{league}-live' for league in LEAGUES if league != 'epl']]},
+                'odds-official-checks': 86400,
                 'finance-backfill': 300, 'racing-research': 300, 'evidence-reviews': 300,
                 'stock-forecasts': 120, 'racing-forecasts': 300, 'football-rounds': 300, 'recommendations': 120,
                 'daily-research': 300, 'finance-cn': 300, 'finance-us': 300, 'finance-volume': 300,
                 'finance-companies': 86400, 'finance-catalogue': 86400, 'finance-history': 3600, 'finance-evaluation': 120,
                 'racing-meetings': 300, 'racing-catalogue': 86400, 'racing-horses': 600,
                 'racing-directory': 86400, 'racing-people': 1800, 'racing-live': 60,
-                'portal-news': 300, **{f'{league}-photos': 3600 for league in LEAGUES}}
+                'portal-news': 300, **{f'{league}-photos': 3600 for league in LEAGUES}})
     return {name: Job(script, JobStatus(intervalSeconds=overrides.get(name, defaults.get(name, base)), group=group))
             for name, script, group in JOBS}
 
@@ -242,6 +242,30 @@ def stop_worker(signum: int, frame: object) -> None:
 PRIORITY_JOBS = {'daily-football', 'football-forecasts'}
 
 
+def restore_schedule(jobs, previous, clock, stamp):
+    """Keep fresh background work off the startup queue; live checks still run immediately."""
+    records = previous.get('jobs', {}) if isinstance(previous, dict) else {}
+    if not isinstance(records, dict):
+        return
+    for name, job in jobs.items():
+        if name in PRIORITY_JOBS or not isinstance(records.get(name), dict):
+            continue
+        try:
+            saved = JobStatus.model_validate({**records[name], 'intervalSeconds': job.status.intervalSeconds,
+                                               'group': job.status.group})
+            attempted = datetime.fromisoformat(saved.lastAttempt.replace('Z', '+00:00'))
+            if attempted.tzinfo is None or attempted > stamp:
+                continue
+        except (ValueError, TypeError, AttributeError):
+            continue
+        age = (stamp - attempted).total_seconds()
+        delay = retry_delay(saved.intervalSeconds, saved.consecutiveFailures)
+        remaining = 0 if saved.running else max(0, delay - age)
+        saved.running = False
+        job.status, job.started, job.due = saved, clock - age, clock + remaining
+        saved.nextAttempt = (stamp + timedelta(seconds=remaining)).isoformat()
+
+
 def dispatch_forecast(jobs, executor, clock, stamp):
     if PAUSED.is_set() or STOP.is_set() or any(jobs[name].future is not None for name in PRIORITY_JOBS):
         return False
@@ -268,6 +292,11 @@ def main() -> None:
     signal.signal(signal.SIGTERM, stop_worker)
     signal.signal(signal.SIGINT, stop_worker)
     jobs = job_table()
+    try:
+        previous = read_json(PUBLIC / 'sync-status.json')
+    except (OSError, ValueError):
+        previous = {}
+    restore_schedule(jobs, previous, time.monotonic(), datetime.now(timezone.utc))
     started_at = datetime.now(timezone.utc).isoformat()
     published = 0.0
     general_workers = max(1, max_workers() - 1)

@@ -15,11 +15,14 @@ from .rankings import COMPETITIONS, EPL_NAMES, normalize, player_code
 from .ucl import fetch_json
 
 BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer'
+MAPPING_VERSION = 4
 SPANISH_NAMES = {'Athletic Club': 'Ath Bilbao', 'Athletic Bilbao': 'Ath Bilbao', 'Atlético Madrid': 'Ath Madrid',
                  'Atletico Madrid': 'Ath Madrid', 'Celta Vigo': 'Celta', 'Alavés': 'Alaves', 'Espanyol': 'Espanol',
                  'Racing Santander': 'Santander', 'Racing de Santander': 'Santander', 'Deportivo La Coruña': 'La Coruna',
                  'Deportivo La Coruna': 'La Coruna', 'Real Betis': 'Betis', 'Real Sociedad': 'Sociedad',
-                 'Rayo Vallecano': 'Vallecano', 'Real Oviedo': 'Oviedo'}
+                 'Rayo Vallecano': 'Vallecano', 'Real Oviedo': 'Oviedo', 'Deportivo': 'La Coruna',
+                 'Real Valladolid': 'Valladolid', 'Real Zaragoza': 'Zaragoza',
+                 'Sporting Gijón': 'Sp Gijon', 'Sporting Gijon': 'Sp Gijon', 'Real Sociedad II': 'Sociedad B'}
 LOCKS = [threading.Lock() for _ in range(32)]
 EVENT_TYPES = {'goal': '进球', 'penalty---scored': '点球进球', 'own-goal': '乌龙球',
                'yellow-card': '黄牌', 'red-card': '红牌', 'yellow-red-card': '两黄变红',
@@ -190,18 +193,18 @@ def detail_for_match(match, catalogue, league, fetch_missing=True):
     path = league_path(PUBLIC, league) / 'match-details' / f'{key[:24]}.json'
     previous = read_json(path) if path.exists() else None
     ttl = cache_seconds(match, previous)
-    usable = previous and (previous.get('status') != 'unavailable' or previous.get('mappingVersion') == 3)
+    usable = previous and (previous.get('status') != 'unavailable' or previous.get('mappingVersion') == MAPPING_VERSION)
     if usable and fresh(previous, ttl) or not fetch_missing:
         return previous
     with LOCKS[int(key[:2], 16) % len(LOCKS)]:
         if path.exists():
             previous = read_json(path)
-            if fresh(previous, ttl) and (previous.get('status') != 'unavailable' or previous.get('mappingVersion') == 3):
+            if fresh(previous, ttl) and (previous.get('status') != 'unavailable' or previous.get('mappingVersion') == MAPPING_VERSION):
                 return previous
         try:
             event_id = resolve_event(match, league)
             if not event_id:
-                result = {'version': 1, 'mappingVersion': 3, 'league': league, 'matchId': match['id'], 'status': 'unavailable',
+                result = {'version': 1, 'mappingVersion': MAPPING_VERSION, 'league': league, 'matchId': match['id'], 'status': 'unavailable',
                           'updatedAt': now().isoformat(), 'lineups': {}, 'statistics': [], 'events': [],
                           'message': '暂未找到可核对的本场出场名单。'}
             else:
@@ -238,7 +241,7 @@ def refresh_details(league, limit=80):
             chosen[m['id']] = m
         if m.get('kickoff') and m.get('started') and not m.get('finished'):
             chosen[m['id']] = m
-    pending = [m for m in chosen.values() if not (cached := detail_for_match(m, catalogue, league, False)) or not fresh(cached, cache_seconds(m, cached)) or cached.get('status') == 'unavailable' and cached.get('mappingVersion') != 3]
+    pending = [m for m in chosen.values() if not (cached := detail_for_match(m, catalogue, league, False)) or not fresh(cached, cache_seconds(m, cached)) or cached.get('status') == 'unavailable' and cached.get('mappingVersion') != MAPPING_VERSION]
     pending.sort(key=lambda m: m.get('date', ''), reverse=True)
     def fetch_one(match):
         try:

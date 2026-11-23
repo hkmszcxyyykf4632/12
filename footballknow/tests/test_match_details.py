@@ -69,3 +69,46 @@ def test_same_birth_date_does_not_confuse_twin_names():
     assert not birth_matches(jack, WikiPage(title='Tyler Fletcher', extract='Tyler Fletcher (born 19 March 2007) is a footballer.'))
     assert birth_matches(jack, WikiPage(title='Jack Fletcher', extract='Jack Fletcher (born 19 March 2007) is a footballer.'))
 
+
+
+@pytest.mark.parametrize('source,stored', [
+    ('Deportivo', 'La Coruna'), ('Real Valladolid', 'Valladolid'),
+    ('Real Zaragoza', 'Zaragoza'), ('Sporting Gijón', 'Sp Gijon'),
+    ('Real Sociedad II', 'Sociedad B'),
+])
+def test_verified_spanish_source_aliases(source, stored):
+    assert canonical(source, 'laliga') == canonical(stored, 'laliga')
+    assert canonical(source, 'laliga') != canonical('Real Sociedad', 'laliga')
+
+
+def test_negative_match_cache_is_retried_after_mapping_upgrade(tmp_path, monkeypatch):
+    import hashlib
+    from datetime import datetime, timezone
+    from football import match_details as md
+    from football.files import publish, read_json
+    at = datetime(2026, 11, 23, 7, tzinfo=timezone.utc)
+    monkeypatch.setattr(md, 'now', lambda: at)
+    monkeypatch.setattr(md, 'PUBLIC', tmp_path / 'public')
+    monkeypatch.setattr(md, 'STATE', tmp_path / 'state')
+    match = dict(id='2026-11-21|Alaves|La Coruna', date='2026-11-21',
+                 home='Alaves', away='La Coruna', competition='西甲', finished=True)
+    key = hashlib.sha256(('laliga|' + match['id']).encode()).hexdigest()[:24]
+    path = md.PUBLIC / 'laliga/match-details' / (key + '.json')
+    publish(path, {'status': 'unavailable', 'mappingVersion': 3, 'updatedAt': at.isoformat()})
+    event = {'id': '401882806', 'date': '2026-11-21T13:00Z', 'competitions': [{'competitors': [
+        {'homeAway': 'home', 'team': {'displayName': 'Alavés'}},
+        {'homeAway': 'away', 'team': {'displayName': 'Deportivo'}}]}]}
+    calls = []
+    def fetch(url):
+        calls.append(url)
+        if 'scoreboard' in url:
+            return {'events': [event]}
+        return {'header': {'id': event['id'], 'competitions': [{'date': event['date'], 'competitors': [
+            {'id': '96', 'homeAway': 'home', 'team': {'displayName': 'Alavés'}},
+            {'id': '90', 'homeAway': 'away', 'team': {'displayName': 'Deportivo'}}]}]}}
+    monkeypatch.setattr(md, 'fetch_json', fetch)
+    result = md.detail_for_match(match, {'teams': []}, 'laliga')
+    assert result['eventId'] == '401882806' and result['status'] == 'pending'
+    assert len(calls) == 2 and read_json(path)['away'] == 'La Coruna'
+    md.detail_for_match(match, {'teams': []}, 'laliga')
+    assert len(calls) == 2
