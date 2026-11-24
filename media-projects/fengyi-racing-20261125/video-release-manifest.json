@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "path": "public/media/recommendation-videos.json",
+      "sha256": "528b9078f9d2dd5d9d2f981bc6f2d8f9e898e63d4a1701dcad405f2558512b0e",
+      "bytes": 311,
+      "previousSha256": "ce887295279be34dcf24a773378243fc157838735473c32599fae735677b077c"
+    },
+    {
+      "path": "public/media/videos/fengyi-racing-20261125-web-v1.mp4",
+      "sha256": "99ee393a8ffa19bf7dab62cdc1b1e334e2b547ae650c0a4b8ea87c2070e31a76",
+      "bytes": 2322434,
+      "previousSha256": null
+    },
+    {
+      "path": "public/media/videos/fengyi-racing-20261125-poster-v1.jpg",
+      "sha256": "54795e5566c6dc8792819b76675cc20317a91f562a446a75877c43230b4fc8e5",
+      "bytes": 151090,
+      "previousSha256": null
+    }
+  ]
+}

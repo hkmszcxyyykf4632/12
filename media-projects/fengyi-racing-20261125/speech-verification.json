@@ -1,0 +1,47 @@
+{
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 2.5,
+      "text": "喂,明晚有什麼好料啊?"
+    },
+    {
+      "start": 2.5,
+      "end": 4.94,
+      "text": "跑碼第第七場,八號孫善保啊"
+    },
+    {
+      "start": 4.94,
+      "end": 5.44,
+      "text": "買什麼?"
+    },
+    {
+      "start": 5.92,
+      "end": 6.96,
+      "text": "導演未知啊"
+    },
+    {
+      "start": 6.96,
+      "end": 8.4,
+      "text": "連影怎麼配啊?"
+    },
+    {
+      "start": 8.4,
+      "end": 10.4,
+      "text": "二八九連影未知連影啊"
+    },
+    {
+      "start": 10.4,
+      "end": 12.16,
+      "text": "為什麼買他啊?"
+    },
+    {
+      "start": 12.18,
+      "end": 14.78,
+      "text": "上張同成影兩碼未,又操一檔啊"
+    }
+  ],
+  "rms": 0.4054405987262726,
+  "peak": 1.46225905418396,
+  "note": "Automatic speech transcription and signal check; no speaker playback or human listening assessment."
+}

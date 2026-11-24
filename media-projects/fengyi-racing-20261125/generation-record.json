@@ -1,7 +1,7 @@
 {
   "videoId": "58170d39efae4c0ca7341dfd1f33ba29",
   "createdAt": "2026-11-24",
-  "status": "pending",
+  "status": "completed",
   "sourceReference": "../fengyi-recommendation-original-characters/locked-reference.png",
   "sourceSha256": "e36ef8a9ac47fea3b4babf15d06920b300fdb6ccaba75e337b92c50a971fbc28",
   "generationArgs": {
@@ -15,5 +15,20 @@
     "promptEnhancement": "quality",
     "prompt": "Create one continuous 15-second 16:9 animated conversational scene from the supplied first frame. Preserve EXACTLY these two supplied plush characters and their warm sage-green room, golden window lighting, wood table, fur textures, facial proportions, star-highlight eyes, little pointed teeth and accessories. Left is fluffy dark brown with a gold pendant, right is fluffy cream-white with small shiny silver wings. Do not replace or remodel either character. Medium two-shot, steady camera, almost imperceptible slow push-in, no cuts.\n\nLEFT asks in a friendly low male Mandarin voice. RIGHT replies in a warm natural female Mandarin voice. Both speak complete flowing phrases, never isolated syllables. Conversational timing, tiny turn-taking gaps, no overlapping voices. Right's final 啊 is gently audible in each answer. Only the speaking character moves its mouth. Listening character blinks and reacts naturally. Left makes a small curious palm-up gesture, right responds with a soft smile, one little nod, then a small thoughtful gesture when giving the reason. No constant bobbing, flapping or stiff repeated motions.\n\nExactly four exchanges, eight lines, in this order:\n0.10–1.95 LEFT: \"喂，明晚有什么好料啊？\"\n2.05–4.25 RIGHT: \"跑马地第七场，八号顺善宝啊。\"\n4.35–5.05 LEFT: \"买什么啊？\"\n5.15–6.15 RIGHT: \"独赢、位置啊。\"\n6.25–7.45 LEFT: \"连赢怎么配啊？\"\n7.55–9.70 RIGHT: \"一、八、九，连赢位置连赢啊。\"\n9.80–11.10 LEFT: \"为什么买它啊？\"\n11.20–14.35 RIGHT: \"上仗同程赢两马位，又抽一档啊。\"\n14.35–15.00 Both share a relaxed smile.\n\nThe exact horse name 顺善宝 is pronounced Shun Shan Bao. The clip presents a sports-analysis selection for the Happy Valley meeting on November 25, 2026, created the evening before. Do not claim guaranteed wins, invent extra dialogue or mention live prices. No music competing with voices, no captions, new typography, new logo, extra characters or props. Clear audible dialogue, human-like connected Mandarin phrasing, restrained room ambience. Use generic original voices, never imitate a real person."
   },
-  "sourceRace": "2026-11-25-HV-7"
+  "sourceRace": "2026-11-25-HV-7",
+  "delivery": {
+    "videoPage": "https://app.heygen.com/videos/58170d39efae4c0ca7341dfd1f33ba29",
+    "web": "/media/videos/fengyi-racing-20261125-web-v1.mp4",
+    "poster": "/media/videos/fengyi-racing-20261125-poster-v1.jpg",
+    "originalBytes": 12176453,
+    "webBytes": 2322434,
+    "durationSeconds": 15.251354,
+    "encoding": "H264 1120x640 + AAC 48kHz; faststart; loudness -16 LUFS / -1.5dBTP target",
+    "watermark": "Provider watermark preserved"
+  },
+  "verification": {
+    "visual": "Contact sheet inspected: approved two characters, room, and gestures retained.",
+    "speech": "Two independent offline unprompted transcriptions found all four exchanges. Small model transcribed the combination phonetically as E89 (yi-ba-jiu); specialist terms and horse name have ASR spelling errors.",
+    "scope": "Automatic speech/signal checks and silent frame inspection only; no human listening or audible playback."
+  }
 }
