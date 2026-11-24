@@ -1,0 +1,10 @@
+{
+  "files": [
+    {
+      "path": "public/recommendation-video.mjs",
+      "sha256": "e1b65cf28435a96d30a1cc61ebc550bc57ce0582f3acb9fe3393721e144b872f",
+      "bytes": 837,
+      "previousSha256": "5bdd3a171d44b057b2b8a4b84222b69961e1ba3f722e082646912357308ae571"
+    }
+  ]
+}

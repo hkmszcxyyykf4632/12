@@ -1,0 +1,12 @@
+{
+  "sourceVideo": "footballknow/public/media/videos/fengyi-recommendation-bologna-20261122-original-v3.mp4",
+  "sourceSha256": "69247c0d171cdd24548002d00c9380eed9179689a72dfad7beb2528e24f29ca2",
+  "audioFile": "approved-dialogue.m4a",
+  "audioSha256": "c5504576f70d71e2f243eb1ac86730f0a23a9c6d17fd1871b4dfe1370b81d891",
+  "sourceAudioPackets": 384,
+  "identicalAudioPackets": true,
+  "method": "Lossless AAC stream copy; original speed and pitch retained.",
+  "userDirectionDate": "2026-11-24",
+  "referencePolicy": "Use the user-approved Bologna video as the fixed voice and conversational-rhythm reference. Reuse unchanged recordings where their text matches. Do not substitute other TTS voices or the rejected experimental narration.",
+  "limitations": "The source audio was jointly generated with the video and has no reusable TTS voice ID. This extraction is not voice cloning and has not replaced the racing video audio. Team names, horse names, numbers and explanations must match each new recommendation."
+}
