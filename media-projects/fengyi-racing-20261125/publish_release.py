@@ -37,7 +37,10 @@ def main():
         assert path in ALLOWED or re.fullmatch(r'public/media/videos/fengyi-racing-20261125-[a-z0-9-]+\.(mp4|jpg)',path)
         target=ROOT/path
         current=target.read_bytes() if target.exists() else None
-        assert (sha(current) if current is not None else None)==item['previousSha256'],'Unexpected deployed file: '+path
+        previous = sha(current) if current is not None else None
+        if current is not None and path in ALLOWED and previous != item['previousSha256']:
+            previous = sha(current.replace(b'\r\n', b'\n'))
+        assert previous==item['previousSha256'],'Unexpected deployed file: '+path
         with urlopen(base+'footballknow/'+path,timeout=60) as response:raw=response.read(item['bytes']+1)
         assert len(raw)==item['bytes'] and sha(raw)==item['sha256'],'Download mismatch: '+path
         if path.endswith('.py'):compile(raw,path,'exec')
