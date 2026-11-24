@@ -1,0 +1,47 @@
+{
+  "url": "https://inwesting.shop/#/videos/1edbe78bf8154245ae46033233cdf629",
+  "downloads": [
+    {
+      "version": "web-v4",
+      "status": 200,
+      "bytes": 3373266,
+      "sha256": "ef82be410c587a6acf0e74d78302faa0b6e4c0f93c19cc634c80f76e20647e7e",
+      "firstResponseSeconds": 0.317,
+      "totalSeconds": 16.309,
+      "contentDisposition": "attachment",
+      "contentType": "video/mp4",
+      "cacheControl": "public, max-age=86400"
+    },
+    {
+      "version": "original-v3",
+      "status": 200,
+      "bytes": 8023125,
+      "sha256": "69247c0d171cdd24548002d00c9380eed9179689a72dfad7beb2528e24f29ca2",
+      "firstResponseSeconds": 0.357,
+      "totalSeconds": 1.159,
+      "contentDisposition": "attachment",
+      "contentType": "video/mp4",
+      "cacheControl": "public, max-age=86400"
+    }
+  ],
+  "catalogueCount": 2,
+  "rangeChecksPassed": true,
+  "normalPlaybackNotAttachment": true,
+  "publishedFrontendMatches": true,
+  "publishedRevision": "d2e615ab75f5d04acd699457dd4d94c2b89883ec",
+  "audiblePlaybackPerformed": false,
+  "browserDownload": {
+    "savedFile": "fengyi-recommendation-bologna-20261122-web-v4.mp4",
+    "bytes": 3373266,
+    "sha256": "ef82be410c587a6acf0e74d78302faa0b6e4c0f93c19cc634c80f76e20647e7e",
+    "buttonClickSucceeded": true
+  },
+  "browserPlayer": {
+    "paused": true,
+    "currentTime": 0,
+    "readyState": 4,
+    "duration": 12.333344,
+    "error": null,
+    "autoplay": false
+  }
+}
