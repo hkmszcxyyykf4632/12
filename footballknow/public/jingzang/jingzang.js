@@ -86,7 +86,7 @@ function loadRecitation(b){
 }
 function recitationPanel(){
   if(!recitation)return '';
-  return `<section class="wrap recitation" aria-label="一百零八遍诵读"><div class="recitation-head"><div><h2>一百零八遍诵读</h2><div class="recitation-count"><strong id="recitation-count">${recitation.completed}</strong><small> / 108 遍已完成</small></div></div><button class="ctl" id="recitation-reset">重新计数</button></div><progress id="recitation-progress" max="108" value="${recitation.completed}" aria-label="已完成诵读遍数"></progress><p id="recitation-status" role="status"></p><p>${recitation.id==='ysz'?'粤语原声逐遍计数，累计 108 遍自动停止；国语原片自带 108 遍，整段播完才确认完成。暂停可继续，停止或重新打开后从未完成片段的开头播放。':'读完整篇才计一遍，满 108 遍自动停止。进度保存在这台设备；重新打开时从下一遍的开头继续。点击中间句子可试听，不计为完整一遍。'}</p><p id="recitation-storage"></p><p>${recitation.id==='ysz'?'切换语言保留已完成次数。国语整段播放不估算中途遍数；跳过内容的片段不计数，结束后会重新播放。':'使用设备的国语或粤语合成语音。咒文音译字的读音依所选声音，唱诵版本可在「诵经影音」查找。'}</p></section>`;
+  return `<section class="wrap recitation" aria-label="一百零八遍诵读"><div class="recitation-head"><div><h2>一百零八遍诵读</h2><div class="recitation-count"><strong id="recitation-count">${recitation.completed}</strong><small> / 108 遍已完成</small></div></div><button class="ctl" id="recitation-reset">重新计数</button></div><progress id="recitation-progress" max="108" value="${recitation.completed}" aria-label="已完成诵读遍数"></progress><p id="recitation-status" role="status"></p><p>${recitation.id==='ysz'?'粤语原声逐遍计数，累计 108 遍自动停止；国语原片自带 108 遍，整段播完才确认完成。暂停可继续，停止或重新打开后从未完成片段的开头播放。':'读完整篇才计一遍，满 108 遍自动停止。进度保存在这台设备；重新打开时从下一遍的开头继续。开始朗读后可点选句子跳转；跳转后的片段不计为完整一遍。'}</p><p id="recitation-storage"></p><p>${recitation.id==='ysz'?'切换语言保留已完成次数。国语整段播放不估算中途遍数；跳过内容的片段不计数，结束后会重新播放。':'使用设备的国语或粤语合成语音。咒文音译字的读音依所选声音，唱诵版本可在「诵经影音」查找。'}</p></section>`;
 }
 function updateRecitation(){
   if(!recitation||!$('#recitation-count'))return;
@@ -389,7 +389,7 @@ function readerPart(b,ci){
   }).catch(()=>{if(location.hash===wanted)$('#app').innerHTML=`<p class="loading">《${esc(b.name)}》没有载入成功。<a href="${href(b,ci)}" id="retry">再试一次</a>，或<a href="#">回到经藏</a>。</p>`;});
 }
 function draw(b,ci){
-  stop();loadRecitation(b);
+  window.RecordedReading?.stop();stop();loadRecitation(b);
   state={book:b,ch:ci};store.set('last',{book:b.id,ch:ci});
   const c=b.ch[ci],notes=BOOKS.filter(x=>x.of===b.id),base=b.of&&byId[b.of];
   document.title=`${b.name} · ${c.t} · 经藏`;
@@ -400,11 +400,12 @@ function draw(b,ci){
       <span class="seg" role="group" aria-label="字号"><button class="ctl" data-size="-2" aria-label="缩小字号">小</button><button class="ctl" data-size="2" aria-label="放大字号">大</button></span>
       <button class="ctl" data-fan>${prefs.fan?'简体':'繁體'}</button>
       <button class="ctl" id="theme" aria-pressed="${prefs.theme==='dark'}">夜间</button></div></div>
-    ${window.RecordedReading?.panel(b.id,c)||''}${window.RecordedReading?.has(b.id)?'<details class="wrap device-reader"><summary>设备朗读 · 国语 / 粤语合成声音</summary>':''}<div class="player"><div class="wrap"><button class="ctl play" id="play">▶ 朗读</button><button class="ctl" id="stop" disabled>停止</button>
+    <details class="wrap reading-options" id="reading-options"><summary>朗读选项<span>需要听时展开，再按播放</span></summary>
+    ${window.RecordedReading?.panel(b.id,c)||''}${window.RecordedReading?.has(b.id)?'<details class="device-reader"><summary>设备朗读 · 国语 / 粤语合成声音</summary>':''}<div class="player"><div class="wrap"><button class="ctl play" id="play">▶ 朗读</button><button class="ctl" id="stop" disabled>停止</button>
       <label>语言<select class="ctl" id="lang"><option value="zh-CN">国语</option><option value="zh-HK">粤语</option></select></label>
       <label>声音<select class="ctl" id="voice" style="max-width:11em"></select></label>
       <label>语速<select class="ctl" id="rate">${[[0.6,'很慢'],[0.75,'慢'],[0.9,'稍慢'],[1,'正常'],[1.2,'快']].map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></label>
-      ${recitation?'':'<label><input type="checkbox" id="chain"> 读完自动接下一章</label>'}<span id="voice-note" role="status"></span></div></div>${window.RecordedReading?.has(b.id)?'</details>':''}
+      ${recitation?'':'<label><input type="checkbox" id="chain"> 读完自动接下一章</label>'}<span id="voice-note" role="status"></span></div></div>${window.RecordedReading?.has(b.id)?'</details>':''}</details>
     ${recitationPanel()}<div class="wrap layout"><article><h1>${esc(c.t)}</h1><p class="by">${esc(b.full)} · ${esc(b.by)}</p><div class="text${recitation?' chant-text':''}" id="text">${body(c,ci)}</div>
       ${c.v||recitation?'':`<p class="none">${b.cat==='注'?'这是古人的注解原文。':'这一章的白话还没有译出。'}${notes.length?`可以先参看古注：${notes.map(n=>`<a href="${href(n,0)}">${esc(n.name)}</a>`).join('、')}。`:''}</p>`}
       <div class="pager"><button class="ctl" id="prev2" ${ci?'':'disabled'}>← 上一章</button><button class="ctl" id="next2" ${ci<b.ch.length-1?'':'disabled'}>下一章 →</button></div></article>
@@ -442,7 +443,7 @@ function speak(){
   synth.speak(u);
 }
 function start(from,continuing=false){
-  if(!synth||!state.book||(recitation&&recitation.completed===recitation.target))return;
+  if(!$('#reading-options')?.open||!synth||!state.book||(recitation&&recitation.completed===recitation.target))return;
   window.RecordedReading?.stop();
   token++;speaking=false;synth.cancel();build();at=Number.isInteger(from)&&from>=0&&from<queue.length?from:0;
   if(recitation){recitation.recorded=false;recitation.program=1;if(!continuing)recitation.fullRound=at===0;}
@@ -462,7 +463,7 @@ function find(q){
 
 document.addEventListener('click',e=>{
   const t=e.target.closest('button,.s');if(!t||!state.book)return;
-  if(t.classList.contains('s')){build();const i=queue.indexOf(t);if(i>=0)start(i);return;}
+  if(t.classList.contains('s')){if(speaking&&$('#reading-options')?.open){build();const i=queue.indexOf(t);if(i>=0)start(i);}return;}
   if(t.id==='prev'||t.id==='prev2')go(state.ch-1);
   else if(t.id==='next'||t.id==='next2')go(state.ch+1);
   else if(t.id==='play'){if(speaking)pause();else{const continuing=at<queue.length&&$('#play').textContent.includes('继续');start(continuing?at:0,continuing);}}
@@ -474,6 +475,10 @@ document.addEventListener('click',e=>{
   else if(t.dataset.go)go(Number(t.dataset.go));
   else if(t.dataset.del){const base=state.book.of?byId[state.book.of]:state.book,list=store.get('media-'+base.id,[]);list.splice(Number(t.dataset.del),1);store.set('media-'+base.id,list);reader(state.book,state.ch);}
 });
+document.addEventListener('toggle',e=>{
+  if(e.target.id==='reading-options'&&!e.target.open){window.RecordedReading?.stop();stop();}
+  else if(e.target.classList?.contains('device-reader')&&!e.target.open)stop();
+},true);
 document.addEventListener('change',e=>{
   if(e.target.id==='chapter')go(Number(e.target.value));
   else if(e.target.id==='lang'){prefs.lang=e.target.value;applyPrefs();fillVoices();voiceNote();if(speaking)start(at,true);}

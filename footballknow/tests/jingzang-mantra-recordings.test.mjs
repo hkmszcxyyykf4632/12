@@ -29,7 +29,7 @@ async function open(completed=0){
   w.YT={Player};w.eval(recordings);w.eval(reader);await tick();await tick();
   const $=s=>w.document.querySelector(s);
   return {w,dom,$,instances,count:()=>Number($('#recitation-count').textContent),
-    async play(){$('[data-recording-play]').click();await tick();instances.at(-1)?.ready();},
+    async play(){$('#reading-options').open=true;await tick();$('[data-recording-play]').click();await tick();instances.at(-1)?.ready();},
     change(selector,value){$(selector).value=value;$(selector).dispatchEvent(new w.Event('change',{bubbles:true}));},
     stepClock(){clock+=250;timer?.();},
   };
@@ -89,4 +89,13 @@ test('saved completion does not autoplay, and a blocked player can be started di
   const h=await open(108);t.after(()=>h.dom.window.close());assert.equal(h.instances.length,0);await h.play();assert.equal(h.instances.length,0);
   h.$('#recitation-reset').click();await h.play();const p=h.instances[0];p.options.events.onAutoplayBlocked();
   assert.match(h.$('[data-recording-note]').textContent,/视频中的播放键/);assert.equal(h.count(),0);
+});
+
+test('collapsing reading options stops original audio and discards pending playback',async t=>{
+ const h=await open();t.after(()=>h.dom.window.close());
+ assert.equal(h.$('#reading-options').open,false);h.$('[data-recording-play]').click();await tick();assert.equal(h.instances.length,0);
+ await h.play();const old=h.instances.at(-1);old.step();h.$('#reading-options').open=false;await tick();assert.equal(old.destroyed,true);assert.equal(h.count(),0);
+ h.$('#reading-options').open=true;await tick();assert.equal(h.instances.length,1);
+ const YT=h.w.YT;delete h.w.YT;h.$('[data-recording-play]').click();await tick();
+ h.$('#reading-options').open=false;await tick();h.w.YT=YT;h.w.onYouTubeIframeAPIReady();await tick();assert.equal(h.instances.length,1,'late player readiness must remain silent');
 });

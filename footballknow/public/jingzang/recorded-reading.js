@@ -37,7 +37,7 @@
     return apiPromise;
   }
   async function play(){
-    const r=root();if(!r)return;const entry=catalogue[r.dataset.book]?.[Number(r.querySelector('[data-recording-source]').value)];if(!entry)return;
+    const r=root();if(!r)return;const gate=r.closest('#reading-options');if(gate&&!gate.open)return;const entry=catalogue[r.dataset.book]?.[Number(r.querySelector('[data-recording-source]').value)];if(!entry)return;
     stop();window.dispatchEvent(new Event('jingzang:recorded-play'));if(entry.repeat&&window.JingzangRecitation?.getCompleted()>=entry.repeat){note('已完成 108 遍，点击「重新计数」开始下一轮。');return;}pauseRequested=false;active=entry;desiredRate=Number(r.querySelector('[data-recording-rate]').value);const ticket=epoch,box=r.querySelector('[data-recording-host]');
     box.hidden=false;r.querySelector('[data-recording-play]').disabled=true;note('正在准备法师原版…');
     const valid=()=>ticket===epoch&&r===root();

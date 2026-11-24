@@ -76,3 +76,16 @@ test('Medicine Buddha ending retains the sutra ending followed by the verified d
   assert.ok(ending>=0&&appendix>ending);
   assert.deepEqual(paragraphs.slice(-4),['愿消三障诸烦恼，','愿得智慧真明了。','普愿罪障悉消除，','世世常行菩萨道。']);
 });
+
+test('Medicine Buddha recitation includes the verified middle passages in source order',async()=>{
+  const parts=JSON.parse(await readFile(new URL('books/ysj.json',base),'utf8'));
+  const text=parts.flatMap(part=>part.p).join('\n');
+  const markers=['文殊师利菩萨、观世音菩萨、得大势菩萨、无尽意菩萨、宝檀华菩萨、药王菩萨、药上菩萨、弥勒菩萨',
+    '彼药师琉璃光如来得菩提时','南谟薄伽伐帝','尔时，光中说此咒已','咒一百八遍','常持此咒，勿令废忘',
+    '晨嚼齿木','尔时，曼殊室利童子白佛言'];
+  let previous=-1;
+  for(const marker of markers){const position=text.indexOf(marker);assert.ok(position>previous,marker);assert.equal(text.split(marker).length,2,marker);previous=position;}
+  const catalogue=JSON.parse(await readFile(new URL('index.json',base),'utf8'));
+  const book=catalogue.find(book=>book.id==='ysj');
+  assert.match(book.src,/课诵版本/);assert.match(book.src,/T0450/);assert.match(book.sourceUrl,/J19nB044/);
+});

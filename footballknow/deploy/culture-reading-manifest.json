@@ -1,0 +1,35 @@
+{
+  "previousRevision": "62356f13f669bdc94b1cd5e84acb1afef5ad6652",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "034e0894032c5dfb47e7fcc20845161c9d372b57cdf12006f24ab52e2cc66217",
+      "bytes": 20185,
+      "previousSha256": "16c9e69728d3a6a4fe265b1857d5435def19e85e139055caee126c692f88b663"
+    },
+    {
+      "path": "index.json",
+      "sha256": "d8371ae6585f0a83accc2de52d02534a12fdaf3c68a397cfe5bb69861618d458",
+      "bytes": 218907,
+      "previousSha256": "011278ca4da0f5009608bce01dde41bee364822bc1413a4de2dd0bf1df5bb0a1"
+    },
+    {
+      "path": "jingzang.js",
+      "sha256": "cd76e10c6386993a4d0905aacfcca7a7da433fe2673af3ac1a50db9887890a49",
+      "bytes": 81270,
+      "previousSha256": "8964769643b006ce8a85845804e19f181eaac900d0caceb435f37255393a2236"
+    },
+    {
+      "path": "recorded-reading.js",
+      "sha256": "1a618b73bc24593c32c5b70cb8ac032d410f3a16a5fd12781a826782c12c9099",
+      "bytes": 13650,
+      "previousSha256": "f2037315ba597c4044750476f3a426514abca46ad552085d0e735a31446a39ff"
+    },
+    {
+      "path": "books/ysj.json",
+      "sha256": "ea6b5ca98bec7622072d90fb13cdf2073a8d61951e4af0f862cd6f6a4068631b",
+      "bytes": 19878,
+      "previousSha256": "75206a3a1e52b2d7cd292e8cfef600a1b88cffb4b16c8c05c466912f2ad2519f"
+    }
+  ]
+}

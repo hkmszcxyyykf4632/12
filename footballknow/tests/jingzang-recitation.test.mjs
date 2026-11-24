@@ -26,7 +26,7 @@ async function open(id='ysz',options={}){
   assert.ok(w.document.querySelector('#play'),'reader loaded');
   const $=s=>w.document.querySelector(s);
   return {dom,w,$,spoken,get current(){return current;},setVoices(v){voices=v;w.speechSynthesis.onvoiceschanged?.();},count:()=>Number($('#recitation-count')?.textContent),
-    click(s){$(s).click();},change(s,value){$(s).value=value;$(s).dispatchEvent(new w.Event('change',{bubbles:true}));},
+    click(s){if(s==='#play')$('#reading-options').open=true;$(s).click();},change(s,value){$(s).value=value;$(s).dispatchEvent(new w.Event('change',{bubbles:true}));},
     end(n=1){for(let i=0;i<n;i++){assert.ok(current,'an utterance is active');const done=current;current=null;done.onend();}},
     async navigate(id){w.location.hash=`#b-${id}-1`;await turn();await turn();},
   };
@@ -59,7 +59,7 @@ test('pause and language changes keep completed rounds and reject canceled callb
 
 test('partial preview, errors, stop and navigation do not falsely finish a reading',async t=>{
   const h=await open();t.after(()=>h.dom.window.close());
-  h.w.document.querySelectorAll('#text .s')[7].click();h.end(7);assert.equal(h.count(),0);assert.equal(h.current,null);
+  h.click('#play');h.w.document.querySelectorAll('#text .s')[7].click();h.end(7);assert.equal(h.count(),0);assert.equal(h.current,null);
   h.click('#play');h.end(13);const interrupted=h.current;interrupted.onerror({error:'network'});interrupted.onend();assert.equal(h.count(),0);assert.equal(h.current,null);
   h.click('#play');assert.equal(h.current.text,texts.ysz[0].p.at(-1));h.end();assert.equal(h.count(),1);
   h.end(4);const stopped=h.current;h.click('#stop');stopped.onend();assert.equal(h.count(),1);h.click('#play');assert.equal(h.current.text,texts.ysz[0].p[0]);
@@ -95,3 +95,15 @@ test('ordinary books retain single-reading controls without repetition',async t=
   const h=await open('xj',{saved:{'jz-prefs':{chain:false}}});t.after(()=>h.dom.window.close());assert.equal(h.$('#recitation-count'),null);assert.ok(h.$('#chain'));
   const phrases=h.w.document.querySelectorAll('#text .s[data-k="o"]').length;h.click('#play');h.end(phrases);assert.equal(h.current,null);assert.equal(h.spoken.length,phrases);
 });
+
+ test('reading starts silent, text taps stay silent, and closing cancels speech',async t=>{
+  const h=await open();t.after(()=>h.dom.window.close());
+  assert.equal(h.$('#reading-options').open,false);
+  h.$('#text .s').click();h.$('#play').click();assert.equal(h.spoken.length,0);
+  h.$('#reading-options').open=true;await turn();h.$('#text .s').click();assert.equal(h.spoken.length,0,'expanding alone does not enable tap-to-play');
+  h.$('#play').click();assert.ok(h.current);const old=h.current;
+  h.$('#reading-options').open=false;await turn();assert.equal(h.current,null);old.onend();assert.equal(h.current,null);assert.equal(h.count(),0);
+  h.$('#text .s').click();assert.equal(h.current,null);
+  h.$('#reading-options').open=true;await turn();assert.equal(h.current,null,'reopening never resumes automatically');
+  await h.navigate('xj');assert.equal(h.$('#reading-options').open,false);
+ });

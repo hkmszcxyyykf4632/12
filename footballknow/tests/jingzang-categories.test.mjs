@@ -14,7 +14,8 @@ async function open(hash='#'){
   const dom=new JSDOM(html,{url:'https://culture.test/'+hash,runScripts:'outside-only'}),w=dom.window;
   w.scrollTo=()=>{};w.jingzangCountVisit=()=>{};
   w.localStorage.setItem('jz-last',JSON.stringify({book:'xj',ch:0}));
-  w.fetch=async path=>({ok:true,json:async()=>path==='./videos.json'?{}:JSON.parse(await readFile(new URL(path,root),'utf8'))});
+  const fixtures={'./index.json':index,'./books/lyj.json':chapters,'./videos.json':{}};
+  w.fetch=async path=>({ok:true,json:async()=>path in fixtures?structuredClone(fixtures[path]):JSON.parse(await readFile(new URL(path,root),'utf8'))});
   w.eval(script);await tick();await tick();
   return {w,dom,$:selector=>w.document.querySelector(selector),async go(hash){w.location.hash=hash;await tick();await tick();}};
 }

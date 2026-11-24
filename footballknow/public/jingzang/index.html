@@ -139,8 +139,11 @@ article .by{color:var(--soft);font-size:13px;margin:0 0 22px}
 .text p{margin:0 0 .9em;text-align:justify}
 .text h3{font:600 1.05em/1.5 var(--song);margin:1.6em 0 .5em;color:var(--azure)}
 .text .tag{color:var(--seal);font-weight:600}
-.text .s{cursor:pointer;border-radius:3px}
-.text .s:hover{background:color-mix(in srgb,var(--mark) 45%,transparent)}
+.reading-options{margin-top:18px;margin-bottom:18px;border:1px solid var(--line);border-radius:8px;background:var(--sheet)}
+.reading-options>summary{cursor:pointer;padding:13px 0;font-weight:600;color:var(--azure)}
+.reading-options>summary span{display:inline-block;margin-left:12px;font-size:12px;font-weight:400;color:var(--soft)}
+.reading-options .wrap{padding-left:0;padding-right:0}.reading-options .recorded-reading{border:0;border-top:1px solid var(--line);margin:0;padding:16px 0}
+.text .s{cursor:text;border-radius:3px}
 .text .s.now{background:var(--mark)}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:26px;border-bottom:1px dashed var(--line);padding:6px 0 2px}
 .pair .plain,.plain-only p{font-family:var(--hei);font-size:calc(var(--size) - 3px);line-height:1.95;color:var(--ink)}
