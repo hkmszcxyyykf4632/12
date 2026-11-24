@@ -9,8 +9,15 @@ footballknow.art, www.footballknow.art, inwesting.shop, www.inwesting.shop {
     }
     @api path /api/*
     header @api Cache-Control "no-store"
-    @static not path /api/*
+    @static not path /api/* /media/videos/*
     header @static Cache-Control "no-cache"
+    @video path /media/videos/*
+    header @video Cache-Control "public, max-age=86400"
+    @video_download {
+        path /media/videos/*.mp4 /media/videos/*.webm
+        query download=1
+    }
+    header @video_download Content-Disposition "attachment"
     request_body {
         max_size 64KB
     }

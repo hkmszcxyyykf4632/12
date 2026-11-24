@@ -214,3 +214,28 @@ def test_video_admin_drafts_and_publication(client, tmp_path, monkeypatch):
     assert client.put('/api/admin/videos/' + ident, json=draft).status_code == 200
     assert client.get('/api/videos').json()['videos'] == []
     assert client.post('/api/admin/videos', json={**draft, 'url': 'javascript:alert(1)'}).status_code == 422
+
+
+def test_video_optimized_playback_and_legacy_edits(client, tmp_path, monkeypatch):
+    from football import videos
+    monkeypatch.setattr(videos, 'PATH', tmp_path / 'videos.json')
+    sign_in(client)
+    original = 'https://inwesting.shop/media/videos/original.mp4'
+    stream = 'https://inwesting.shop/media/videos/web.mp4'
+    value = {'title': 'Sample', 'url': original, 'streamUrl': stream, 'published': True}
+    saved = client.post('/api/admin/videos', json=value).json()
+    ident = saved['id']
+    row = client.get('/api/videos').json()['videos'][0]
+    assert row['url'] == original and row['playback'] == {'kind': 'file', 'url': stream}
+    legacy = {key: value[key] for key in ('title', 'url', 'published')}
+    edited = client.put('/api/admin/videos/' + ident, json={**legacy, 'title': 'Renamed'}).json()
+    assert edited['streamUrl'] == stream and edited['playback']['url'] == stream
+    assert edited['createdAt'] == saved['createdAt'] and edited['publishedAt'] == saved['publishedAt']
+    for invalid in ('http://example.com/a.mp4', 'https://youtube.com/watch?v=abcdefghijk', 'https://localhost/a.mp4'):
+        assert client.put('/api/admin/videos/' + ident, json={**value, 'streamUrl': invalid}).status_code == 422
+    changed = client.put('/api/admin/videos/' + ident, json={**legacy, 'url': 'https://example.com/new.mp4'}).json()
+    assert changed['streamUrl'] == '' and changed['playback']['url'] == changed['url']
+    client.put('/api/admin/videos/' + ident, json=value)
+    cleared = client.put('/api/admin/videos/' + ident, json={**value, 'streamUrl': '', 'published': False}).json()
+    assert cleared['playback']['url'] == original
+    assert client.get('/api/videos').json()['videos'] == []

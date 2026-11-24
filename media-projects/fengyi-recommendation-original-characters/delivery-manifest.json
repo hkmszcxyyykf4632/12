@@ -1,0 +1,37 @@
+{
+  "videoId": "1edbe78bf8154245ae46033233cdf629",
+  "originalUrl": "https://inwesting.shop/media/videos/fengyi-recommendation-bologna-20261122-original-v3.mp4",
+  "streamUrl": "https://inwesting.shop/media/videos/fengyi-recommendation-bologna-20261122-web-v4.mp4",
+  "files": [
+    {
+      "path": "football/videos.py",
+      "bytes": 4162,
+      "sha256": "970bafdcde71114c2c4f1f8ddf80aa3f1ecbcd3fad375ba165230084c1992e9c",
+      "previousSha256": "d12310acc99bd97c9c97f13f635f5f573a114cb3556d9c7220ec473e665dcc1f"
+    },
+    {
+      "path": "public/videos-page.mjs",
+      "bytes": 7869,
+      "sha256": "03aa067ccc90857696add2ea71e89d322e5eb8ef5ec161a1f8ed65c48d5fc074",
+      "previousSha256": "dfb7f0a6511940dba8b880bfa06a3bd888f32f6cd8ec971347992ae84d0d8372"
+    },
+    {
+      "path": "public/video-media.mjs",
+      "bytes": 862,
+      "sha256": "14459f1b505121ae5275834874ff266a5a717e25aad14314ba7b603362e6b790",
+      "previousSha256": null
+    },
+    {
+      "path": "deploy/Caddyfile",
+      "bytes": 1468,
+      "sha256": "0de064581c86030fa5d51d2036f2657e474a0204acb328c7eeac0c76a2a21e9b",
+      "previousSha256": "5f4da4f3f86025fd9dfdfbee928aab30f7270be5f2bd0ede932f9751932549e9"
+    },
+    {
+      "path": "public/media/videos/fengyi-recommendation-bologna-20261122-web-v4.mp4",
+      "bytes": 3373266,
+      "sha256": "ef82be410c587a6acf0e74d78302faa0b6e4c0f93c19cc634c80f76e20647e7e",
+      "previousSha256": null
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "files": [
+    {
+      "file": "source-approved.mp4",
+      "bytes": 8023125,
+      "sha256": "69247c0d171cdd24548002d00c9380eed9179689a72dfad7beb2528e24f29ca2",
+      "duration": "12.333344",
+      "streams": [
+        {
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 1344,
+          "height": 768,
+          "r_frame_rate": "24/1",
+          "sample_rate": null,
+          "channels": null,
+          "bit_rate": "5100013"
+        },
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "width": null,
+          "height": null,
+          "r_frame_rate": "0/0",
+          "sample_rate": "32000",
+          "channels": 2,
+          "bit_rate": "131510"
+        }
+      ],
+      "decodeExit": 0,
+      "decodeErrors": "",
+      "audioHash": "SHA256=2810778a2ff10fc5e207dded0f52c52a548477110f26a699bf35c8fd3433069e"
+    },
+    {
+      "file": "fengyi-recommendation-bologna-20261122-web-v4.mp4",
+      "bytes": 3373266,
+      "sha256": "ef82be410c587a6acf0e74d78302faa0b6e4c0f93c19cc634c80f76e20647e7e",
+      "duration": "12.333344",
+      "streams": [
+        {
+          "codec_type": "video",
+          "codec_name": "h264",
+          "width": 1344,
+          "height": 768,
+          "r_frame_rate": "24/1",
+          "sample_rate": null,
+          "channels": null,
+          "bit_rate": "2063378"
+        },
+        {
+          "codec_type": "audio",
+          "codec_name": "aac",
+          "width": null,
+          "height": null,
+          "r_frame_rate": "0/0",
+          "sample_rate": "32000",
+          "channels": 2,
+          "bit_rate": "131510"
+        }
+      ],
+      "decodeExit": 0,
+      "decodeErrors": "",
+      "audioHash": "SHA256=2810778a2ff10fc5e207dded0f52c52a548477110f26a699bf35c8fd3433069e",
+      "h264Level": 32
+    }
+  ],
+  "savedPercent": 58.0,
+  "originalAudioUnchanged": true,
+  "boxes": [
+    {
+      "type": "ftyp",
+      "offset": 0,
+      "bytes": 32
+    },
+    {
+      "type": "moov",
+      "offset": 32,
+      "bytes": 10923
+    },
+    {
+      "type": "free",
+      "offset": 10955,
+      "bytes": 8
+    },
+    {
+      "type": "mdat",
+      "offset": 10963,
+      "bytes": 3362303
+    }
+  ],
+  "fastStart": true,
+  "noAudiblePlaybackPerformed": true
+}

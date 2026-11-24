@@ -45,6 +45,7 @@ class VideoInput(BaseModel):
     description: str = Field(default='', max_length=3000)
     category: Literal['football', 'racing', 'stocks', 'markets', 'other'] = 'other'
     url: str = Field(min_length=8, max_length=2000)
+    streamUrl: str = Field(default='', max_length=2000)
     poster: str = Field(default='', max_length=2000)
     published: bool = False
 
@@ -62,6 +63,14 @@ class VideoInput(BaseModel):
         if info.field_name == 'url' and not value:
             raise ValueError('视频链接不能为空')
         return public_url(value)
+
+    @field_validator('streamUrl')
+    @classmethod
+    def check_stream_url(cls, value):
+        value = public_url(value.strip())
+        if value and playback(value)['kind'] != 'file':
+            raise ValueError('网页播放地址须为 MP4 或 WebM 文件。')
+        return value
 
 
 def catalogue(admin=False):
@@ -84,9 +93,12 @@ def save(value, ident=None):
         if not ident and len(rows) >= 1000:
             raise ValueError('视频目录已达到 1000 条')
         stamp = datetime.now(timezone.utc).isoformat()
-        row = {**value.model_dump(), 'id': ident or uuid4().hex, 'createdAt': old['createdAt'] if old else stamp,
+        stream = value.streamUrl
+        if old and old['url'] == value.url and 'streamUrl' not in value.model_fields_set:
+            stream = old.get('streamUrl', '')
+        row = {**value.model_dump(), 'streamUrl': stream, 'id': ident or uuid4().hex, 'createdAt': old['createdAt'] if old else stamp,
                'updatedAt': stamp, 'publishedAt': (old or {}).get('publishedAt') or (stamp if value.published else None),
-               'playback': playback(value.url)}
+               'playback': playback(stream or value.url)}
         rows = [r for r in rows if r['id'] != row['id']] + [row]
         publish(PATH, {'version': 1, 'updatedAt': stamp, 'videos': rows})
         return row
