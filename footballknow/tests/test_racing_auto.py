@@ -374,3 +374,26 @@ def test_fact_amendment_database_rejects_update_and_delete(cards):
         with pytest.raises(sqlite3.IntegrityError, match='append-only'):
             db.execute('DELETE FROM fact_amendments WHERE id=?', (correction['id'],))
     assert analysis.public_status(ident)['reports']['pre']['amendments'] == [correction]
+
+
+def test_reviewed_pre_race_content_keeps_sources_and_never_calls_provider(cards):
+    rows, calls = cards
+    horse = rows[0]['entries'][0]['id']
+    prepared = {'summary': ['已核对的赛前选择。', '资料与风险说明。'], 'pick': horse, 'shortlist': [horse],
+                'details': [{'title': '依据', 'text': '来自封存前的马匹资料。'}]}
+    first = analysis.generate(rows[0]['id'], 'pre', prepared_content=prepared, prepared_by='Codex reviewed')['reports']['pre']
+    assert calls == [] and first['model'] == 'Codex reviewed'
+    assert first['profileCoverage'] == {'available': 1, 'total': 1}
+    assert first['snapshotHash'] and first['issuedAt'] == AT.isoformat()
+    assert analysis.generate(rows[0]['id'], 'pre')['reports']['pre'] == first and calls == []
+
+
+def test_reviewed_content_still_rejects_unavailable_runner_and_missing_attribution(cards):
+    rows, calls = cards
+    prepared = {'summary': ['选择。', '依据。'], 'pick': 'not-entered', 'shortlist': ['not-entered'],
+                'details': [{'title': '依据', 'text': '测试'}]}
+    with pytest.raises(ValueError, match='来源'):
+        analysis.generate(rows[0]['id'], 'pre', prepared_content=prepared)
+    with pytest.raises(ValueError, match='名单'):
+        analysis.generate(rows[0]['id'], 'pre', prepared_content=prepared, prepared_by='Codex reviewed')
+    assert calls == []

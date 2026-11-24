@@ -2,13 +2,14 @@
 import json
 import sqlite3
 from contextlib import closing
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pydantic import JsonValue
 from .files import STATE
 from .recommendation_candidates import Candidate, football_candidates, racing_candidates
 from .football_statistics import read_statistics as football_statistics
 from .racing_statistics import read_statistics as racing_statistics
 
+HONG_KONG = timezone(timedelta(hours=8))
 METHOD = 'evidence-priority-v1'
 METHOD_TEXT = ('足球每个联赛及欧冠每轮最多三场，赛马每个赛马日一场。只筛选尚未开赛且已保存预测的比赛。'
                '足球比较往绩样本、正式首发、泊松基线对亚洲盘的支持及比分一致性；赛马比较资料覆盖、首选报价的市场支持、晨操证据和报价时效。'
@@ -31,6 +32,8 @@ def publish_candidates(candidates: list[Candidate], at: datetime) -> int:
     count = 0
     groups: dict[tuple[str, str], list[Candidate]] = {}
     for c in candidates:
+        if c.domain == 'racing' and (c.kickoff.astimezone(HONG_KONG).date() - at.astimezone(HONG_KONG).date()).days > 1:
+            continue
         if c.issuedAt <= at < c.kickoff and c.receipt.get('status') == 'pending':
             groups.setdefault((c.domain, c.group), []).append(c)
     with closing(sqlite3.connect(STATE / 'recommendations.sqlite3', timeout=15)) as db:
@@ -46,8 +49,8 @@ def publish_candidates(candidates: list[Candidate], at: datetime) -> int:
                 options = sorted((c for c in options if c.event not in existing), key=lambda c: (-c.priority, c.kickoff, c.event))
                 if not options:
                     continue
-                # Give other pre-match reports time to arrive before filling the first batch.
-                if not existing and min(c.kickoff for c in options).timestamp() - at.timestamp() > 7200:
+                # Football waits for comparable reports; racing opens on the previous Hong Kong calendar day.
+                if domain == 'football' and not existing and min(c.kickoff for c in options).timestamp() - at.timestamp() > 7200:
                     continue
                 for c in options[:vacancies]:
                     count += db.execute('INSERT OR IGNORE INTO selections VALUES(?,?,?,?,?)',

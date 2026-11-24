@@ -87,3 +87,25 @@ def test_api_accepts_object_and_never_exposes_provider_error(monkeypatch):
     response=client.post('/api/ask',json={'question':'测试','history':[]},headers={'Origin':'http://testserver'})
     assert response.status_code==502 and 'private-provider-detail' not in response.text
     assert client.post('/api/ask',json={'question':'a'*1501},headers={'Origin':'http://testserver'}).status_code==422
+
+
+def test_racing_opens_previous_hong_kong_day_not_rolling_24_hours(tmp_path, monkeypatch):
+    monkeypatch.setattr(rec, 'STATE', tmp_path)
+    kickoff = datetime(2026, 11, 25, 14, 50, tzinfo=timezone.utc)
+    c = candidate('2026-11-25-HV-9', 1, 'racing', '2026-11-25').model_copy(update={
+        'issuedAt': datetime(2026, 11, 23, 12, tzinfo=timezone.utc), 'kickoff': kickoff})
+    assert rec.publish_candidates([c], datetime(2026, 11, 23, 15, 59, tzinfo=timezone.utc)) == 0
+    assert rec.publish_candidates([c], datetime(2026, 11, 23, 16, tzinfo=timezone.utc)) == 1
+    assert rec.publish_candidates([c.model_copy(update={'event': 'replacement', 'priority': 999})],
+        datetime(2026, 11, 24, 12, tzinfo=timezone.utc)) == 0
+
+
+def test_racing_day_before_never_uses_future_or_finished_reports(tmp_path, monkeypatch):
+    monkeypatch.setattr(rec, 'STATE', tmp_path)
+    at = datetime(2026, 11, 24, 12, tzinfo=timezone.utc)
+    c = candidate('tomorrow', 1, 'racing', '2026-11-25').model_copy(update={
+        'issuedAt': at + timedelta(minutes=1), 'kickoff': at + timedelta(hours=26)})
+    assert rec.publish_candidates([c], at) == 0
+    assert rec.publish_candidates([c.model_copy(update={'issuedAt': at-timedelta(hours=1), 'receipt': {'status': 'settled'}})], at) == 0
+    assert rec.publish_candidates([c.model_copy(update={'issuedAt': at-timedelta(hours=1), 'kickoff': at})], at) == 0
+    assert rec.publish_candidates([c.model_copy(update={'issuedAt': at-timedelta(hours=1)})], at) == 1

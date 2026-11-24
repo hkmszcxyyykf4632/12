@@ -1,0 +1,44 @@
+{
+  "files": [
+    {
+      "path": "football/recommendations.py",
+      "sha256": "aef546d14671544276aadd2358e51f470047d1468a7bb95cc21e8eaafa5824b8",
+      "bytes": 5069,
+      "previousSha256": "d2494b37a6321fb318e5fc005a178c2fedcd68f9e89f4aee0cac181c9737674d"
+    },
+    {
+      "path": "football/racing_analysis.py",
+      "sha256": "23080d0da60d7475c4ee935afaf6f1a1ef0c9fa202fe93bf726c562783427af7",
+      "bytes": 29543,
+      "previousSha256": "00b4969be297c3e287212db01222f93d14f1c7097cb615b2720e36abdbd18649"
+    },
+    {
+      "path": "public/recommendations.mjs",
+      "sha256": "348ce97c9a91d8c41d72a0ef0ed0b94b64139b35541e4ca18d025352e6f31ec2",
+      "bytes": 7663,
+      "previousSha256": "d44ddc0a7bc33baa9f728ac56bf16879caa4be745433ca523c73ecba60ee3938"
+    },
+    {
+      "path": "public/recommendation-video.mjs",
+      "sha256": "5bdd3a171d44b057b2b8a4b84222b69961e1ba3f722e082646912357308ae571",
+      "bytes": 880,
+      "previousSha256": null
+    },
+    {
+      "path": "public/editorial.css",
+      "sha256": "04b6e181efdd53f71cffe1adae49730780d0a70a46fc268f48c4b7c21fadc699",
+      "bytes": 6077,
+      "previousSha256": "46f8329c8640070c5bb9237e21aedda5c075d1b9af49df4efac64b24fcd5aa01"
+    },
+    {
+      "path": "public/media/recommendation-videos.json",
+      "sha256": "dee73b87842cd944fb16546aedd40ad3cfb4f6b4973f4c2c8634a909661e05ee",
+      "bytes": 15,
+      "previousSha256": null
+    }
+  ],
+  "forecast": {
+    "reviewed-forecast.json": "bfee3254f69bee5cf7b9cfd34e948dd550539f48caf711cbded57b53e3c94ba1",
+    "publish_forecast.py": "68a41d01c27e877c33676f97f0134a8f72277b68e4d757928299ac4ee032ccec"
+  }
+}

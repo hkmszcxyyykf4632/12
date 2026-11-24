@@ -259,7 +259,11 @@ def append_fact_amendment(ident, reason):
     return public_status(ident)
 
 
-def generate(ident, phase: Literal['pre', 'post']):
+def generate(ident, phase: Literal['pre', 'post'], *, prepared_content=None, prepared_by=None):
+    if prepared_content is not None and (phase != 'pre' or not isinstance(prepared_by, str) or not prepared_by.strip() or len(prepared_by) > 120):
+        raise ValueError('已核对稿件仅用于赛前发布，并须注明分析来源。')
+    if prepared_content is None and prepared_by is not None:
+        raise ValueError('请同时提供已核对稿件。')
     if not LOCK.acquire(blocking=False):
         raise ValueError('正在生成赛马分析，请稍后再试。')
     try:
@@ -308,7 +312,8 @@ def generate(ident, phase: Literal['pre', 'post']):
                    'paceInstructions': '步速模拟是本站按往绩构建的情景假设，不是官方预测或实测速度。结合前领马数量、档位、近期沿途走位与末段追前位数，说明首选和关注马在偏慢、正常、偏快步速下的受惠条件及风险。资料不足的马不补造跑法。赛后仅在hasPregame为真时对照原模拟；retrospective是事后按赛前往绩重建，不作为曾发布预测或命中率。摘要简短，跑法依据和情景差异放入详情。',
                    'profileCoverage': {'available': coverage, 'total': len(horses)},
                    'priorPrediction': prior['reports'].get('pre'), 'historicalEvaluation': prior['evaluation']}
-        content = model_report(context, race, phase)
+        content = (validate_factual_claims(validate_content(prepared_content, race, phase), context)
+                   if prepared_content is not None else model_report(context, race, phase))
         # A model call can finish after the off time; that answer must never become a pre-race record.
         latest = get_race(ident)
         check_phase(latest, phase, datetime.now(timezone.utc))
@@ -324,7 +329,7 @@ def generate(ident, phase: Literal['pre', 'post']):
         digest = hashlib.sha256(json.dumps(context, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
         with connect() as db:
             db.execute('INSERT OR IGNORE INTO reports VALUES (?,?,?,?,?,?)',
-                       (ident, phase, now(), settings().model, digest, json.dumps(content, ensure_ascii=False)))
+                       (ident, phase, now(), prepared_by.strip() if prepared_content is not None else settings().model, digest, json.dumps(content, ensure_ascii=False)))
         return public_status(ident)
     finally:
         LOCK.release()
