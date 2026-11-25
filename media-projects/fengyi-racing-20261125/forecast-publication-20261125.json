@@ -1,0 +1,101 @@
+{
+  "raceDate": "2026-11-25",
+  "racecourse": "HV",
+  "timezone": "Asia/Hong_Kong",
+  "method": "Existing racing_analysis.generate pre publication with prepared content; actual server timestamp and cutoff checks retained.",
+  "publicVerification": "https://inwesting.shop/#/racing-statistics",
+  "missedRaces": [
+    1,
+    2
+  ],
+  "missedRacesBackfilled": false,
+  "automatedAnalysisError": "HTTP 402 returned by configured AI service; automatic generation not restored.",
+  "bestRecommendationUnchanged": "2026-11-25-HV-7 / HK_2024_K239",
+  "videoAudioChanged": false,
+  "publications": [
+    {
+      "raceId": "2026-11-25-HV-3",
+      "publishedAt": "2026-11-25T11:36:37.260207+00:00",
+      "scheduledStartLocal": "19:40",
+      "shortlistDisplay": [
+        "3 领航天子",
+        "8 竣诚驹",
+        "9 拣马之皇"
+      ],
+      "snapshotHash": "2a8ac02bff4989a73973cc97f428fa7e95628e314bc84985e34deb2e2152ffc4",
+      "unchangedExistingPublication": false
+    },
+    {
+      "raceId": "2026-11-25-HV-4",
+      "publishedAt": "2026-11-25T11:40:55.731943+00:00",
+      "scheduledStartLocal": "20:10",
+      "shortlistDisplay": [
+        "1 劲骏腾飞",
+        "9 比特星",
+        "2 环球英雄"
+      ],
+      "snapshotHash": "5668e3797c1efca22cda47d55dd0495dd42d413a8856a7219810276a636aed64",
+      "unchangedExistingPublication": false
+    },
+    {
+      "raceId": "2026-11-25-HV-5",
+      "publishedAt": "2026-11-25T11:40:55.888138+00:00",
+      "scheduledStartLocal": "20:40",
+      "shortlistDisplay": [
+        "11 飞跃成就",
+        "8 有你有我",
+        "2 红海旺"
+      ],
+      "snapshotHash": "7349ac00f3dd808341adb82d7a9bd19cdaa3a7743008cc8e27925c168ffc2dd7",
+      "unchangedExistingPublication": false
+    },
+    {
+      "raceId": "2026-11-25-HV-6",
+      "publishedAt": "2026-11-25T11:43:43.431643+00:00",
+      "scheduledStartLocal": "21:10",
+      "shortlistDisplay": [
+        "2 星愿无限",
+        "1 部族高手",
+        "9 金驹永腾"
+      ],
+      "snapshotHash": "4eea89d30625337d11f165285abdf3e136a9a943e158cafb9138ebae07e2296f",
+      "unchangedExistingPublication": false
+    },
+    {
+      "raceId": "2026-11-25-HV-7",
+      "publishedAt": "2026-11-24T13:43:43.227400+00:00",
+      "scheduledStartLocal": "21:45",
+      "shortlistDisplay": [
+        "8 顺善宝",
+        "1 非凡时刻",
+        "9 萤影飞驰"
+      ],
+      "snapshotHash": "340738c9d5dc39c56d9f164fe3e0133bb38a634f2ca289a489b9bede001da6fa",
+      "unchangedExistingPublication": true
+    },
+    {
+      "raceId": "2026-11-25-HV-8",
+      "publishedAt": "2026-11-25T11:43:43.566336+00:00",
+      "scheduledStartLocal": "22:15",
+      "shortlistDisplay": [
+        "2 细水长流",
+        "8 金钱游戏",
+        "3 膨才"
+      ],
+      "snapshotHash": "97b69a85fc37410cc38e49ba48db64bde57194d09787697574da81433c9ae0a0",
+      "unchangedExistingPublication": false
+    },
+    {
+      "raceId": "2026-11-25-HV-9",
+      "publishedAt": "2026-11-25T11:43:43.718036+00:00",
+      "scheduledStartLocal": "22:50",
+      "shortlistDisplay": [
+        "2 长胜队长",
+        "7 何方来声",
+        "6 辉洒自如"
+      ],
+      "snapshotHash": "3e1551318b162cb66412694933cf8381672afe34af55bb7621b67b6e32f97853",
+      "unchangedExistingPublication": false
+    }
+  ]
+}
