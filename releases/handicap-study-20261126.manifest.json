@@ -1,0 +1,34 @@
+{
+  "files": [
+    {
+      "path": "public/research/shallow-handicap.json",
+      "bytes": 347819,
+      "sha256": "08f90abc08305cd391a6a8793e149c844ba3f36a1cadf34d901c94fa8c16e4be",
+      "previousSha256": null
+    },
+    {
+      "path": "public/handicap-study.css",
+      "bytes": 6327,
+      "sha256": "12f7d86fa3d69c078b2c5bf7f94b26655e2dc1273a48e6ff7543f42dfd2200bd",
+      "previousSha256": null
+    },
+    {
+      "path": "public/handicap-study.mjs",
+      "bytes": 15401,
+      "sha256": "5cd6f1834b953e08b1896b0439438a6253cd8d7d9ca514ef0c25e70ed64068d4",
+      "previousSha256": null
+    },
+    {
+      "path": "public/app.js",
+      "bytes": 15386,
+      "sha256": "fb48da8871213437d9d56a756510b0bee0e9407bc631e54314c58690c6339963",
+      "previousSha256": "4ed0ba11c83c7b77896bc6ea1617db101e5fd20ad44f5523ee8b13f5134ced6b"
+    },
+    {
+      "path": "public/index.html",
+      "bytes": 9872,
+      "sha256": "6afb0c04dc5aee67d1c8b1b35be70c4c9601c5ac0cda00286a48a048046098bd",
+      "previousSha256": "a9e33086759afd064958b983f6941f9e2d71afa83903a8f30068b38374073b50"
+    }
+  ]
+}
