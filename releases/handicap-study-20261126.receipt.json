@@ -1,0 +1,67 @@
+{
+  "revision": "7a0ed8f834cc17610971e02566672c7dc17bba19",
+  "hashes": {
+    "releases/publish-handicap-study-20261126.py": "2117538116875fa5fae6749c2cd54446f8430211c344b11adb05b77f7c03bbff",
+    "releases/handicap-study-20261126.manifest.json": "4cb6fcd6d8e9ae339f7ad43fa2f943740370f49b7f0ec6ba08988e8136772c38"
+  },
+  "deployment": "published",
+  "verifiedAt": "2026-11-26T15:32:23.049362+00:00",
+  "publicUrl": "https://inwesting.shop/#/handicap-study",
+  "backup": "/var/backups/footballknow/handicap-study-20261126T153024615962Z",
+  "serverExitCode": 0,
+  "publishedFiles": 5,
+  "publicHttpsChecks": [
+    {
+      "path": "research/shallow-handicap.json",
+      "status": 200,
+      "bytes": 347819,
+      "sha256": "08f90abc08305cd391a6a8793e149c844ba3f36a1cadf34d901c94fa8c16e4be"
+    },
+    {
+      "path": "handicap-study.css",
+      "status": 200,
+      "bytes": 6327,
+      "sha256": "12f7d86fa3d69c078b2c5bf7f94b26655e2dc1273a48e6ff7543f42dfd2200bd"
+    },
+    {
+      "path": "handicap-study.mjs",
+      "status": 200,
+      "bytes": 15401,
+      "sha256": "5cd6f1834b953e08b1896b0439438a6253cd8d7d9ca514ef0c25e70ed64068d4"
+    },
+    {
+      "path": "app.js",
+      "status": 200,
+      "bytes": 15386,
+      "sha256": "fb48da8871213437d9d56a756510b0bee0e9407bc631e54314c58690c6339963"
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "bytes": 9872,
+      "sha256": "6afb0c04dc5aee67d1c8b1b35be70c4c9601c5ac0cda00286a48a048046098bd"
+    }
+  ],
+  "browserChecks": {
+    "allKpis": [
+      "2,450",
+      "30.24%",
+      "58.61%",
+      "22.90%"
+    ],
+    "epl2024Kpis": [
+      "187",
+      "24.60%",
+      "51.34%",
+      "18.72%"
+    ],
+    "detailsInitiallyCollapsed": true,
+    "movementDetailsOpened": true,
+    "mobileViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "mobileDocumentWidth": 375,
+    "mobileScrollWidth": 375
+  }
+}
