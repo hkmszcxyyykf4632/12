@@ -5,7 +5,7 @@ from pathlib import Path
 from urllib.request import urlopen
 ROOT=Path('/opt/footballknow')
 PREFIX='https://raw.githubusercontent.com/hkmszcxyyykf4632/12/'
-FILES=['football/daily_scores.py','football/football_forecasts.py','football/football_statistics.py','football/recommendation_candidates.py','football/recommendations.py','football/statistics_models.py','football/odds_forecast.py','football/odds_signals.py','football/recommendation_video_queue.py','sync_recommendations.py','public/football-forecasts.mjs','public/prediction-stats-core.mjs','public/prediction-stats.mjs','public/recommendation-video.mjs','public/recommendations.mjs']
+FILES=['football/football_rounds.py','football/daily_scores.py','football/football_forecasts.py','football/football_statistics.py','football/recommendation_candidates.py','football/recommendations.py','football/statistics_models.py','football/odds_forecast.py','football/odds_signals.py','football/recommendation_video_queue.py','sync_recommendations.py','public/football-forecasts.mjs','public/prediction-stats-core.mjs','public/prediction-stats.mjs','public/recommendation-video.mjs','public/recommendations.mjs']
 sha=lambda b:hashlib.sha256(b).hexdigest()
 def service(action):
     subprocess.run(['systemctl',action,'footballknow-web.service','footballknow-worker.service'],check=True,timeout=650)

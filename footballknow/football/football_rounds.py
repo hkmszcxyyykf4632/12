@@ -52,6 +52,20 @@ def refresh(limit: int = 3) -> int:
     at = datetime.now(timezone.utc)
     year = at.year if at.month >= 7 else at.year - 1
     season = f'{year}-{year + 1}'
+    entries = [RoundEntry.model_validate(r) for r in records.values()]
+    missing = set()
+    for match in load(PUBLIC / 'daily-football.json').get('matches', []):
+        league = match.get('league')
+        kickoff = datetime.fromisoformat(match['kickoff'])
+        if league in IDS and match.get('state') == 'scheduled' and at < kickoff <= at + timedelta(days=5):
+            teams = match['teams']
+            if not round_info(league, teams['home']['name'], teams['away']['name'], kickoff, entries)[1]:
+                missing.add(league)
+    anchors = {}
+    for league in IDS:
+        past = [r for r in records.values() if r['league'] == league and r['season'].startswith(str(year)) and r['date'] < at.date().isoformat()]
+        # This only prioritizes source requests; a round is never assigned by inference.
+        anchors[league] = max(past, key=lambda r: (r['date'], r['round']))['round'] + 1 if past else (5 if league == 'ucl' else 12)
     candidates = []
     for league in IDS:
         maximum = 8 if league == 'ucl' else 34 if league == 'bundesliga' else 38
@@ -63,7 +77,8 @@ def refresh(limit: int = 3) -> int:
             active = any(abs((datetime.fromisoformat(r['date']).date() - at.date()).days) <= 7 for r in peers)
             if recent and at - recent < (timedelta(minutes=10) if active else timedelta(days=1)):
                 continue
-            candidates.append((0 if active else 1, bool(recent), abs(number - (5 if league == 'ucl' else 12)), key, league, number))
+            priority = 0 if league in missing and abs(number - anchors[league]) <= 1 else 1 if active else 2
+            candidates.append((priority, bool(recent), abs(number - anchors[league]), key, league, number))
     count = 0
     for _, _, _, key, league, number in sorted(candidates)[:limit]:
         if count:

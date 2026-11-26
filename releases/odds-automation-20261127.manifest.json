@@ -1,94 +1,100 @@
 {
   "files": [
     {
+      "path": "football/football_rounds.py",
+      "bytes": 5689,
+      "sha256": "fc413269501e4518217fa1e9242054fa2ec33f10ccb86c95cd107c90278ec08f",
+      "previousSha256": "fc972a523755aebb1e128cd38ab773d51fbae6e61117c1c1cfd7a143ec9080a0"
+    },
+    {
       "path": "football/daily_scores.py",
       "bytes": 18743,
       "sha256": "a339477adf7e6752be96dc6c50c84c1d6a3478d1a91cc25bbbf6a31804805a65",
-      "previousSha256": "a9c301ccfde0d8168d262470d294b4f4a1786debed1ca2da17e847ec5a729aeb"
+      "previousSha256": "a339477adf7e6752be96dc6c50c84c1d6a3478d1a91cc25bbbf6a31804805a65"
     },
     {
       "path": "football/football_forecasts.py",
       "bytes": 26564,
       "sha256": "3ff8b12b1144151d0404848b2e7b7bd1d36f4a9e5b1af0534c8593a324d204c1",
-      "previousSha256": "d23a6baee585d1ea1e5b854b2f9db19d0bdf99a47d50cdc1fcac3206d56ea832"
+      "previousSha256": "3ff8b12b1144151d0404848b2e7b7bd1d36f4a9e5b1af0534c8593a324d204c1"
     },
     {
       "path": "football/football_statistics.py",
       "bytes": 9540,
       "sha256": "79cbb7c626b2454d9ed02545367b70704721829f27bf023851af0f7873f712e5",
-      "previousSha256": "ab199965bdcd0386988221097c375c0bd4ec181c0249264eda9d081709922f9c"
+      "previousSha256": "79cbb7c626b2454d9ed02545367b70704721829f27bf023851af0f7873f712e5"
     },
     {
       "path": "football/recommendation_candidates.py",
       "bytes": 6940,
       "sha256": "a5a0ebc6d95cc8d42f31eb33041b0357e9f8a5cde44e2efbb0cfbf00acf65779",
-      "previousSha256": "02f36520a59c0623e23903fad82816d75850cb66ddc36e4d6e4abe105b22d828"
+      "previousSha256": "a5a0ebc6d95cc8d42f31eb33041b0357e9f8a5cde44e2efbb0cfbf00acf65779"
     },
     {
       "path": "football/recommendations.py",
       "bytes": 4744,
       "sha256": "e545989c123050a5ca938e5fea0895c89e851e9cbbeab38585849a361af73de2",
-      "previousSha256": "47541dcfed2c5ec9bd3750f0cb88b758b1f635895174426118030fa1a6054b32"
+      "previousSha256": "e545989c123050a5ca938e5fea0895c89e851e9cbbeab38585849a361af73de2"
     },
     {
       "path": "football/statistics_models.py",
       "bytes": 3668,
       "sha256": "cc1f79f3fdfa8221a40ab2660f8492a2277abb442db1c5e0177e85fa18282ee9",
-      "previousSha256": "d020c7b80855d636043fa7b2191978f3104c3a5b5fdc1da9910919bc3e55ed29"
+      "previousSha256": "cc1f79f3fdfa8221a40ab2660f8492a2277abb442db1c5e0177e85fa18282ee9"
     },
     {
       "path": "football/odds_forecast.py",
       "bytes": 5721,
       "sha256": "1f40e42faa69c20ca63fabeee60817fb48167cfffe8a191f3df9610556d3d89d",
-      "previousSha256": null
+      "previousSha256": "1f40e42faa69c20ca63fabeee60817fb48167cfffe8a191f3df9610556d3d89d"
     },
     {
       "path": "football/odds_signals.py",
       "bytes": 16696,
       "sha256": "2887b864f0d17d4c5bb26ea24e9fc868391ee0cfbd6f5bb840f2a93213e05560",
-      "previousSha256": null
+      "previousSha256": "2887b864f0d17d4c5bb26ea24e9fc868391ee0cfbd6f5bb840f2a93213e05560"
     },
     {
       "path": "football/recommendation_video_queue.py",
       "bytes": 3197,
       "sha256": "88033750c3634a7c7757282c944fac0e0a2ea5d5429ec3710657cb7f16b4f7e0",
-      "previousSha256": null
+      "previousSha256": "88033750c3634a7c7757282c944fac0e0a2ea5d5429ec3710657cb7f16b4f7e0"
     },
     {
       "path": "sync_recommendations.py",
       "bytes": 527,
       "sha256": "48edf5d938c6cf97b317c03154673cf44008c65fec751429eed2206c67a41112",
-      "previousSha256": "a9ab2049aebe02399550343f7d4618ac154a4d4c13eca2b676aca3adef00b1ef"
+      "previousSha256": "48edf5d938c6cf97b317c03154673cf44008c65fec751429eed2206c67a41112"
     },
     {
       "path": "public/football-forecasts.mjs",
       "bytes": 7379,
       "sha256": "9c052844a35b8e593b3a9c3546ecfa2023b89ceefa01e73a266e1ac32e6da6dc",
-      "previousSha256": "2654d50586b9d094999a076e9ccd02e27ac318c543a9dfa972e72722f6073ff9"
+      "previousSha256": "9c052844a35b8e593b3a9c3546ecfa2023b89ceefa01e73a266e1ac32e6da6dc"
     },
     {
       "path": "public/prediction-stats-core.mjs",
       "bytes": 5703,
       "sha256": "b3f6375268465ed00c4ab15d99c61a341ac2aeda7e7246c129cf207c01941cde",
-      "previousSha256": "b3b940339a2c207c516f39fb50f6659840c7219123b8242182efebdef27049dc"
+      "previousSha256": "b3f6375268465ed00c4ab15d99c61a341ac2aeda7e7246c129cf207c01941cde"
     },
     {
       "path": "public/prediction-stats.mjs",
       "bytes": 9596,
       "sha256": "165f3c21ec75cb5578a4aa2b77e618db0677e67ec75f20d8dcfb0c995f25cc09",
-      "previousSha256": "4d54012a3812d8aae3f7e23603360ae19290f27fd6eb62cd3abfd75dd06e69f3"
+      "previousSha256": "165f3c21ec75cb5578a4aa2b77e618db0677e67ec75f20d8dcfb0c995f25cc09"
     },
     {
       "path": "public/recommendation-video.mjs",
       "bytes": 1132,
       "sha256": "11133c15738dcb186aa32d8da835b388d804c24668fcb82ffb62b39e2c739930",
-      "previousSha256": "e1b65cf28435a96d30a1cc61ebc550bc57ce0582f3acb9fe3393721e144b872f"
+      "previousSha256": "11133c15738dcb186aa32d8da835b388d804c24668fcb82ffb62b39e2c739930"
     },
     {
       "path": "public/recommendations.mjs",
       "bytes": 7737,
       "sha256": "7a6592c9c2ccdba6734dc2811ee2551300ad3bedff73fd73224d6dc9794a97c4",
-      "previousSha256": "c8d9cdb0d3aa1ad711c13546b55e97cd2c65eec5041c94f9259fed93b7adf09f"
+      "previousSha256": "7a6592c9c2ccdba6734dc2811ee2551300ad3bedff73fd73224d6dc9794a97c4"
     }
   ]
 }

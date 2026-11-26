@@ -1,0 +1,49 @@
+{
+  "status": "published",
+  "revision": "643164910fd39b611045fd17300c6989a6fc799c",
+  "files": 15,
+  "backup": "/var/backups/footballknow/odds-automation-20261126T163705Z",
+  "services": {
+    "web": "active",
+    "worker": "active"
+  },
+  "publicChecks": [
+    {
+      "path": "public/football-forecasts.mjs",
+      "sha256": "9c052844a35b8e593b3a9c3546ecfa2023b89ceefa01e73a266e1ac32e6da6dc",
+      "matched": true
+    },
+    {
+      "path": "public/prediction-stats-core.mjs",
+      "sha256": "b3f6375268465ed00c4ab15d99c61a341ac2aeda7e7246c129cf207c01941cde",
+      "matched": true
+    },
+    {
+      "path": "public/prediction-stats.mjs",
+      "sha256": "165f3c21ec75cb5578a4aa2b77e618db0677e67ec75f20d8dcfb0c995f25cc09",
+      "matched": true
+    },
+    {
+      "path": "public/recommendation-video.mjs",
+      "sha256": "11133c15738dcb186aa32d8da835b388d804c24668fcb82ffb62b39e2c739930",
+      "matched": true
+    },
+    {
+      "path": "public/recommendations.mjs",
+      "sha256": "7a6592c9c2ccdba6734dc2811ee2551300ad3bedff73fd73224d6dc9794a97c4",
+      "matched": true
+    }
+  ],
+  "tests": {
+    "pythonBeforeFinalGuard": 122,
+    "javascript": 21,
+    "followupFocusedPython": 24
+  },
+  "automation": {
+    "id": "automation",
+    "name": "峰弈推荐与视频自动更新",
+    "schedule": "daily 18:00 Asia/Taipei",
+    "status": "ACTIVE"
+  },
+  "videoGeneration": "not yet submitted"
+}
