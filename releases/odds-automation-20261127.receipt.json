@@ -37,7 +37,9 @@
   "tests": {
     "pythonBeforeFinalGuard": 122,
     "javascript": 21,
-    "followupFocusedPython": 24
+    "followupFocusedPython": 24,
+    "roundPriorityAndStatistics": 20,
+    "queueAfterPathFix": 1
   },
   "automation": {
     "id": "automation",
@@ -45,5 +47,40 @@
     "schedule": "daily 18:00 Asia/Taipei",
     "status": "ACTIVE"
   },
-  "videoGeneration": "not yet submitted"
+  "videoGeneration": "blocked: HeyGen monthly free video allowance exhausted; zero new video, no automatic retry",
+  "followupReleases": [
+    {
+      "revision": "b3438d2e4490f966597d750bedbcfafa367e472a",
+      "changedFiles": 1,
+      "backup": "/var/backups/footballknow/odds-automation-20261126T165329Z",
+      "purpose": "prioritize missing upcoming round metadata"
+    },
+    {
+      "revision": "8ddda4cd649aa1373f923d6970604b6545c0aa7d",
+      "changedFiles": 1,
+      "backup": "/var/backups/footballknow/odds-automation-20261126T165914Z",
+      "purpose": "write production queue to worker-owned public directory"
+    }
+  ],
+  "liveResult": {
+    "checkedAt": "2026-11-26T17:00:11.352312+00:00",
+    "initialForecasts": 35,
+    "recommendations": 12,
+    "byLeague": {
+      "seriea": 3,
+      "laliga": 3,
+      "bundesliga": 3,
+      "epl": 3
+    },
+    "videoJobs": 12,
+    "videoCreated": 0,
+    "videoBlocker": "Connected generation service returned insufficient_credit 402; no new video created."
+  },
+  "queueUrl": "https://inwesting.shop/recommendation-video-queue.json",
+  "browserVerified": [
+    "Twelve current recommendation cards across all four leagues",
+    "Two score candidates visible",
+    "Actual desktop layout inspected",
+    "Web and worker services active after final update"
+  ]
 }
