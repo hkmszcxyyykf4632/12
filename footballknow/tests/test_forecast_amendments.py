@@ -40,7 +40,7 @@ def test_baseline_explanation_is_deterministic_and_does_not_force_same_handicap_
 def test_bad_baseline_prose_never_saved_as_new_forecast(sandbox, monkeypatch):
     value = content()
     value['summary'][1] = '比分沿用统计首选2-1。'
-    monkeypatch.setattr(ff, 'request_json', lambda *args: value)
+    monkeypatch.setattr(ff, 'build_prediction', lambda *args: value)
     assert not ff.generate(sandbox, 'final')
     assert ff.status(sandbox)['stages']['final']['report'] is None
 

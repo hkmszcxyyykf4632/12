@@ -14,6 +14,7 @@ from test_football_forecasts import AT, content, fixture, research, sandbox
 @pytest.mark.parametrize('minutes,expected', [(121, 0), (120, 1), (119, 1)])
 def test_final_checks_start_at_two_hours(sandbox, monkeypatch, minutes, expected):
     row = fixture(minutes / 60)
+    row['quotes'].append({**row['quotes'][0], 'phase': 'opening', 'line': -.5})
     publish(ff.PUBLIC / 'daily-football.json', {'matches': [row]})
     assert ff.generate(row, 'initial')
     calls = []
@@ -26,7 +27,7 @@ def test_final_checks_start_at_two_hours(sandbox, monkeypatch, minutes, expected
 def test_unconfirmed_lineups_at_two_hours_do_not_call_model(sandbox, monkeypatch):
     row = fixture(2)
     monkeypatch.setattr(ff, 'research_row', lambda row: research(row, False))
-    monkeypatch.setattr(ff, 'request_json', lambda *args: pytest.fail('unconfirmed lineup cannot reach model'))
+    monkeypatch.setattr(ff, 'build_prediction', lambda *args: pytest.fail('unconfirmed lineup cannot reach model'))
     assert not ff.generate(row, 'final')
     value = ff.status(row)['stages']['final']
     assert value['report'] is None
@@ -36,9 +37,9 @@ def test_unconfirmed_lineups_at_two_hours_do_not_call_model(sandbox, monkeypatch
 def test_failed_initial_does_not_block_fresh_confirmed_final(sandbox, monkeypatch):
     def failure(*args):
         raise OSError('provider unavailable')
-    monkeypatch.setattr(ff, 'request_json', failure)
+    monkeypatch.setattr(ff, 'build_prediction', failure)
     assert not ff.generate(sandbox, 'initial')
-    monkeypatch.setattr(ff, 'request_json', lambda *args: content())
+    monkeypatch.setattr(ff, 'build_prediction', lambda *args: content())
     assert ff.refresh()['generated'] == 1
     value = ff.status(sandbox)
     assert value['stages']['initial']['report'] is None
@@ -65,7 +66,7 @@ def test_final_failure_retries_once_per_minute_and_claim_still_locks(sandbox, mo
     def failure(*args):
         calls.append(1)
         raise OSError('provider unavailable')
-    monkeypatch.setattr(ff, 'request_json', failure)
+    monkeypatch.setattr(ff, 'build_prediction', failure)
     for minute in range(4):
         monkeypatch.setattr(ff, 'now', lambda minute=minute: AT + timedelta(minutes=minute))
         assert not ff.generate(sandbox, 'final')

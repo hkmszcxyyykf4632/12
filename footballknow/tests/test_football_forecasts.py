@@ -36,14 +36,14 @@ def content():
 @pytest.fixture
 def sandbox(tmp_path, monkeypatch):
     row = fixture()
+    row['quotes'].append({**row['quotes'][0], 'phase': 'opening', 'line': -.5})
     monkeypatch.setattr(ff, 'STATE', tmp_path/'state')
+    monkeypatch.setattr(ff.odds_signals, 'STATE', tmp_path/'state')
     monkeypatch.setattr(ff, 'PUBLIC', tmp_path/'public')
     monkeypatch.setattr(ff, 'now', lambda: AT)
     monkeypatch.setattr(ff, 'read_control', lambda: {'enabled': True})
-    monkeypatch.setattr(ff, 'settings', lambda: SimpleNamespace(apiKey=SecretStr('test-only'), model='test-model'))
     monkeypatch.setattr(ff, 'research_row', lambda r: research(r))
-    monkeypatch.setattr(ff, 'professional_rules', lambda domain, rules: rules)
-    monkeypatch.setattr(ff, 'request_json', lambda *args: content())
+    monkeypatch.setattr(ff, 'build_prediction', lambda *args: content())
     publish(ff.PUBLIC/'daily-football.json', {'matches': [row]})
     return row
 
@@ -76,16 +76,16 @@ def test_final_requires_fresh_confirmed_matching_eleven(sandbox, monkeypatch, fa
     if fault == 'stale_message': r['message'] = 'cached source'
     if fault == 'unconfirmed': r['teams']['home']['lineup']['confirmed'] = False
     monkeypatch.setattr(ff, 'research_row', lambda row: r)
-    monkeypatch.setattr(ff, 'request_json', lambda *args: pytest.fail('must not call model'))
+    monkeypatch.setattr(ff, 'build_prediction', lambda *args: pytest.fail('must not call model'))
     assert not ff.generate(sandbox, 'final')
 
 
 def test_initial_allowed_before_lineups_and_missing_odds_has_no_selection(sandbox, monkeypatch):
     sandbox['quotes'] = []
     monkeypatch.setattr(ff, 'research_row', lambda row: research(row, False))
-    monkeypatch.setattr(ff, 'request_json', lambda *args: {**content(), 'asianSide': 'pass'})
-    assert ff.generate(sandbox, 'initial')
-    assert ff.status(sandbox)['stages']['initial']['report']['quote'] is None
+    monkeypatch.setattr(ff, 'build_prediction', lambda *args: {**content(), 'asianSide': 'pass'})
+    assert not ff.generate(sandbox, 'initial')
+    assert ff.status(sandbox)['stages']['initial']['report'] is None
     with pytest.raises(ValueError): ff.validate(content(), None)
 
 
@@ -106,7 +106,7 @@ def test_response_after_kickoff_or_changed_opponent_is_not_saved(sandbox, monkey
     def late(*args):
         monkeypatch.setattr(ff, 'now', lambda: AT+timedelta(hours=2))
         return content()
-    monkeypatch.setattr(ff, 'request_json', late)
+    monkeypatch.setattr(ff, 'build_prediction', late)
     assert not ff.generate(sandbox, 'initial')
     assert ff.status(sandbox)['stages']['initial']['report'] is None
 
@@ -135,25 +135,25 @@ def test_retry_cooldown_and_exception_body_never_public(sandbox, monkeypatch):
     def fail(*args):
         calls.append(1)
         raise ValueError('secret credential and provider body')
-    monkeypatch.setattr(ff, 'request_json', fail)
+    monkeypatch.setattr(ff, 'build_prediction', fail)
     assert not ff.generate(sandbox, 'initial')
     assert not ff.generate(sandbox, 'initial')
     assert len(calls) == 1
     assert 'secret' not in str(ff.status(sandbox))
 
 
-def test_timing_six_hours_bootstrap_and_champions_league(sandbox, monkeypatch):
-    row = fixture(7)
+def test_timing_four_days_bootstrap_and_champions_league(sandbox, monkeypatch):
+    row = fixture(97)
     row['competitionId'] = '775'
     publish(ff.PUBLIC/'daily-football.json', {'matches': [row]})
     calls = []
     monkeypatch.setattr(ff, 'generate', lambda r, stage: calls.append(stage) or True)
     assert ff.refresh()['checked'] == 0
     assert ff.refresh('2026-11-21')['generated'] == 0
-    assert ff.refresh('2026-11-22')['generated'] == 1
+    assert ff.refresh('2026-11-25')['generated'] == 1
     assert calls == ['initial']
     calls.clear()
-    row['kickoff'] = (AT+timedelta(hours=6)).isoformat()
+    row['kickoff'] = (AT+timedelta(hours=96)).isoformat()
     publish(ff.PUBLIC/'daily-football.json', {'matches': [row]})
     assert ff.refresh()['generated'] == 1
     assert calls == ['initial']

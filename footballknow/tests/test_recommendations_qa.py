@@ -31,7 +31,7 @@ def test_top_three_per_league_are_immutable_and_never_backfilled(tmp_path, monke
 
 def test_racing_one_per_day_and_wait_for_comparison_window(tmp_path, monkeypatch):
     monkeypatch.setattr(rec,'STATE',tmp_path)
-    assert rec.publish_candidates([candidate('early',99,offset=180)],AT)==0
+    assert rec.publish_candidates([candidate('early',99,offset=180)],AT)==1
     choices=[candidate(str(i),i,'racing','2026-11-22') for i in range(4)]
     assert rec.publish_candidates(choices,AT)==1
     assert rec.publish_candidates([candidate('later',99,'racing','2026-11-22')],AT)==0

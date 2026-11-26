@@ -16,3 +16,10 @@ test('a recommendation video is tied to the original event and horse, with silen
  assert.equal(recommendationVideo(c,[{...clip,poster:'https://elsewhere.test/track.jpg'}]),'');
 });
 
+test('football clip must match frozen stage, issue time, handicap and both scores',()=>{
+ const candidate={event:'123',domain:'football',stage:'initial',issuedAt:'2026-11-27T00:00:00Z',receipt:{asianSide:'H',line:-.5,score:[2,1],scoreCandidates:[[2,1],[1,0]]}};
+ const video={...clip,event:'123',stage:'initial',issuedAt:candidate.issuedAt,asianSide:'H',line:-.5,scoreCandidates:[[2,1],[1,0]]};
+ assert.match(recommendationVideo(candidate,[video]),/<video/);
+ for(const change of [{issuedAt:'wrong'},{line:.5},{asianSide:'A'},{scoreCandidates:[[1,0],[2,1]]}])assert.equal(recommendationVideo(candidate,[{...video,...change}]),'');
+});
+

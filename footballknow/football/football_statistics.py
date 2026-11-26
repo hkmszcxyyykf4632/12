@@ -64,7 +64,7 @@ def read_statistics() -> Statistics:
                 kickoff=fixture.kickoff, day=fixture.kickoff.astimezone(HK).date().isoformat(),
                 home=home.label or home.name, away=away.label or away.name,
                 homeName=home.name, awayName=away.name, stage=report.stage, issuedAt=report.issuedAt,
-                score=report.score, asianSide=report.asianSide, source=fixture.source)
+                score=report.score, scoreCandidates=report.scoreCandidates, asianSide=report.asianSide, source=fixture.source)
             season, round_label, round_source, complete = round_info(league, home.name, away.name, fixture.kickoff, rounds)
             receipt = receipt.model_copy(update={'season': season, 'round': round_label, 'roundSource': round_source, 'roundComplete': complete})
             if reason:
@@ -109,17 +109,26 @@ def read_statistics() -> Statistics:
             if valid_quote and type(price) in (int, float) and math.isfinite(price) and 1 < price <= 10000:
                 receipt = receipt.model_copy(update={'asianPrice': float(price)})
             correct_score = []
+            score_prices = {}
             for q in row.get('quotes', []):
                 if not isinstance(q, dict):
                     continue
                 captured = dt(q.get('fetchedAt'))
                 prices = q.get('prices')
                 value = prices.get(':'.join(str(n) for n in report.score)) if isinstance(prices, dict) else None
+                if (q.get('market') == 'correct-score' and captured and captured <= snapshot.capturedAt and captured < fixture.kickoff and not q.get('inPlay') and q.get('source') and q.get('phase') == 'latest' and isinstance(prices, dict)):
+                    for candidate in report.scoreCandidates or [report.score]:
+                        key = ':'.join(map(str, candidate)); candidate_price = prices.get(key)
+                        if type(candidate_price) in (int, float) and math.isfinite(candidate_price) and 1 < candidate_price <= 10000:
+                            old = score_prices.get(key)
+                            if old is None or captured > old[0]:
+                                score_prices[key] = (captured, float(candidate_price))
                 if (q.get('market') == 'correct-score' and captured and captured <= snapshot.capturedAt
                         and not q.get('inPlay') and q.get('source')
                         and q.get('phase') in {'latest', 'opening', 'preclosing', 'closing'}
                         and type(value) in (int, float) and math.isfinite(value) and 1 < value <= 10000):
                     correct_score.append((captured, value, q))
+            receipt = receipt.model_copy(update={'scorePrices': {k: v[1] for k, v in score_prices.items()}})
             if correct_score:
                 captured, value, q = max(correct_score, key=lambda item: item[0])
                 receipt = receipt.model_copy(update={'scorePrice': float(value), 'scoreQuoteAt': captured.isoformat(),
@@ -129,7 +138,7 @@ def read_statistics() -> Statistics:
                 if report.asianSide != 'pass' and valid_quote:
                     ah = settlement(score, line, report.asianSide)
                 receipt = receipt.model_copy(update={'status': 'settled', 'actual': score,
-                    'exactHit': score == report.score,
+                    'exactHit': score in (report.scoreCandidates or [report.score]),
                     'resultHit': ((score[0] > score[1]) - (score[0] < score[1])) ==
                                  ((report.score[0] > report.score[1]) - (report.score[0] < report.score[1])),
                     'asianResult': ah})

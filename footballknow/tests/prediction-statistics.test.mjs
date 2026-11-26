@@ -61,3 +61,10 @@ test('win coverage is per race while place and pair hit rates count every valid 
  assert.equal(poolAccuracy(poolTotals([a],'PLA'),'PLA').total,2);
  assert.equal(poolAccuracy(poolTotals([{...a,status:'excluded'}],'PLA'),'PLA').total,0);
 });
+
+test('two score candidates share the fixed 50 budget and settle independently',()=>{
+ const r=football('two',true,{score:[1,1],scoreCandidates:[[1,1],[0,1]],scorePrices:{'1:1':7,'0:1':10},actual:[0,1],asianSide:'A',asianPrice:1.9,asianResult:'赢盘'});
+ const bets=footballPaper(r);assert.equal(bets.length,3);assert.deepEqual(bets.map(b=>b.stake),[100,25,25]);assert.deepEqual(bets.map(b=>b.returned),[190,0,250]);
+ const t=footballPaperTotals([r]);assert.equal(t.planned,150);assert.equal(t.net,290);
+ const missing=footballPaper({...r,scorePrices:{'1:1':7}});assert.equal(missing[2].status,'unpriced');
+});

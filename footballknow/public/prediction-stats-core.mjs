@@ -64,8 +64,9 @@ export function paperTotals(rows){
  return {planned:sum('planned'),stake:sum('stake'),refunds:sum('refundAmount'),returns:sum('returns'),net:sum('net'),pending:sum('pendingStake')};
 }
 export function footballPaper(row){
+ const scores=row.scoreCandidates?.length?row.scoreCandidates:[row.score];
  const units=[{type:'亚洲盘',stake:row.asianSide==='pass'?0:100,price:row.asianPrice,outcome:row.asianResult},
-  {type:'比分',stake:50,price:row.scorePrice,outcome:row.exactHit?'赢盘':'输盘'}];
+  ...scores.map(score=>({type:scores.length>1?'比分 '+score.join(':'):'比分',stake:50/scores.length,price:row.scorePrices?.[score?.join(':')]??(scores.length===1?row.scorePrice:null),outcome:row.actual?row.actual.join(':')===score?.join(':')?'赢盘':'输盘':row.exactHit?'赢盘':'输盘'}))];
  return units.map(u=>{
   if(row.status==='excluded')return {...u,status:'excluded',returned:null};
   if(!u.stake)return {...u,status:'skip',returned:0};

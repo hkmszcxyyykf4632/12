@@ -253,22 +253,26 @@ def fetch_day(day, stamp, names):
 def refresh_daily(at=None, fetcher=fetch_day):
     at = at or datetime.now(timezone.utc)
     stamp, today = at.isoformat(), at.astimezone(HK).date()
-    first, last = (today - timedelta(days=1)).isoformat(), (today + timedelta(days=1)).isoformat()
+    first, last = (today - timedelta(days=1)).isoformat(), (today + timedelta(days=5)).isoformat()
     oldest = (today - timedelta(days=30)).isoformat()
     previous = load(OUTPUT)
     names, contexts = identities()
     rows = {m['id']: m for m in previous.get('matches', []) if oldest <= m['day'] <= last}
     source_days = {d: v for d, v in previous.get('sourceDays', {}).items() if d >= oldest}
     errors, success = [], 0
-    # ESPN's daily bucket straddles UTC midnight. Four source dates cover three HK dates.
-    days = [(today + timedelta(days=offset)).isoformat() for offset in (-2, -1, 0, 1)]
+    # Keep live scores frequent; only the five research competitions need advance coverage.
+    live_last = (today + timedelta(days=1)).isoformat()
+    days = [(today + timedelta(days=offset)).isoformat() for offset in range(-2, 6)]
+    days = [day for day in days if day <= live_last or not (
+        source_days.get(day, {}).get('ok') and timestamp(source_days[day].get('updatedAt'))
+        and timedelta(0) <= at - timestamp(source_days[day]['updatedAt']) < timedelta(minutes=5))]
     with ThreadPoolExecutor(max_workers=2) as pool:
         jobs = [(day, pool.submit(fetcher, day, stamp, names)) for day in days]
         for day, future in jobs:
             try:
                 incoming = future.result()
                 for row in incoming:
-                    if first <= row['day'] <= last:
+                    if first <= row['day'] <= last and (row['day'] <= live_last or supports_research(row)):
                         rows[row['id']] = preserve_pregame_quotes(row, rows.get(row['id']))
                 source_days[day] = {'updatedAt': stamp, 'ok': True}
                 success += 1
@@ -294,8 +298,10 @@ def refresh_daily(at=None, fetcher=fetch_day):
               'updatedAt': stamp if success else previous.get('updatedAt'), 'checkedAt': stamp,
               'window': {'from': first, 'to': last}, 'sourceDays': source_days, 'errors': errors,
               'provider': 'ESPN 全球足球比分', 'matches': ordered,
-              'coverage': '全球主要联赛、杯赛及国家队赛事，以 ESPN 当日收录为准；即时检查昨天、今天、明天，已收录记录保留30天。'}
+              'coverage': '全球主要赛事持续更新即场赛果；四大联赛及欧冠提前收录未来5天，远期赛程每5分钟检查，已收录记录保留30天。'}
     publish(OUTPUT, result)
-    if errors:
-        raise OSError(f'Daily football: {success}/4 source dates refreshed; previous records retained')
+    from .odds_signals import observe
+    observe(ordered, at)
+    if any(error['day'] <= live_last for error in errors):
+        raise OSError(f'Daily football: {success}/{len(days)} source dates refreshed; previous records retained')
     return result

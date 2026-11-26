@@ -35,6 +35,7 @@ class FootballReport(Frozen):
     issuedAt: AwareDatetime
     stage: Literal['initial', 'final']
     score: tuple[Goal, Goal]
+    scoreCandidates: list[tuple[Goal, Goal]] = Field(default_factory=list, max_length=2)
     asianSide: Literal['H', 'A', 'pass']
     quote: dict[str, JsonValue] | None = None
     snapshotHash: str
@@ -63,6 +64,8 @@ class FootballReceipt(Frozen):
     stage: str
     issuedAt: datetime
     score: tuple[int, int]
+    scoreCandidates: list[tuple[int, int]] = Field(default_factory=list)
+    scorePrices: dict[str, float] = Field(default_factory=dict)
     asianSide: str
     line: float | None = None
     asianPrice: float | None = None

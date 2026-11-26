@@ -7,8 +7,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal
 from pydantic import AwareDatetime, BaseModel, ConfigDict, JsonValue
-from .files import STATE
-from .football_forecasts import settlement
+from .files import STATE, PUBLIC
+from .football_forecasts import settlement, identity, pregame, INITIAL_WINDOW
+from .match_research import load
 from .football_statistics import read_statistics as football_statistics
 from .racing_statistics import read_statistics as racing_statistics
 from .motivation import dt
@@ -38,15 +39,23 @@ def rows(path: Path, query: str) -> list[sqlite3.Row]:
 
 
 def football_candidates(at: datetime) -> list[Candidate]:
+    saved_rows = rows(STATE / 'football-forecasts.sqlite3', 'SELECT * FROM forecasts')
+    seen = {r['identity'] for r in saved_rows if r['stage'] == 'initial'}
+    seen.update(r['identity'] for r in rows(STATE / 'football-forecasts.sqlite3', "SELECT * FROM attempts WHERE stage='initial' AND message != '正在核对资料并生成预测'"))
+    # Finish a first pass over available fixtures before locking this round's top three.
+    if any(pregame(m, at) and dt(m['kickoff']) - at <= INITIAL_WINDOW and identity(m) not in seen for m in load(PUBLIC / 'daily-football.json').get('matches', [])):
+        return []
     receipts = {(r.identity, r.stage): r for r in football_statistics().records}
     chosen: dict[str, Candidate] = {}
-    for saved in rows(STATE / 'football-forecasts.sqlite3', 'SELECT * FROM forecasts'):
+    for saved in saved_rows:
         r = receipts.get((saved['identity'], saved['stage']))
         if not r or r.status != 'pending' or not at < r.kickoff or not r.round or not r.season:
             continue
         if r.asianSide == 'pass' or r.line is None or r.asianPrice is None:
             continue
         report = json.loads(saved['content'])
+        if report.get('model') != 'fengyi-odds-change-v1' or not report.get('oddsSignal'):
+            continue
         base = report.get('baseline', {})
         samples = base.get('samples', {})
         count = min(samples.get('home', 0), samples.get('away', 0))
@@ -63,8 +72,10 @@ def football_candidates(at: datetime) -> list[Candidate]:
                 edge += weight * value
         confirmed = report.get('lineupsConfirmed') is True
         same = list(r.score) == (base.get('leadingScores') or [None])[0]
-        priority = min(count, 10) * 2 + 20 * confirmed + 25 * edge + 5 * same
-        reasons = [f'双方至少{count}场赛前往绩可核对', '已保存亚洲盘方向、盘口及赔率', '正式首发已核对' if confirmed else '首发尚未确认，保留阵容变化风险', '比分与统计基线一致' if same else '比分含模型调整，需结合原文依据']
+        signal = report['oddsSignal']
+        strength = min(20, abs(signal.get('lineChange', 0)) * 10 + max((signal.get('weightChangesPP') or {'x': 0}).values()))
+        priority = strength + (10 if abs(r.line) <= .5 else 0) + min(count, 10) * 2 + 20 * confirmed + 25 * edge + 5 * same
+        reasons = [f'双方至少{count}场赛前往绩可核对', '已核对同来源赔率变化，半球以内优先研究', '正式首发已核对' if confirmed else '首发尚未确认，保留阵容变化风险', '比分与统计基线一致' if same else '比分含模型调整，需结合原文依据']
         candidate = Candidate(domain='football', group=f'{r.league}|{r.season}|{r.round}', event=r.eventId,
             identity=r.identity, stage=r.stage, issuedAt=r.issuedAt, kickoff=r.kickoff,
             priority=round(priority, 4), reasons=reasons, summary=report.get('summary', []), receipt=r.model_dump(mode='json'))

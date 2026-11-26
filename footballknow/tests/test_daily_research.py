@@ -99,7 +99,20 @@ class DailyResearchTests(unittest.TestCase):
                 with self.assertRaises(OSError):
                     refresh_daily(at, fail)
             self.assertEqual(read_json(output)['matches'][0]['id'], '123')
-            self.assertEqual(len(read_json(output)['errors']), 4)
+            self.assertEqual(len(read_json(output)['errors']), 8)
+
+    def test_future_source_failure_does_not_delay_live_scores(self):
+        at = datetime(2026, 11, 20, 10, tzinfo=timezone.utc)
+        with tempfile.TemporaryDirectory() as folder:
+            output = Path(folder) / 'daily.json'
+            def source(day, *args):
+                if day > '2026-11-21':
+                    raise OSError('future date unavailable')
+                return []
+            with patch('football.daily_scores.OUTPUT', output), patch('football.daily_scores.STATE', Path(folder)), patch('football.daily_scores.identities', return_value=({}, {})):
+                result = refresh_daily(at, source)
+            self.assertEqual(len(result['errors']), 4)
+            self.assertEqual(result['updatedAt'], at.isoformat())
 
     def test_only_eleven_unique_confirmed_players(self):
         roster = {'team': {'id': '1'}, 'formation': '4-3-3', 'roster': [{'starter': True, 'athlete': {'id': str(i), 'displayName': str(i)}} for i in range(11)]}

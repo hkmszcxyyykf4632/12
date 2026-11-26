@@ -12,7 +12,7 @@ from .racing_statistics import read_statistics as racing_statistics
 HONG_KONG = timezone(timedelta(hours=8))
 METHOD = 'evidence-priority-v1'
 METHOD_TEXT = ('足球每个联赛及欧冠每轮最多三场，赛马每个赛马日一场。只筛选尚未开赛且已保存预测的比赛。'
-               '足球比较往绩样本、正式首发、泊松基线对亚洲盘的支持及比分一致性；赛马比较资料覆盖、首选报价的市场支持、晨操证据和报价时效。'
+               '足球仅从可核对变盘预测中筛选，比较变盘幅度、往绩样本、首发和盘口支持，半球以内优先；赛马比较资料覆盖、首选报价的市场支持、晨操证据和报价时效。'
                '排序不是经校准的胜率，不等同保证命中。发布后保留原版本，不因输赢替换；不足合格场次不凑数。')
 
 
@@ -48,9 +48,6 @@ def publish_candidates(candidates: list[Candidate], at: datetime) -> int:
                     continue
                 options = sorted((c for c in options if c.event not in existing), key=lambda c: (-c.priority, c.kickoff, c.event))
                 if not options:
-                    continue
-                # Football waits for comparable reports; racing opens on the previous Hong Kong calendar day.
-                if domain == 'football' and not existing and min(c.kickoff for c in options).timestamp() - at.timestamp() > 7200:
                     continue
                 for c in options[:vacancies]:
                     count += db.execute('INSERT OR IGNORE INTO selections VALUES(?,?,?,?,?)',

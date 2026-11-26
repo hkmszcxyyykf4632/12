@@ -64,14 +64,9 @@ def test_history_excludes_future_wrong_division_and_result_mismatch():
     assert len(ref.history(rows, 'Manchester City', 'epl', AT, ref.FIXTURES)) == 1
 
 
-def test_initial_uses_dated_reference_but_final_still_requires_live_source(sandbox, monkeypatch):
+def test_stale_live_data_is_not_relabelled_as_odds_movement(sandbox, monkeypatch):
     from test_football_forecasts import AT as clock
     sandbox['updatedAt'] = (clock-timedelta(days=1)).isoformat()
-    evidence = {'research': research(sandbox, False), 'quote': {**sandbox['quotes'][0], 'phase': 'preclosing'},
-                'source': ref.FIXTURES, 'sourceUpdatedAt': sandbox['updatedAt'], 'checkedAt': clock.isoformat(), 'note': '赛前参考'}
-    calls = []
-    monkeypatch.setattr(ff, 'initial_reference', lambda r, at: calls.append(r['id']) or evidence)
-    assert ff.generate(sandbox, 'initial')
-    assert ff.status(sandbox)['stages']['initial']['report']['reference']['source'] == ref.FIXTURES
+    monkeypatch.setattr(ff, 'build_prediction', lambda *args: pytest.fail('stale data must not reach model'))
+    assert not ff.generate(sandbox, 'initial')
     assert not ff.generate(sandbox, 'final')
-    assert calls == ['123']
