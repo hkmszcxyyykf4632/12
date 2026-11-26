@@ -1,0 +1,71 @@
+{
+  "domain": "football",
+  "group": "epl|2026/27|第12轮",
+  "event": "401879229",
+  "identity": "f491e851b3cb92b53e99eed139d0d4f9f19a74b3172ac2f691a77b2e6d88f864",
+  "stage": "initial",
+  "issuedAt": "2026-11-26T16:43:14.225568Z",
+  "kickoff": "2026-11-29T12:00:00Z",
+  "priority": 45.4129,
+  "reasons": [
+    "双方至少10场赛前往绩可核对",
+    "已核对同来源赔率变化，半球以内优先研究",
+    "首发尚未确认，保留阵容变化风险",
+    "比分与统计基线一致"
+  ],
+  "summary": [
+    "主选利物浦让0.5球，报价1.74；比分参考1:2、0:1（主队在前）。",
+    "DraftKings的亚洲让球盘口不变，A项赔率1.91→1.74，去水权重上升6.15个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "receipt": {
+    "identity": "f491e851b3cb92b53e99eed139d0d4f9f19a74b3172ac2f691a77b2e6d88f864",
+    "eventId": "401879229",
+    "matchId": "2026-11-29|Everton|Liverpool",
+    "league": "epl",
+    "kickoff": "2026-11-29T12:00:00Z",
+    "day": "2026-11-29",
+    "home": "埃弗顿",
+    "away": "利物浦",
+    "season": "2026/27",
+    "round": "第12轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Everton",
+    "awayName": "Liverpool",
+    "stage": "initial",
+    "issuedAt": "2026-11-26T16:43:14.225568Z",
+    "score": [
+      1,
+      2
+    ],
+    "scoreCandidates": [
+      [
+        1,
+        2
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "A",
+    "line": 0.5,
+    "asianPrice": 1.7407407407407407,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401879229"
+  },
+  "publishedAt": "2026-11-26T16:46:18.922712+00:00",
+  "methodVersion": "evidence-priority-v1"
+}

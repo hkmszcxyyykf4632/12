@@ -43,5 +43,5 @@ def refresh_queue(records, at=None):
             'instructions': '沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。'})
     result = {'updatedAt': at.isoformat(), 'jobs': sorted(jobs, key=lambda j: (j['kickoff'], j['id'])),
               'method': '文字推荐自动发布后进入制作队列；视频生成及核对完成才显示。队列不代表视频已完成。'}
-    publish(PUBLIC / 'media/recommendation-video-queue.json', result)
+    publish(PUBLIC / 'recommendation-video-queue.json', result)
     return result

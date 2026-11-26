@@ -1,0 +1,29 @@
+{
+  "event": "401879229",
+  "createdAt": "2026-11-27",
+  "status": "blocked",
+  "videoCreated": false,
+  "code": "insufficient_credit",
+  "message": "The connected HeyGen account has used all free videos for this month.",
+  "automaticRetryAllowed": false,
+  "generationArgs": {
+    "model": "heygen-video-1",
+    "duration": 20,
+    "aspectRatio": "16:9",
+    "resolution": "768p",
+    "promptEnhancement": "quality",
+    "referenceImages": [
+      {
+        "type": "asset_id",
+        "asset_id": "9b8a3caea8264f01b7b59b99aa01222e"
+      }
+    ],
+    "referenceVideos": [
+      {
+        "type": "url",
+        "url": "https://inwesting.shop/media/videos/fengyi-recommendation-bologna-20261122-web-v4.mp4"
+      }
+    ],
+    "prompt": "Make one continuous 20-second animated four-question sports conversation. This is a new episode using the supplied EXACT two fluffy toy characters and EXACT warm sage-green room, sunlight through the left window, shelves and wooden table. Left is the same dark-brown long-eared character with gold pendant; right is the same cream-white long-eared character with small silver wings. Preserve their faces, eyes, star highlights, tiny pointed teeth, fur, proportions, expressions and accessories. No redesigns. The reference video supplies the previously approved Mandarin MALE LEFT and FEMALE RIGHT voices, speech melody, natural conversational rhythm and gestures. Match these same fictional voices closely; do not imitate any real person. Use the IMAGE for visual identity and the VIDEO for the voices and motion, but replace all old sports words with the exact new dialogue below.\n\nOne steady cinematic medium two-shot with tiny natural push in, both sitting at the table. Natural blinks at different times, meaningful gaze changes, smiles, curious eyebrows, relaxed small hand gestures. Each character only articulates its own words and listens silently when the other speaks. No stiff constant bobbing, sliding heads, detached mouths, flapping wings or robotic syllable speech. Dialogue must be clear STANDARD MANDARIN, not Cantonese and not a mixture. Warm, comfortable, flowing whole phrases like the reference. The white character softly and audibly ends EACH answer with 啊. No overlapping speech, no hurried diction, no unrelated extra lines.\n\nExactly eight short lines, in this order. Keep all names and numbers intact:\n0.2–2.5 LEFT, leaning in with a curious palm-up gesture: \"喂，今晚有什么好料啊？\"\n2.7–4.3 RIGHT, warmly smiling: \"今晚买利物浦啊。\"\n4.6–5.5 LEFT: \"怎么让啊？\"\n5.7–8.5 RIGHT, a small explanatory hand gesture: \"利物浦让埃弗顿半球啊。\"\n8.8–10.0 LEFT: \"买几比几啊？\"\n10.2–13.5 RIGHT: \"利物浦赢二比一，或者一比零啊。\"\n13.8–15.2 LEFT, interested: \"为什么买它啊？\"\n15.4–18.6 RIGHT: \"让半球，利物浦赔率降了啊。\"\n18.6–20.0 a natural shared smile and settling hands.\n\nSports context for accuracy only: the linked frozen recommendation is Everton versus Liverpool, 2026-11-29 20:00 Hong Kong time. Selected Liverpool -0.5; home-first scores 1:2 and 0:1, which are Liverpool winning 2:1 or 1:0 as spoken. The real recorded quoted Liverpool price moved from 1.91 to 1.74. Do NOT invent an injury, team news, money flow or guaranteed win. The reason line states an observed price move only. No new captions, subtitles, labels, scoreboards, brands or typography; no competing music, no extra props or characters, no title card. Preserve any service-required marks. The scene and audio should be one coherent conversation like the approved reference, not a talking slide."
+  }
+}

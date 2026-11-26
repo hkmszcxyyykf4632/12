@@ -4,7 +4,7 @@
       "path": "football/football_rounds.py",
       "bytes": 5689,
       "sha256": "fc413269501e4518217fa1e9242054fa2ec33f10ccb86c95cd107c90278ec08f",
-      "previousSha256": "fc972a523755aebb1e128cd38ab773d51fbae6e61117c1c1cfd7a143ec9080a0"
+      "previousSha256": "fc413269501e4518217fa1e9242054fa2ec33f10ccb86c95cd107c90278ec08f"
     },
     {
       "path": "football/daily_scores.py",
@@ -56,8 +56,8 @@
     },
     {
       "path": "football/recommendation_video_queue.py",
-      "bytes": 3197,
-      "sha256": "88033750c3634a7c7757282c944fac0e0a2ea5d5429ec3710657cb7f16b4f7e0",
+      "bytes": 3191,
+      "sha256": "f50b286cb4b35d0a1ec0eb63c1ec2f437bc5c2f28d3bf6622922c42b29f785a1",
       "previousSha256": "88033750c3634a7c7757282c944fac0e0a2ea5d5429ec3710657cb7f16b4f7e0"
     },
     {
