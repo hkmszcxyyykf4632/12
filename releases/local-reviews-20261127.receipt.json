@@ -1,0 +1,91 @@
+{
+  "site": "https://inwesting.shop",
+  "deploymentRevision": "2965ea326f6d4f7db689cc57a35c5e74492e6295",
+  "recordedAt": "2026-11-27T15:27:52.451029+00:00",
+  "deployment": {
+    "startedAtHongKong": "2026-11-27T23:18:56+08:00",
+    "finishedAtHongKong": "2026-11-27T23:20:23+08:00",
+    "exitCode": 0,
+    "changedFiles": 3,
+    "manifestAllowlistedFiles": 6,
+    "backup": "/var/backups/footballknow/local-reviews-20261127T151915Z"
+  },
+  "scope": "Automatic cited post-event reviews use the local evidence generator; this release does not remove every optional or legacy AI path.",
+  "preservation": {
+    "storedFootballForecastsCompared": 106,
+    "comparison": "Every previously stored identity/stage forecast payload compared unchanged before and after the deployment batches."
+  },
+  "validation": {
+    "pythonTestsPassed": 134,
+    "pythonSubtestsPassed": 8,
+    "javascriptTestsPassed": 12,
+    "gitDiffCheck": "passed",
+    "health": {
+      "status": "ok",
+      "paused": false,
+      "heartbeatAgeSeconds": 5,
+      "syncSeconds": 60,
+      "summary": {
+        "total": 82,
+        "ok": 81,
+        "failed": 1,
+        "pending": 0
+      }
+    },
+    "page": "https://inwesting.shop/?league=laliga#/match/2026-11-22%7CGetafe%7CAth%20Madrid",
+    "pageChecked": "Opened the two-stage detailed review disclosure in the live browser; both stages show independent exact-score and Asian-handicap results and the 30-minute score-elimination event. Evidence details remain expandable.",
+    "sampleReview": {
+      "initial": {
+        "revision": "076ed8b849d854961beb5ebbebef98c5fa90557dd214434ad300af9297c8cd63",
+        "analysisStatus": "ready",
+        "engine": "local-evidence-1",
+        "generatedAt": "2026-11-27T15:20:17.645624+00:00"
+      },
+      "final": {
+        "revision": "35425192723e8f39e186bff1a5527643b1c94c76ad95deeb520c80cf823a9407",
+        "analysisStatus": "ready",
+        "engine": "local-evidence-1",
+        "generatedAt": "2026-11-27T15:19:39.833975+00:00"
+      }
+    },
+    "renderingLimit": "Browser DOM/accessibility checked; no claim of new mobile screenshot or audio QA."
+  },
+  "catchUpBatches": [
+    {
+      "lastSuccess": "2026-11-27T15:19:48.710467+00:00",
+      "generated": 5,
+      "failed": 0
+    },
+    {
+      "lastSuccess": "2026-11-27T15:20:22.453890+00:00",
+      "generated": 5,
+      "failed": 0
+    }
+  ],
+  "scheduledWorkerVerification": {
+    "observedHeartbeat": "2026-11-27T15:27:19.353932+00:00",
+    "job": {
+      "intervalSeconds": 300,
+      "group": "lineups",
+      "running": false,
+      "lastAttempt": "2026-11-27T15:26:38.283513+00:00",
+      "lastSuccess": "2026-11-27T15:27:18.349970+00:00",
+      "nextAttempt": "2026-11-27T15:31:38.283512+00:00",
+      "lastDurationMs": 40066,
+      "runs": 397,
+      "failures": 375,
+      "consecutiveFailures": 0,
+      "ok": true,
+      "message": "{'generated': 5, 'failed': 0, 'engine': 'local-evidence-1'}"
+    },
+    "generated": 5,
+    "failed": 0,
+    "note": "This third batch was dispatched by the restarted normal scheduler without manual invocation. Historical failure totals are retained."
+  },
+  "reviewVersionsGeneratedThisRelease": 15,
+  "countingNote": "Initial and final forecasts have separate immutable review versions; 15 versions does not mean 15 distinct fixtures.",
+  "limitations": [
+    "Unverified tactical intent, news causality and incomplete event histories remain explicitly unresolved.",
+    "Unrelated site jobs and the existing recommendation-video quota blocker are outside this release."
+  ]
+}
