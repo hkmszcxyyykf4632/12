@@ -25,7 +25,7 @@ def join_facts(items, limit=1100):
         text = (str(item.get('time') or item.get('clock') or '') + ' ' + item['text']).strip()
         if size + len(text) > limit:
             break
-        parts.append(text)
+        parts.append(text.rstrip('。；'))
         size += len(text) + 1
     return '；'.join(parts)
 
@@ -120,6 +120,12 @@ def football_process(d, result, outcome):
     goals = [e for e in events if e['type'] in ('goal', 'penalty---scored', 'own-goal')]
     if goals and context.get('goalsReconciled'):
         driver(result, '进球顺序与比分转折', join_facts(goals) + '。以上进球已与最终比分对账；事件中的球员名单不自动区分进球者和助攻者。', goals)
+    if outcome and outcome['targets'] and goals and context.get('goalsReconciled'):
+        exceeded = next((e for e in goals if all(any(e['after'][i] > target[i] for i in (0, 1)) for target in outcome['targets'])), None)
+        if exceeded:
+            driver(result, '比分选择何时被突破',
+                   f"{exceeded['clock']} 比分来到 {display(exceeded['after'])}，已使保存的比分选择 {'、'.join(map(display, outcome['targets']))}全部无法成为最终比分。"
+                   '这一时点定位了比分预测落空的阶段。之后的红牌、换人或进球不能反过来解释此前已经形成的偏差，仍应追查此前失球与机会产出的原因。', [exceeded])
     critical = [e for e in events if e['type'] in ('red-card', 'yellow-red-card', 'penalty---missed', 'penalty---scored', 'own-goal')]
     if critical:
         parts = []
@@ -141,7 +147,12 @@ def football_process(d, result, outcome):
         driver(result, name + '的换人时机', '；'.join(parts) + '。可确认教练何时调整人员；攻守意图及调整效果需结合球员位置、换人前后分段表现和采访，不能把随后进球直接算作换人功劳。', subs)
     stats = [f for f in d['facts'] if f['category'] == 'statistics']
     if stats:
-        driver(result, '机会产出与全场表现', join_facts(stats) + '。射门和射正反映机会数量，尚不能替代预期进球或机会质量；全场合计也不能分辨领先后收缩与始终被动。', stats)
+        readings = []
+        for fact in stats[:2]:
+            values = re.findall(r'(?:：|；)(控球率|射门|射正|角球|红牌)\s+([0-9.]+)', fact['text'])
+            team = fact['text'].split('全场统计：', 1)[0]
+            readings.append(team + '：' + '，'.join(label + ' ' + value for label, value in values) if values else fact['text'][:220])
+        driver(result, '机会产出与全场表现', '；'.join(readings) + '。射门和射正反映机会数量，尚不能替代预期进球或机会质量；全场合计也不能分辨领先后收缩与始终被动。完整统计可展开证据查看。', stats[:2])
     if outcome and outcome['targets'] and not outcome['exact']:
         primary = outcome['targets'][0]
         actual = outcome['actual']

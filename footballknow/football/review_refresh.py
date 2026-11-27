@@ -86,4 +86,4 @@ def refresh():
     publish(STATE / 'evidence-review-last-run.json', status)
     if failures and not generated:
         raise ValueError('本批复盘证据未通过校验；已保留原预测与错误类型，稍后重试。')
-    return status
+    return {key: status[key] for key in ('generated', 'failed', 'engine')}

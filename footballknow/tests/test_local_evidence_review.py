@@ -86,3 +86,16 @@ def test_immature_stock_horizon_cannot_be_called_a_failure():
     d['priceContext'] = {'horizons': {'week': {'correct': None}, 'quarter': {'correct': None}}}
     r = er.validate_analysis(local.generate(d), d)
     assert all(c['verdict'] == 'unresolved' for c in r['claimAudits'])
+
+
+def test_prediction_breakpoint_precedes_late_red_card_for_single_score():
+    d = football()
+    d['original']['scoreCandidates'] = [[0, 1]]
+    r = er.validate_analysis(local.generate(d), d)
+    row = next(c for c in r['drivers'] if c['title'] == '比分选择何时被突破')
+    assert "30' 比分来到 0:2" in row['explanation']
+    assert '之后的红牌' in row['explanation']
+    d['original']['scoreCandidates'] = [[0, 1], [1, 2]]
+    r = er.validate_analysis(local.generate(d), d)
+    row = next(c for c in r['drivers'] if c['title'] == '比分选择何时被突破')
+    assert "90'+2' 比分来到 0:3" in row['explanation']
