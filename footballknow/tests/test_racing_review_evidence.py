@@ -163,7 +163,8 @@ def test_collection_refresh_reuses_review_but_changed_odds_create_revision(sampl
         calls.append(dossier)
         return {'summary': ['Only recorded facts are available.'], 'claimAudits': [],
                 'drivers': [], 'lessons': [], 'marketReview': []}
-    monkeypatch.setattr(reviews, 'request_json', reply)
+    from football import local_evidence_review
+    monkeypatch.setattr(local_evidence_review, 'generate', lambda dossier: reply(None, dossier, None))
     first_dossier = evidence.build_dossier(sample, None)
     first = reviews.build_review('racing', sample['id'], first_dossier, generate=True)
     sample['updatedAt'] = '2026-11-19T12:30:00+00:00'

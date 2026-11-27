@@ -74,6 +74,7 @@ def build_dossier(race, original):
     else:
         d['gaps'].append('本站未保存本场赛前预测，不能补造原选择或评价原预测方法。')
 
+    d['raceContext'] = {'entries': [], 'distance': race.get('distance')}
     by_id = {e['id']: e for e in entries}
     for entry in entries:
         name = f"{entry.get('number', '')}号 {entry['name']}（{entry['id'].rsplit('_', 1)[-1]}）"
@@ -88,6 +89,10 @@ def build_dossier(race, original):
                 parts.append(f"{label} {person['name']}")
         fact = add_fact(d, '；'.join(parts) + '。', [result_source], category='result', time=event_time, before_event=False)
         d['timeline'].append({'time': event_time, 'text': '；'.join(parts) + '。', 'evidenceIds': [fact]})
+        d['raceContext']['entries'].append({**{k: entry.get(k) for k in ('id', 'name', 'number', 'place', 'withdrawn')}, 'evidenceIds': [fact]})
+        if entry.get('running'):
+            add_fact(d, f"{name}：沿途走位 {entry['running']}；最终名次 {entry.get('position') or entry.get('place') or '未记录'}。",
+                     [result_source], category='running', time=event_time, before_event=False)
         if positive(entry.get('winOdds')):
             add_fact(d, f"{name}：正式赛果所列独赢赔率 {entry['winOdds']}；这是赛后结果记录。",
                      [result_source], category='odds', time=event_time, before_event=False)

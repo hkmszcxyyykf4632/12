@@ -82,6 +82,7 @@ def _match_facts(d, detail, ident):
     if not reconciled:
         d['gaps'].append('进球事件无法与最终比分及比分口径完整对账；不生成逐球领先或逆转叙事。乌龙球须核实得分方。')
     score = {'home': 0, 'away': 0}
+    context = d['matchContext'] = {'goalsReconciled': reconciled, 'events': []}
     for event in events:
         kind, side = event.get('type'), event.get('side')
         if kind in goal_types and not reconciled:
@@ -90,6 +91,7 @@ def _match_facts(d, detail, ident):
             continue
         names = '、'.join(p.get('name', '') for p in event.get('players', []) if p.get('name'))
         text = f"{ident.get(side, '未明确球队')}：{event.get('label', kind)}；{names or '球员未明确'}"
+        before_score = [score['home'], score['away']] if reconciled else None
         if kind in goal_types:
             score[scoring_side(event)] += 1
             text += f"；比分 {score['home']}–{score['away']}"
@@ -97,6 +99,9 @@ def _match_facts(d, detail, ident):
             text += '（事件名单不表示换入换出顺序）'
         fid = add_fact(d, text, [src], time=event.get('clock', ''), before_event=False)
         d['timeline'].append({'time': event.get('clock', ''), 'text': text, 'evidenceIds': [fid]})
+        context['events'].append({'type': kind, 'side': side, 'clock': event.get('clock', ''),
+                                  'before': before_score, 'after': [score['home'], score['away']] if reconciled else None,
+                                  'text': text, 'evidenceIds': [fid]})
     for row in detail.get('statistics', []):
         if row.get('side') in ('home', 'away'):
             values = '；'.join(f'{STAT_LABELS[k]} {v}' for k, v in row.get('values', {}).items() if k in STAT_LABELS)

@@ -10,13 +10,17 @@ from football import football_forecasts, racing_analysis, review_refresh, review
 
 def test_paused_reviews_do_not_read_models_or_candidates(monkeypatch):
     monkeypatch.setattr(review_refresh, 'read_control', lambda: {'enabled': False})
-    monkeypatch.setattr(review_refresh, 'settings', lambda: (_ for _ in ()).throw(AssertionError('paused')))
+    monkeypatch.setattr(review_refresh, 'candidates', lambda *a: (_ for _ in ()).throw(AssertionError('paused')))
     assert review_refresh.refresh() == {'paused': True, 'generated': 0}
 
 
-def test_missing_model_leaves_verified_facts_visible(monkeypatch):
+def test_reviews_run_without_external_model(tmp_path, monkeypatch):
     monkeypatch.setattr(review_refresh, 'read_control', lambda: {'enabled': True})
-    monkeypatch.setattr(review_refresh, 'settings', lambda: SimpleNamespace(apiKey=SecretStr('')))
+    monkeypatch.setattr(review_refresh, 'STATE', tmp_path)
+    calls = []
+    monkeypatch.setattr(review_refresh, 'candidates', lambda at: [({'revision': 'local'}, lambda: calls.append('generated'))])
+    assert review_refresh.refresh()['generated'] == 1
+    assert calls == ['generated']
     assert review_refresh.refresh()['generated'] == 0
 
 
@@ -65,3 +69,26 @@ def test_editorial_review_scope_keeps_all_five_target_competitions(tmp_path, mon
     for audit, action in candidates:
         action()
     assert [league for league, generate in calls if generate] == leagues
+
+
+def test_bad_record_does_not_block_other_ready_reviews(tmp_path, monkeypatch):
+    monkeypatch.setattr(review_refresh, 'read_control', lambda: {'enabled': True})
+    monkeypatch.setattr(review_refresh, 'STATE', tmp_path)
+    calls = []
+    def invalid():
+        raise ValueError('invalid evidence')
+    monkeypatch.setattr(review_refresh, 'candidates', lambda at: [({'revision': 'bad'}, invalid),
+        ({'revision': 'good'}, lambda: calls.append('good'))])
+    result = review_refresh.refresh()
+    assert result['generated'] == 1 and result['failed'] == 1 and calls == ['good']
+    status = json.loads((tmp_path / 'evidence-review-last-run.json').read_text('utf-8'))
+    assert status['failures'] == [{'revision': 'bad', 'errorType': 'ValueError'}]
+
+
+def test_catchup_batch_is_bounded(tmp_path, monkeypatch):
+    monkeypatch.setattr(review_refresh, 'read_control', lambda: {'enabled': True})
+    monkeypatch.setattr(review_refresh, 'STATE', tmp_path)
+    calls = []
+    monkeypatch.setattr(review_refresh, 'candidates', lambda at: [({'revision': str(i)}, lambda: calls.append(1)) for i in range(20)])
+    assert review_refresh.refresh()['generated'] == 5
+    assert len(calls) == 5

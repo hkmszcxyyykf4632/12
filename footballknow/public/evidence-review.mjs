@@ -42,7 +42,7 @@ export function evidenceReviewHtml(report,{compact=false,disclosurePrefix='revie
     :section(title,body);
   const card=(title,body,badge='')=>`<article class="er-card"><div class="er-card-heading"><h4>${esc(title)}</h4>${badge}</div>${body}</article>`;
   const badge=(text,tone='neutral')=>`<span class="er-badge er-${tone}">${esc(text)}</span>`;
-  const status=report.analysisStatus==='ready'?'已整理详细复盘':report.analysisStatus==='limited'?'证据不足，详细原因分析尚未完成':'详细原因分析尚未完成';
+  const status=report.analysisStatus==='ready'?(report.engine==='local-evidence-1'?'已核对结果与过程':'已整理详细复盘'):report.analysisStatus==='limited'?'证据不足，详细原因分析尚未完成':'详细原因分析尚未完成';
   let html=`<div class="evidence-review" aria-label="详细复盘"><header class="er-header"><h2>事实、判断与改进</h2>${badge(status,report.analysisStatus==='ready'?'neutral':'pending')}</header>`;
   html+=`<div class="er-summary">${list(report.summary).map(text=>`<p>${prose(text)}</p>`).join('')}</div>`;
   if(report.generatedAt)html+=`<p class="er-meta">复盘整理时间：${esc(stamp(report.generatedAt))}</p>`;

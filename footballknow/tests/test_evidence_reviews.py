@@ -3,6 +3,13 @@ import copy
 import pytest
 
 from football import evidence_reviews as reviews
+from football import local_evidence_review
+
+
+@pytest.fixture(autouse=True)
+def legacy_generator_contract(monkeypatch):
+    """Exercise the retained optional generator; production local routing is tested separately."""
+    monkeypatch.setattr(local_evidence_review, 'generate', reviews._generate_analysis)
 
 
 def dossier():

@@ -1,9 +1,9 @@
 """Bounded review work; every successful evidence revision becomes visible immediately."""
 import hashlib
 import json
+import time
 from datetime import datetime, timedelta, timezone
 
-from .ai import settings
 from .files import PUBLIC, STATE, publish
 from .match_research import load
 from .leagues import LEAGUES
@@ -61,18 +61,29 @@ def candidates(at):
 def refresh():
     if not read_control()['enabled']:
         return {'paused': True, 'generated': 0}
-    if not settings().apiKey.get_secret_value():
-        return {'generated': 0, 'message': '分析服务尚未配置；已核实事实仍可查看。'}
     at = datetime.now(timezone.utc)
     path = STATE / 'evidence-review-attempts.json'
     attempts = load(path)
+    started = time.monotonic()
+    generated, failures = [], []
     for audit, action in candidates(at):
+        if generated or failures:
+            if len(generated) + len(failures) >= 5 or time.monotonic() - started >= 45:
+                break
         key = hashlib.sha256(audit['revision'].encode()).hexdigest()
         previous = attempts.get(key)
         if previous and at - datetime.fromisoformat(previous) < timedelta(minutes=30):
             continue
         attempts[key] = at.isoformat()
         publish(path, dict(list(attempts.items())[-500:]))
-        action()
-        return {'generated': 1, 'revision': audit['revision']}
-    return {'generated': 0}
+        try:
+            action()
+            generated.append(audit['revision'])
+        except (ValueError, OSError, LookupError, TypeError) as error:
+            failures.append({'revision': audit['revision'], 'errorType': type(error).__name__})
+    status = {'generated': len(generated), 'revisions': generated, 'failed': len(failures),
+              'failures': failures, 'engine': 'local-evidence-1', 'checkedAt': at.isoformat()}
+    publish(STATE / 'evidence-review-last-run.json', status)
+    if failures and not generated:
+        raise ValueError('本批复盘证据未通过校验；已保留原预测与错误类型，稍后重试。')
+    return status

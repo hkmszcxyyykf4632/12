@@ -1,0 +1,40 @@
+{
+  "files": [
+    {
+      "path": "football/evidence_reviews.py",
+      "bytes": 20834,
+      "sha256": "70faa133ee4b5162f04028b5edaafa04aab3985862f11adfa290299e5a4c7030",
+      "previousSha256": "2802095eb43f98fe6aad3573c5bad8d33396eb91ac49bc9e4e06028e1149fd41"
+    },
+    {
+      "path": "football/football_review_evidence.py",
+      "bytes": 25270,
+      "sha256": "08a6e5e0d65c46655c3317d073ef0621877c07d499464f434677999ae2fd5fad",
+      "previousSha256": "394f53ed1878d692353d34c3ace5b2a51500abb893a5a3196fd8fcae4b96ea3e"
+    },
+    {
+      "path": "football/racing_review_evidence.py",
+      "bytes": 11621,
+      "sha256": "337976ffb5f848ea2ad5eba6742783c56d65e15300b72e591b0cff8e0fe03f43",
+      "previousSha256": "c5dbb50ad400ec895fc2620687769f10b81a4ee9caedb1578e2e1e90ed80ee7b"
+    },
+    {
+      "path": "football/review_refresh.py",
+      "bytes": 4063,
+      "sha256": "5531afe9261c6a124451997b89a4515b61098e7bfcd21c46a69766c56aed5937",
+      "previousSha256": "35f80d910dc177f0998bb8898d86444d85c28b69cea38ba88e14049d35b3f7d2"
+    },
+    {
+      "path": "football/local_evidence_review.py",
+      "bytes": 17507,
+      "sha256": "187d44c5d05060604e9dedfc3408dcc5df6fe50a56ab89e5d439c22f7da4abe4",
+      "previousSha256": null
+    },
+    {
+      "path": "public/evidence-review.mjs",
+      "bytes": 9153,
+      "sha256": "affcd27a3a760f5725a4581cdca45d02dc1cf63b52c9ed2cbc5845a335e31904",
+      "previousSha256": "4b698f322e05a3d09c27719c9414422edacdf8e622425875e06febc1a7e4abe0"
+    }
+  ]
+}
