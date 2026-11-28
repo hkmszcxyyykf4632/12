@@ -1,0 +1,65 @@
+{
+  "eventId": "401882796",
+  "capturedAt": "2026-11-28T11:13:44.294543+00:00",
+  "match": "皇家贝蒂斯 vs 巴列卡诺",
+  "kickoff": "2026-11-28T13:00:00+00:00",
+  "reportedQuote": {
+    "provider": "澳门彩票有限公司",
+    "provenance": "user-reported-in-chat",
+    "independentlyVerified": false,
+    "market": "asian-handicap",
+    "homeLine": -1,
+    "homePrice": 1.99,
+    "awayPrice": 1.85,
+    "oddsFormatAssumption": "decimal, including stake",
+    "quotedAt": null,
+    "earlierSameProviderQuote": null
+  },
+  "verifiedSources": [
+    {
+      "url": "https://realbetisbalompie.es/index.php/noticias/noticias/proximo-rival-rayo-vallecano-32891",
+      "facts": [
+        "巴列本季联赛三胜均为主场，三平六负，进15失22。",
+        "巴列最近两场分别0:1负皇家社会、0:1负瓦伦西亚。",
+        "上季同场地交锋1:1。"
+      ]
+    },
+    {
+      "url": "https://realbetisbalompie.es/index.php/noticias/noticias/lista-de-convocados-del-real-betis-para-el-partido-contra-el-rayo-vallecano-32892",
+      "facts": [
+        "塞瓦略斯、伊克尔·洛萨达、洛塞尔索未入本场大名单。",
+        "伊斯科、安东尼、阿布德、库乔入选；这不是正式首发名单。"
+      ]
+    }
+  ],
+  "assessment": {
+    "decision": "观望，暂停沿用原巴列卡诺推荐；不据单次报价追贝蒂斯让一球。",
+    "matchLean": "基本面较支持贝蒂斯赢球，但尚无足够证据判断其净胜两球以上。",
+    "unproven": [
+      "澳门盘口变化的时间与完整同源报价轨迹",
+      "升盘原因与新闻的因果关系",
+      "双方正式首发",
+      "当前报价的模型优势"
+    ],
+    "originalFrozenReportPreserved": true,
+    "originalProvider": "DraftKings via ESPN",
+    "originalIssuedAt": "2026-11-26T16:39:45.333561+00:00",
+    "doNotSpliceProviders": true
+  },
+  "settlementForRayoPlusOne": {
+    "winOrDraw": "win",
+    "loseByOne": "push",
+    "loseByTwoOrMore": "loss"
+  },
+  "priceMath": {
+    "awayConditionalBreakEvenExcludingPush": 0.5405405405405405,
+    "homeConditionalBreakEvenExcludingPush": 0.5025125628140703,
+    "awayNormalizedImpliedShareExcludingPush": 0.5182291666666667,
+    "meaning": "赔率倒数归一化仅为无走盘条件下的市场价格参考，非模型胜率。"
+  },
+  "publication": {
+    "betisVideo": "held",
+    "siteForecastUnchanged": true,
+    "purpose": "赛前讨论证据，供赛后核对；不回写原封存推荐。"
+  }
+}

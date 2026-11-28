@@ -1,0 +1,755 @@
+{
+  "eventId": "401882796",
+  "kickoff": "2026-11-28T13:00:00+00:00",
+  "updatedAt": "2026-11-28T11:01:56.540118+00:00",
+  "teams": {
+    "home": {
+      "name": "皇家贝蒂斯",
+      "teamId": "244",
+      "lineup": {
+        "confirmed": false,
+        "players": [],
+        "formation": ""
+      },
+      "comparisons": {
+        "previous": {
+          "status": "available",
+          "match": {
+            "id": "401915297",
+            "date": "2026-11-24T20:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "521",
+            "opponent": "Slovan Bratislava",
+            "goalsFor": 2,
+            "goalsAgainst": 0,
+            "result": "W",
+            "competition": "League Phase",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401915297"
+          },
+          "lineup": {
+            "confirmed": true,
+            "players": [
+              {
+                "id": "283892",
+                "name": "Álvaro Valles",
+                "position": "G",
+                "shirt": "1"
+              },
+              {
+                "id": "336480",
+                "name": "Valentín Gómez",
+                "position": "CD-L",
+                "shirt": "16"
+              },
+              {
+                "id": "181530",
+                "name": "Diego Llorente",
+                "position": "CD-R",
+                "shirt": "3"
+              },
+              {
+                "id": "213050",
+                "name": "Fran García",
+                "position": "LB",
+                "shirt": "11"
+              },
+              {
+                "id": "395941",
+                "name": "Ángel Ortiz",
+                "position": "RB",
+                "shirt": "12"
+              },
+              {
+                "id": "143564",
+                "name": "Isco",
+                "position": "AM",
+                "shirt": "22"
+              },
+              {
+                "id": "359912",
+                "name": "Facundo Bernal",
+                "position": "LM",
+                "shirt": "6"
+              },
+              {
+                "id": "322908",
+                "name": "Nelson Deossa",
+                "position": "RM",
+                "shirt": "18"
+              },
+              {
+                "id": "336809",
+                "name": "Cucho Hernández",
+                "position": "F",
+                "shirt": "9"
+              },
+              {
+                "id": "300912",
+                "name": "Abde Ezzalzouli",
+                "position": "AM-L",
+                "shirt": "10"
+              },
+              {
+                "id": "281558",
+                "name": "Antony",
+                "position": "AM-R",
+                "shirt": "7"
+              }
+            ],
+            "formation": "4-2-3-1"
+          },
+          "difference": {
+            "status": "名单尚未完整确认"
+          }
+        },
+        "headToHead": {
+          "status": "available",
+          "match": {
+            "id": "748386",
+            "date": "2026-02-21T15:15:00+00:00",
+            "homeAway": "home",
+            "opponentId": "101",
+            "opponent": "Rayo Vallecano",
+            "goalsFor": 1,
+            "goalsAgainst": 1,
+            "result": "D",
+            "competition": "2025-26 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/748386"
+          },
+          "lineup": {
+            "confirmed": true,
+            "players": [
+              {
+                "id": "283892",
+                "name": "Álvaro Valles",
+                "position": "G",
+                "shirt": "1"
+              },
+              {
+                "id": "301526",
+                "name": "Natan",
+                "position": "CD-L",
+                "shirt": "4"
+              },
+              {
+                "id": "181530",
+                "name": "Diego Llorente",
+                "position": "CD-R",
+                "shirt": "3"
+              },
+              {
+                "id": "136865",
+                "name": "Ricardo Rodríguez",
+                "position": "LB",
+                "shirt": "12"
+              },
+              {
+                "id": "268601",
+                "name": "Aitor Ruibal",
+                "position": "RB",
+                "shirt": "24"
+              },
+              {
+                "id": "242008",
+                "name": "Marc Roca",
+                "position": "CM",
+                "shirt": "21"
+              },
+              {
+                "id": "283827",
+                "name": "Álvaro Fidalgo",
+                "position": "LM",
+                "shirt": "15"
+              },
+              {
+                "id": "227714",
+                "name": "Pablo Fornals",
+                "position": "RM",
+                "shirt": "8"
+              },
+              {
+                "id": "147193",
+                "name": "Cédric Bakambu",
+                "position": "F",
+                "shirt": "11"
+              },
+              {
+                "id": "300912",
+                "name": "Abde Ezzalzouli",
+                "position": "LF",
+                "shirt": "10"
+              },
+              {
+                "id": "281558",
+                "name": "Antony",
+                "position": "RF",
+                "shirt": "7"
+              }
+            ],
+            "formation": "4-3-3"
+          },
+          "difference": {
+            "status": "名单尚未完整确认"
+          }
+        }
+      },
+      "form": {
+        "matches": [
+          {
+            "id": "401915297",
+            "date": "2026-11-24T20:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "521",
+            "opponent": "Slovan Bratislava",
+            "goalsFor": 2,
+            "goalsAgainst": 0,
+            "result": "W",
+            "competition": "League Phase",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401915297"
+          },
+          {
+            "id": "401882797",
+            "date": "2026-11-21T17:30:00+00:00",
+            "homeAway": "away",
+            "opponentId": "243",
+            "opponent": "Sevilla",
+            "goalsFor": 1,
+            "goalsAgainst": 1,
+            "result": "D",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882797"
+          },
+          {
+            "id": "401928551",
+            "date": "2026-11-12T18:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "19288",
+            "opponent": "CD Artistico Navalcarnero",
+            "goalsFor": 3,
+            "goalsAgainst": 2,
+            "result": "W",
+            "competition": "First Round",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401928551"
+          },
+          {
+            "id": "401882814",
+            "date": "2026-11-08T13:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "3751",
+            "opponent": "Elche",
+            "goalsFor": 2,
+            "goalsAgainst": 0,
+            "result": "W",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882814"
+          },
+          {
+            "id": "401915304",
+            "date": "2026-11-04T20:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "124",
+            "opponent": "Borussia Dortmund",
+            "goalsFor": 1,
+            "goalsAgainst": 2,
+            "result": "L",
+            "competition": "League Phase",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401915304"
+          },
+          {
+            "id": "401882825",
+            "date": "2026-10-31T17:30:00+00:00",
+            "homeAway": "home",
+            "opponentId": "99",
+            "opponent": "Málaga",
+            "goalsFor": 2,
+            "goalsAgainst": 1,
+            "result": "W",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882825"
+          },
+          {
+            "id": "401882833",
+            "date": "2026-10-25T15:15:00+00:00",
+            "homeAway": "away",
+            "opponentId": "85",
+            "opponent": "Celta Vigo",
+            "goalsFor": 0,
+            "goalsAgainst": 0,
+            "result": "D",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882833"
+          },
+          {
+            "id": "401915389",
+            "date": "2026-10-21T19:00:00+00:00",
+            "homeAway": "home",
+            "opponentId": "142",
+            "opponent": "Feyenoord Rotterdam",
+            "goalsFor": 1,
+            "goalsAgainst": 0,
+            "result": "W",
+            "competition": "League Phase",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401915389"
+          },
+          {
+            "id": "401882846",
+            "date": "2026-10-17T16:30:00+00:00",
+            "homeAway": "home",
+            "opponentId": "83",
+            "opponent": "Barcelona",
+            "goalsFor": 2,
+            "goalsAgainst": 5,
+            "result": "L",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882846"
+          },
+          {
+            "id": "401915408",
+            "date": "2026-10-14T19:00:00+00:00",
+            "homeAway": "home",
+            "opponentId": "437",
+            "opponent": "FC Porto",
+            "goalsFor": 3,
+            "goalsAgainst": 2,
+            "result": "W",
+            "competition": "League Phase",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401915408"
+          }
+        ],
+        "run": 1,
+        "outcome": "W",
+        "bounded": false,
+        "summary": "已收录比赛中连续1胜；近10场6胜、2平、2负，进17球、失13球。",
+        "interpretation": "连胜需结合对手与主客场，不能直接外推下一场；连败需区分失球增多、赛程强度与伤停。下表逐场列出样本，未覆盖的赛事不计入。"
+      },
+      "errors": []
+    },
+    "away": {
+      "name": "巴列卡诺",
+      "teamId": "101",
+      "lineup": {
+        "confirmed": false,
+        "players": [],
+        "formation": ""
+      },
+      "comparisons": {
+        "previous": {
+          "status": "available",
+          "match": {
+            "id": "401882799",
+            "date": "2026-11-21T15:15:00+00:00",
+            "homeAway": "home",
+            "opponentId": "94",
+            "opponent": "Valencia",
+            "goalsFor": 0,
+            "goalsAgainst": 1,
+            "result": "L",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882799"
+          },
+          "lineup": {
+            "confirmed": true,
+            "players": [
+              {
+                "id": "207834",
+                "name": "Emil Audero",
+                "position": "G",
+                "shirt": "25",
+                "mandarin": "埃米尔·奥德罗",
+                "cantonese": "埃米爾·奧德羅",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%9F%83%E7%B1%B3%E5%B0%94%C2%B7%E5%A5%A5%E5%BE%B7%E7%BD%97",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%9F%83%E7%B1%B3%E5%B0%94%C2%B7%E5%A5%A5%E5%BE%B7%E7%BD%97"
+              },
+              {
+                "id": "265996",
+                "name": "Mujaid Sadick",
+                "position": "CD-L",
+                "shirt": "15"
+              },
+              {
+                "id": "140754",
+                "name": "Florian Lejeune",
+                "position": "CD-R",
+                "shirt": "24",
+                "mandarin": "弗洛里安·勒戎",
+                "cantonese": "弗洛里安·勒戎",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "276067",
+                "name": "Giorgi Tsitaishvili",
+                "position": "LB",
+                "shirt": "14"
+              },
+              {
+                "id": "287224",
+                "name": "Andrei Ratiu",
+                "position": "RB",
+                "shirt": "2",
+                "mandarin": "安德烈·拉蒂乌",
+                "cantonese": "安德烈·拉蒂烏",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "203711",
+                "name": "Unai López",
+                "position": "CM-L",
+                "shirt": "8",
+                "mandarin": "乌奈·洛佩斯",
+                "cantonese": "烏尼·盧比斯",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E7%83%8F%E5%A5%88%C2%B7%E6%B4%9B%E4%BD%A9%E6%96%AF",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E7%83%8F%E5%A5%88%C2%B7%E6%B4%9B%E4%BD%A9%E6%96%AF"
+              },
+              {
+                "id": "294228",
+                "name": "Pathé Ciss",
+                "position": "CM-R",
+                "shirt": "6",
+                "mandarin": "帕佩·西塞",
+                "cantonese": "帕佩·西塞",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "260740",
+                "name": "Jorge de Frutos",
+                "position": "LM",
+                "shirt": "19",
+                "mandarin": "豪尔赫·德弗鲁托斯",
+                "cantonese": "佐治·迪·費魯圖斯",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E8%B1%AA%E7%88%BE%E8%B5%AB%C2%B7%E5%BE%B7%E5%BC%97%E9%AD%AF%E6%89%98%E6%96%AF",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E8%B1%AA%E7%88%BE%E8%B5%AB%C2%B7%E5%BE%B7%E5%BC%97%E9%AD%AF%E6%89%98%E6%96%AF"
+              },
+              {
+                "id": "264197",
+                "name": "Isi Palazón",
+                "position": "RM",
+                "shirt": "7",
+                "mandarin": "伊西·帕拉松",
+                "cantonese": "伊西·帕拉松",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "276652",
+                "name": "Sergio Camello",
+                "position": "CF-L",
+                "shirt": "10",
+                "mandarin": "塞尔希奥·卡梅略",
+                "cantonese": "沙治奧·卡美洛",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%A1%9E%E5%B0%94%E5%B8%8C%E5%A5%A5%C2%B7%E5%8D%A1%E6%A2%85%E7%95%A5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%A1%9E%E5%B0%94%E5%B8%8C%E5%A5%A5%C2%B7%E5%8D%A1%E6%A2%85%E7%95%A5"
+              },
+              {
+                "id": "276847",
+                "name": "Randy Nteka",
+                "position": "CF-R",
+                "shirt": "11",
+                "mandarin": "兰迪·恩塔卡",
+                "cantonese": "蘭迪·恩塔卡",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              }
+            ],
+            "formation": "4-4-2"
+          },
+          "difference": {
+            "status": "名单尚未完整确认"
+          }
+        },
+        "headToHead": {
+          "status": "available",
+          "match": {
+            "id": "748386",
+            "date": "2026-02-21T15:15:00+00:00",
+            "homeAway": "away",
+            "opponentId": "244",
+            "opponent": "Real Betis",
+            "goalsFor": 1,
+            "goalsAgainst": 1,
+            "result": "D",
+            "competition": "2025-26 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/748386"
+          },
+          "lineup": {
+            "confirmed": true,
+            "players": [
+              {
+                "id": "195032",
+                "name": "Augusto Batalla",
+                "position": "G",
+                "shirt": "13",
+                "mandarin": "奥古斯托·巴塔利亚",
+                "cantonese": "奧古斯度·巴達拿",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%A5%A7%E5%8F%A4%E6%96%AF%E5%BA%A6%C2%B7%E5%B7%B4%E9%81%94%E6%8B%BF",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%A5%A7%E5%8F%A4%E6%96%AF%E5%BA%A6%C2%B7%E5%B7%B4%E9%81%94%E6%8B%BF"
+              },
+              {
+                "id": "356212",
+                "name": "Nobel Mendy",
+                "position": "CD-L",
+                "shirt": "32"
+              },
+              {
+                "id": "140754",
+                "name": "Florian Lejeune",
+                "position": "CD-R",
+                "shirt": "24",
+                "mandarin": "弗洛里安·勒戎",
+                "cantonese": "弗洛里安·勒戎",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "199790",
+                "name": "Pacha Espino",
+                "position": "LB",
+                "shirt": "22"
+              },
+              {
+                "id": "287224",
+                "name": "Andrei Ratiu",
+                "position": "RB",
+                "shirt": "2",
+                "mandarin": "安德烈·拉蒂乌",
+                "cantonese": "安德烈·拉蒂烏",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "264197",
+                "name": "Isi Palazón",
+                "position": "AM",
+                "shirt": "7",
+                "mandarin": "伊西·帕拉松",
+                "cantonese": "伊西·帕拉松",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "186181",
+                "name": "Gerard Gumbau",
+                "position": "LM",
+                "shirt": "15"
+              },
+              {
+                "id": "264217",
+                "name": "Óscar Valentín",
+                "position": "RM",
+                "shirt": "23",
+                "mandarin": "奥斯卡·瓦伦丁",
+                "cantonese": "奧斯卡·瓦倫丁",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "260740",
+                "name": "Jorge de Frutos",
+                "position": "F",
+                "shirt": "19",
+                "mandarin": "豪尔赫·德弗鲁托斯",
+                "cantonese": "佐治·迪·費魯圖斯",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E8%B1%AA%E7%88%BE%E8%B5%AB%C2%B7%E5%BE%B7%E5%BC%97%E9%AD%AF%E6%89%98%E6%96%AF",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E8%B1%AA%E7%88%BE%E8%B5%AB%C2%B7%E5%BE%B7%E5%BC%97%E9%AD%AF%E6%89%98%E6%96%AF"
+              },
+              {
+                "id": "324505",
+                "name": "Fran Pérez",
+                "position": "AM-L",
+                "shirt": "21",
+                "mandarin": "弗兰·佩雷斯",
+                "cantonese": "弗蘭·佩雷斯",
+                "mandarinSource": "https://zh.wikipedia.org/zh-cn/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5",
+                "cantoneseSource": "https://zh.wikipedia.org/zh-hk/%E5%B7%B4%E5%88%97%E5%8D%A1%E8%AF%BA%E9%97%AA%E7%94%B5"
+              },
+              {
+                "id": "331047",
+                "name": "Ilias Akhomach",
+                "position": "AM-R",
+                "shirt": "12"
+              }
+            ],
+            "formation": "4-2-3-1"
+          },
+          "difference": {
+            "status": "名单尚未完整确认"
+          }
+        }
+      },
+      "form": {
+        "matches": [
+          {
+            "id": "401882799",
+            "date": "2026-11-21T15:15:00+00:00",
+            "homeAway": "home",
+            "opponentId": "94",
+            "opponent": "Valencia",
+            "goalsFor": 0,
+            "goalsAgainst": 1,
+            "result": "L",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882799"
+          },
+          {
+            "id": "401882810",
+            "date": "2026-11-08T15:15:00+00:00",
+            "homeAway": "away",
+            "opponentId": "89",
+            "opponent": "Real Sociedad",
+            "goalsFor": 0,
+            "goalsAgainst": 1,
+            "result": "L",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882810"
+          },
+          {
+            "id": "401882818",
+            "date": "2026-10-31T15:15:00+00:00",
+            "homeAway": "home",
+            "opponentId": "85",
+            "opponent": "Celta Vigo",
+            "goalsFor": 3,
+            "goalsAgainst": 0,
+            "result": "W",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882818"
+          },
+          {
+            "id": "401928533",
+            "date": "2026-10-27T20:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "2571",
+            "opponent": "Recreativo Huelva",
+            "goalsFor": 3,
+            "goalsAgainst": 2,
+            "result": "W",
+            "competition": "First Round",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401928533"
+          },
+          {
+            "id": "401882830",
+            "date": "2026-10-24T12:00:00+00:00",
+            "homeAway": "home",
+            "opponentId": "3751",
+            "opponent": "Elche",
+            "goalsFor": 0,
+            "goalsAgainst": 3,
+            "result": "L",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882830"
+          },
+          {
+            "id": "401882842",
+            "date": "2026-10-19T19:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "2922",
+            "opponent": "Getafe",
+            "goalsFor": 1,
+            "goalsAgainst": 1,
+            "result": "D",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882842"
+          },
+          {
+            "id": "401882860",
+            "date": "2026-09-19T12:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "97",
+            "opponent": "Osasuna",
+            "goalsFor": 1,
+            "goalsAgainst": 1,
+            "result": "D",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882860"
+          },
+          {
+            "id": "401882868",
+            "date": "2026-09-15T17:00:00+00:00",
+            "homeAway": "home",
+            "opponentId": "88",
+            "opponent": "Espanyol",
+            "goalsFor": 2,
+            "goalsAgainst": 1,
+            "result": "W",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882868"
+          },
+          {
+            "id": "401882880",
+            "date": "2026-09-12T19:00:00+00:00",
+            "homeAway": "away",
+            "opponentId": "86",
+            "opponent": "Real Madrid",
+            "goalsFor": 1,
+            "goalsAgainst": 4,
+            "result": "L",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882880"
+          },
+          {
+            "id": "401882889",
+            "date": "2026-09-05T16:30:00+00:00",
+            "homeAway": "home",
+            "opponentId": "87",
+            "opponent": "Racing Santander",
+            "goalsFor": 3,
+            "goalsAgainst": 2,
+            "result": "W",
+            "competition": "2026-27 LALIGA",
+            "scope": "来源完场比分（杯赛可能含加时；不含点球大战比分）",
+            "source": "https://www.espn.com/soccer/match/_/gameId/401882889"
+          }
+        ],
+        "run": 2,
+        "outcome": "L",
+        "bounded": false,
+        "summary": "已收录比赛中连续2负；近10场4胜、2平、4负，进14球、失16球。",
+        "interpretation": "连胜需结合对手与主客场，不能直接外推下一场；连败需区分失球增多、赛程强度与伤停。下表逐场列出样本，未覆盖的赛事不计入。"
+      },
+      "errors": []
+    }
+  },
+  "weather": {
+    "status": "球场城市位置尚未唯一核实"
+  },
+  "message": "",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401882796",
+  "pregame": {
+    "capturedAt": "2026-11-28T11:01:56.540118+00:00",
+    "hash": "f7f7ba85f0847d2e49c49dfa1419375d2b09c3baccc38e132b8e2a0476c308f9"
+  },
+  "review": {
+    "status": "待完场",
+    "score": [
+      null,
+      null
+    ],
+    "summary": "赛前阵容和天气记录已保留，可与赛后比赛表现对照。天气预报不等于实测，也不能单独解释赛果。"
+  },
+  "method": "首发按来源明确标注且11人不重复才确认；对比上一场及最近同对手交锋，不将首发变化直接归因为伤停。"
+}
