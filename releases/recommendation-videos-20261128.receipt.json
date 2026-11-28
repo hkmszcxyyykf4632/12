@@ -1,0 +1,200 @@
+{
+  "revision": "feabbb92827d8fecf5388a8f0c79de5ca276a14e",
+  "publishedAt": "2026-11-28T11:45:07.047276+00:00",
+  "publishedEvents": [
+    "401884719",
+    "401879226",
+    "401882790",
+    "401884726",
+    "401874977",
+    "401875031",
+    "401879229",
+    "401874992",
+    "401879230",
+    "401884727",
+    "401882788",
+    "401879221"
+  ],
+  "skipped": [],
+  "backup": "/var/backups/footballknow/recommendation-videos-20261128T114507Z",
+  "workerNotRestarted": true,
+  "forecastsUnchanged": true,
+  "deploymentCompletedAt": "2026-11-28T19:47:51+08:00",
+  "cloudInvocationId": "inv-fbqpr005i0",
+  "exitCode": 0,
+  "verification": {
+    "checkedAt": "2026-11-28T11:50:23.773840+00:00",
+    "publishedNew": 12,
+    "recommendationIndexCount": 13,
+    "videoLibraryCount": 14,
+    "allReceiptBindingsMatch": true,
+    "betisVideoExcluded": true,
+    "allMediaChecks": [
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261128-401884719-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6442771"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261128-401884719-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261128-401879226-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6430820"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261128-401879226-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261128-401882790-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6394225"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261128-401882790-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401884726-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6366006"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401884726-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401874977-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6432269"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401874977-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401875031-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6228794"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401875031-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401879229-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6217160"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401879229-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401874992-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6265733"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401874992-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401879230-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6349199"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261129-401879230-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261130-401884727-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6306262"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261130-401884727-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261130-401882788-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6405909"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261130-401882788-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261202-401879221-local-v1.mp4",
+        "status": 206,
+        "contentType": "video/mp4",
+        "range": "bytes 0-63/6448522"
+      },
+      {
+        "url": "https://inwesting.shop/media/videos/fengyi-football-20261202-401879221-local-v1.jpg",
+        "status": 200,
+        "sha256Matches": true
+      }
+    ]
+  },
+  "browserVerification": {
+    "checkedAt": "2026-11-28T12:02:26.344545+00:00",
+    "page": "https://inwesting.shop/#/recommendations",
+    "renderedVideoPlayers": 12,
+    "downloadLinks": 12,
+    "controlsPresent": true,
+    "preload": "none",
+    "allCardsShowActualSource": "DraftKings",
+    "allCardsMatchOriginalReceipt": true,
+    "visualScreenshotReviewed": true,
+    "audioPlayedDuringDeployment": false,
+    "sampleDownload": {
+      "eventId": "401879229",
+      "bytes": 6217160,
+      "sha256": "fa73a433214dab469cdde39337fd8016272bc94c309ef57f35f5fda1946ec2f2",
+      "matchesApprovedExport": true
+    }
+  },
+  "publicHealthAfterMacauRelease": {
+    "httpStatus": 200,
+    "body": {
+      "status": "ok",
+      "paused": false,
+      "heartbeatAgeSeconds": 1,
+      "syncSeconds": 60,
+      "summary": {
+        "total": 82,
+        "ok": 80,
+        "failed": 2,
+        "pending": 0
+      }
+    }
+  }
+}

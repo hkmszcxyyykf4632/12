@@ -1,0 +1,33 @@
+{
+  "status": "published",
+  "revision": "feabbb92827d8fecf5388a8f0c79de5ca276a14e",
+  "files": 4,
+  "startedAt": "2026-11-28T19:53:11+08:00",
+  "completedAt": "2026-11-28T19:53:18+08:00",
+  "exitCode": 0,
+  "resultMarker": "FENGYI_MACAU_REFERENCE_PUBLISHED",
+  "backup": "/var/backups/footballknow/macau-reference-20261128T115313Z",
+  "evidence": "Tencent Cloud command result observed in the authenticated investment-server console",
+  "verifiedAt": "2026-11-28T12:02:26.344545+00:00",
+  "publicHealth": {
+    "httpStatus": 200,
+    "body": {
+      "status": "ok",
+      "paused": false,
+      "heartbeatAgeSeconds": 1,
+      "syncSeconds": 60,
+      "summary": {
+        "total": 82,
+        "ok": 80,
+        "failed": 2,
+        "pending": 0
+      }
+    }
+  },
+  "scope": "Prefer fresh Macau observations when present; compare movements within one provider and feed. Preserve frozen forecasts. Disclose original fallback sources.",
+  "officialMacauLiveFeedConnected": false,
+  "limitations": [
+    "Official Macau access verification is still incomplete; preference code is not a live feed integration.",
+    "Current released videos retain their original DraftKings reference and frozen forecasts."
+  ]
+}
