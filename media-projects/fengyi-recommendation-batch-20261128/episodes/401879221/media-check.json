@@ -1,0 +1,13 @@
+{
+  "file": "footballknow/public/media/videos/fengyi-football-20261202-401879221-local-v1.mp4",
+  "poster": "footballknow/public/media/videos/fengyi-football-20261202-401879221-local-v1.jpg",
+  "bytes": 6448522,
+  "sha256": "7fe473f3904173cb661a60b728418986d0ec9f07f8653eae44ffba81197dc8b2",
+  "duration": 17.833333,
+  "width": 1344,
+  "height": 768,
+  "fps": 24,
+  "video": "h264",
+  "audio": "aac",
+  "fastStart": true
+}

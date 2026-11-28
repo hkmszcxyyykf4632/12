@@ -1,0 +1,80 @@
+{
+  "id": "543a229f6c2d5021f8579d79fadd0a394de61d8caf180439712b57d56cd69a5f",
+  "event": "401882790",
+  "domain": "football",
+  "group": "laliga|2026/27|第14轮",
+  "stage": "initial",
+  "issuedAt": "2026-11-26T16:41:12.427874Z",
+  "kickoff": "2026-11-28T15:15:00Z",
+  "title": "马拉加 对 毕尔巴鄂竞技 · 毕尔巴鄂竞技",
+  "pick": "毕尔巴鄂竞技",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401882790",
+  "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+  "receipt": {
+    "identity": "0946aa9325643c057a2ef3a569bf41d966005b821b0e2076929949751c556269",
+    "eventId": "401882790",
+    "matchId": "2026-11-28|Malaga|Ath Bilbao",
+    "league": "laliga",
+    "kickoff": "2026-11-28T15:15:00Z",
+    "day": "2026-11-28",
+    "home": "马拉加",
+    "away": "毕尔巴鄂竞技",
+    "season": "2026/27",
+    "round": "第14轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=14&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Malaga",
+    "awayName": "Ath Bilbao",
+    "stage": "initial",
+    "issuedAt": "2026-11-26T16:41:12.427874Z",
+    "score": [
+      1,
+      2
+    ],
+    "scoreCandidates": [
+      [
+        1,
+        2
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "A",
+    "line": 0.5,
+    "asianPrice": 1.6666666666666665,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401882790"
+  },
+  "summary": [
+    "主选毕尔巴鄂竞技让0.5球，报价1.67；比分参考1:2、0:1（主队在前）。",
+    "DraftKings的亚洲让球盘口不变，A项赔率1.67→1.67，去水权重上升1.21个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "status": "queued",
+  "dialogue": [
+    "喂，今晚有什么好料啊？",
+    "今晚买毕尔巴鄂竞技啊。",
+    "怎么让啊？",
+    "毕尔巴鄂竞技让马拉加半球啊。",
+    "买几比几啊？",
+    "一比二，或者零比一啊。",
+    "为什么买它啊？"
+  ],
+  "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+  "visualReference": "original-characters-v3",
+  "voiceReference": "approved-football-dialogue",
+  "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+}

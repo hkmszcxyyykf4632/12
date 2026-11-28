@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "league": "laliga",
+  "matchId": "2026-11-28|Betis|Vallecano",
+  "eventId": "401882796",
+  "date": "2026-11-28",
+  "home": "Betis",
+  "away": "Vallecano",
+  "completed": false,
+  "updatedAt": "2026-11-28T10:21:09.551111+00:00",
+  "source": "https://www.espn.com/soccer/lineups/_/gameId/401882796",
+  "status": "pending",
+  "lineups": {
+    "home": {
+      "teamId": 5,
+      "name": "Betis",
+      "formation": "",
+      "players": [],
+      "confirmed": false
+    },
+    "away": {
+      "teamId": 14,
+      "name": "Vallecano",
+      "formation": "",
+      "players": [],
+      "confirmed": false
+    }
+  },
+  "statistics": [
+    {
+      "side": "home",
+      "values": {
+        "goalDifference": "5",
+        "totalGoals": "21",
+        "goalAssists": "12",
+        "goalsConceded": "16"
+      }
+    },
+    {
+      "side": "away",
+      "values": {
+        "goalDifference": "-7",
+        "totalGoals": "15",
+        "goalAssists": "12",
+        "goalsConceded": "22"
+      }
+    }
+  ],
+  "events": [],
+  "duration": 90,
+  "minutesBasis": "未提供官方分钟数时，按换人及红牌分钟估算，不计补时；加时另计。",
+  "venue": "Estadio La Cartuja",
+  "attendance": null
+}

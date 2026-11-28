@@ -1,0 +1,80 @@
+{
+  "id": "1c8f02664ea05686869cc8e0b5b7d02c7cca8c9beadbbc7334440cfd8ce0c9db",
+  "event": "401884726",
+  "domain": "football",
+  "group": "bundesliga|2026/27|第11轮",
+  "stage": "initial",
+  "issuedAt": "2026-11-26T16:42:33.481144Z",
+  "kickoff": "2026-11-28T17:30:00Z",
+  "title": "斯图加特 对 法兰克福 · 法兰克福",
+  "pick": "法兰克福",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401884726",
+  "quoteAt": "2026-11-26T16:41:48.152634+00:00",
+  "receipt": {
+    "identity": "919bce79ae331237a4093fea7729f5348f847a3f265bcefab7576739abf81c55",
+    "eventId": "401884726",
+    "matchId": "espn:401884726",
+    "league": "bundesliga",
+    "kickoff": "2026-11-28T17:30:00Z",
+    "day": "2026-11-29",
+    "home": "斯图加特",
+    "away": "法兰克福",
+    "season": "2026/27",
+    "round": "第11轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4331&r=11&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Stuttgart",
+    "awayName": "Ein Frankfurt",
+    "stage": "initial",
+    "issuedAt": "2026-11-26T16:42:33.481144Z",
+    "score": [
+      1,
+      1
+    ],
+    "scoreCandidates": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "A",
+    "line": -0.5,
+    "asianPrice": 2.05,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-26T16:41:48.152634+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401884726"
+  },
+  "summary": [
+    "主选法兰克福受让0.5球，报价2.05；比分参考1:1、1:2（主队在前）。",
+    "DraftKings的亚洲让球盘口不变，A项赔率2.10→2.05，去水权重上升2.12个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "status": "queued",
+  "dialogue": [
+    "喂，今晚有什么好料啊？",
+    "今晚买法兰克福啊。",
+    "怎么让啊？",
+    "斯图加特让法兰克福半球啊。",
+    "买几比几啊？",
+    "一比一，或者一比二啊。",
+    "为什么买它啊？"
+  ],
+  "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+  "visualReference": "original-characters-v3",
+  "voiceReference": "approved-football-dialogue",
+  "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+}

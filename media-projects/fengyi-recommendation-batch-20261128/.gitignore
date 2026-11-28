@@ -1,0 +1,9 @@
+*.log
+**/__pycache__/
+**/.hyperframes/
+**/.thumbnails/
+**/.transcode-cache/
+**/.waveform-cache/
+**/renders/
+cache-to-data-drive.ps1
+restore-local-metadata.ps1

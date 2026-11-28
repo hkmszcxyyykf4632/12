@@ -1,0 +1,98 @@
+{
+  "episodes": [
+    {
+      "event": "401882796",
+      "folder": "episodes/401882796",
+      "kickoff": "2026-11-28T13:00:00Z",
+      "approvedSample": false,
+      "title": "皇家贝蒂斯 对 巴列卡诺 · 巴列卡诺"
+    },
+    {
+      "event": "401884719",
+      "folder": "episodes/401884719",
+      "kickoff": "2026-11-28T14:30:00Z",
+      "approvedSample": false,
+      "title": "帕德博恩 对 沙尔克04 · 沙尔克04"
+    },
+    {
+      "event": "401879226",
+      "folder": "episodes/401879226",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "approvedSample": false,
+      "title": "曼联 对 布伦特福德 · 布伦特福德"
+    },
+    {
+      "event": "401882790",
+      "folder": "episodes/401882790",
+      "kickoff": "2026-11-28T15:15:00Z",
+      "approvedSample": false,
+      "title": "马拉加 对 毕尔巴鄂竞技 · 毕尔巴鄂竞技"
+    },
+    {
+      "event": "401884726",
+      "folder": "episodes/401884726",
+      "kickoff": "2026-11-28T17:30:00Z",
+      "approvedSample": false,
+      "title": "斯图加特 对 法兰克福 · 法兰克福"
+    },
+    {
+      "event": "401874977",
+      "folder": "episodes/401874977",
+      "kickoff": "2026-11-28T19:45:00Z",
+      "approvedSample": false,
+      "title": "国际米兰 对 热那亚 · 热那亚"
+    },
+    {
+      "event": "401875031",
+      "folder": "episodes/401875031",
+      "kickoff": "2026-11-29T11:30:00Z",
+      "approvedSample": false,
+      "title": "乌迪内斯 对 佛罗伦萨 · 乌迪内斯"
+    },
+    {
+      "event": "401879229",
+      "folder": "episodes/401879229",
+      "kickoff": "2026-11-29T12:00:00Z",
+      "approvedSample": true,
+      "title": "埃弗顿 对 利物浦 · 利物浦"
+    },
+    {
+      "event": "401874992",
+      "folder": "episodes/401874992",
+      "kickoff": "2026-11-29T14:00:00Z",
+      "approvedSample": false,
+      "title": "萨索洛 对 那不勒斯 · 那不勒斯"
+    },
+    {
+      "event": "401879230",
+      "folder": "episodes/401879230",
+      "kickoff": "2026-11-29T14:05:00Z",
+      "approvedSample": false,
+      "title": "水晶宫 对 赫尔城 · 赫尔城"
+    },
+    {
+      "event": "401884727",
+      "folder": "episodes/401884727",
+      "kickoff": "2026-11-29T18:30:00Z",
+      "approvedSample": false,
+      "title": "多特蒙德 对 勒沃库森 · 勒沃库森"
+    },
+    {
+      "event": "401882788",
+      "folder": "episodes/401882788",
+      "kickoff": "2026-11-29T20:00:00Z",
+      "approvedSample": false,
+      "title": "皇家社会 对 塞维利亚 · 皇家社会"
+    },
+    {
+      "event": "401879221",
+      "folder": "episodes/401879221",
+      "kickoff": "2026-12-01T20:00:00Z",
+      "approvedSample": false,
+      "title": "考文垂 对 伊普斯维奇 · 考文垂"
+    }
+  ],
+  "paidGenerationCalls": 0,
+  "template": "../fengyi-local-sample-20261128",
+  "scoreOrder": "Home first, except approved Liverpool speech describes Liverpool wins; explicitly labelled in publication."
+}

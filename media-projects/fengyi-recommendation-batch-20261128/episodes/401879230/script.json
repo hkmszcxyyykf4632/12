@@ -1,0 +1,52 @@
+{
+  "purpose": "Video of the existing frozen recommendation; not a new forecast.",
+  "lines": [
+    {
+      "role": "male",
+      "text": "喂，今晚有什么好料啊？",
+      "source": "original",
+      "start": 0,
+      "end": 2.4
+    },
+    {
+      "role": "female",
+      "text": "今晚买赫尔城啊。",
+      "source": "local"
+    },
+    {
+      "role": "male",
+      "text": "怎么让啊？",
+      "source": "original",
+      "start": 4.4,
+      "end": 5.62
+    },
+    {
+      "role": "female",
+      "text": "水晶宫让赫尔城半球啊。",
+      "source": "local"
+    },
+    {
+      "role": "male",
+      "text": "买几比几啊？",
+      "source": "original",
+      "start": 8.45,
+      "end": 10.05
+    },
+    {
+      "role": "female",
+      "text": "主队在前，一比一，或者一比二啊。",
+      "source": "local"
+    },
+    {
+      "role": "male",
+      "text": "为什么买它啊？",
+      "source": "local"
+    },
+    {
+      "role": "female",
+      "text": "受让半球，去水后的权重升了啊。",
+      "source": "local"
+    }
+  ],
+  "sourceRecommendation": "recommendation-receipt.json"
+}

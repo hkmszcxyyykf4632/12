@@ -6,6 +6,7 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 
 from .files import STATE, PUBLIC
+from .odds_reference import policy
 from .motivation import dt, digest
 from .research_scope import SUPPORTED_COMPETITIONS
 
@@ -156,6 +157,8 @@ def analyse(row, at, research=None):
             key = series(q)
             if key not in latest or dt(q['fetchedAt']) > dt(latest[key]['fetchedAt']):
                 latest[key] = q
+    selected, reference = policy(list(latest.values()))
+    latest = {series(q): q for q in selected}
     with connect() as db:
         history = [json.loads(r['content']) for r in db.execute('SELECT content FROM observations WHERE identity=? ORDER BY id', (identity(row),))]
         previous = [json.loads(r['content']) for r in db.execute('SELECT content FROM events WHERE kickoff<? AND kickoff>=? ORDER BY kickoff DESC',
@@ -206,7 +209,7 @@ def analyse(row, at, research=None):
                                -abs(c['lineChange']), -max((c['weightChangesPP'] or {'x': 0}).values()), c['provider'], c['via']))
     primary = next((c for c in changes if c['side']), None)
     return {'version': VERSION, 'eligible': bool(primary), 'primary': primary, 'changes': changes,
-            'adjacentMatches': adjacent, 'checkedAt': at.isoformat(),
+            'adjacentMatches': adjacent, 'checkedAt': at.isoformat(), 'referencePolicy': reference,
             'reason': '已发现可比的赛前变盘' if primary else
                       '只有价格整体调整，尚无明确方向，不作预测' if changes else
                       '没有可核对的赔率变化，不作预测；继续等待同场或同对手同主客场记录。'}

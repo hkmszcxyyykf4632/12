@@ -1,0 +1,80 @@
+{
+  "id": "8e66d13347a419269a1f3a5e8d08946e5c9f223abc583a523eac128dd31f0fd7",
+  "event": "401879230",
+  "domain": "football",
+  "group": "epl|2026/27|第12轮",
+  "stage": "initial",
+  "issuedAt": "2026-11-26T16:44:13.729406Z",
+  "kickoff": "2026-11-29T14:05:00Z",
+  "title": "水晶宫 对 赫尔城 · 赫尔城",
+  "pick": "赫尔城",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401879230",
+  "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+  "receipt": {
+    "identity": "6e3fd288ea3c05d1c7fd28b46372544631c17eeca932ea3c1253b0314548e90f",
+    "eventId": "401879230",
+    "matchId": "2026-11-29|Crystal Palace|Hull City",
+    "league": "epl",
+    "kickoff": "2026-11-29T14:05:00Z",
+    "day": "2026-11-29",
+    "home": "水晶宫",
+    "away": "赫尔城",
+    "season": "2026/27",
+    "round": "第12轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Crystal Palace",
+    "awayName": "Hull City",
+    "stage": "initial",
+    "issuedAt": "2026-11-26T16:44:13.729406Z",
+    "score": [
+      1,
+      1
+    ],
+    "scoreCandidates": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "A",
+    "line": -0.5,
+    "asianPrice": 1.9090909090909092,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401879230"
+  },
+  "summary": [
+    "主选赫尔城受让0.5球，报价1.91；比分参考1:1、1:2（主队在前）。",
+    "DraftKings的亚洲让球盘口不变，A项赔率1.91→1.91，去水权重上升1.22个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "status": "queued",
+  "dialogue": [
+    "喂，今晚有什么好料啊？",
+    "今晚买赫尔城啊。",
+    "怎么让啊？",
+    "水晶宫让赫尔城半球啊。",
+    "买几比几啊？",
+    "一比一，或者一比二啊。",
+    "为什么买它啊？"
+  ],
+  "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+  "visualReference": "original-characters-v3",
+  "voiceReference": "approved-football-dialogue",
+  "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+}

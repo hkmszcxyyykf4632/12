@@ -1,0 +1,80 @@
+{
+  "id": "7bc700ff1dbe71e112218d2a4e99b40fd89c793621017122257c982f71971987",
+  "event": "401874977",
+  "domain": "football",
+  "group": "seriea|2026/27|第13轮",
+  "stage": "initial",
+  "issuedAt": "2026-11-26T16:43:03.715226Z",
+  "kickoff": "2026-11-28T19:45:00Z",
+  "title": "国际米兰 对 热那亚 · 热那亚",
+  "pick": "热那亚",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401874977",
+  "quoteAt": "2026-11-26T16:41:18.123226+00:00",
+  "receipt": {
+    "identity": "7d4f4d172ed240a73341a41000aec5d714156d26a2c36120c84307f9443067fc",
+    "eventId": "401874977",
+    "matchId": "espn:401874977",
+    "league": "seriea",
+    "kickoff": "2026-11-28T19:45:00Z",
+    "day": "2026-11-29",
+    "home": "国际米兰",
+    "away": "热那亚",
+    "season": "2026/27",
+    "round": "第13轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=13&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Inter",
+    "awayName": "Genoa",
+    "stage": "initial",
+    "issuedAt": "2026-11-26T16:43:03.715226Z",
+    "score": [
+      2,
+      1
+    ],
+    "scoreCandidates": [
+      [
+        2,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "A",
+    "line": -1.5,
+    "asianPrice": 1.8695652173913042,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-26T16:41:18.123226+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401874977"
+  },
+  "summary": [
+    "主选热那亚受让1.5球，报价1.87；比分参考2:1、1:1（主队在前）。",
+    "DraftKings的亚洲让球盘口不变，A项赔率1.95→1.87，去水权重上升3.12个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "status": "queued",
+  "dialogue": [
+    "喂，今晚有什么好料啊？",
+    "今晚买热那亚啊。",
+    "怎么让啊？",
+    "国际米兰让热那亚一球半啊。",
+    "买几比几啊？",
+    "二比一，或者一比一啊。",
+    "为什么买它啊？"
+  ],
+  "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+  "visualReference": "original-characters-v3",
+  "voiceReference": "approved-football-dialogue",
+  "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+}

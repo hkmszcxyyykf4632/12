@@ -1,0 +1,183 @@
+{
+  "supported": true,
+  "eventId": "401882796",
+  "kickoff": "2026-11-28T13:00:00+00:00",
+  "teams": {
+    "home": "244",
+    "away": "101"
+  },
+  "initialAt": "2026-11-24T13:00:00+00:00",
+  "finalCheckAt": "2026-11-28T11:00:00+00:00",
+  "paused": false,
+  "stages": {
+    "initial": {
+      "report": {
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "asianSide": "A",
+        "summary": [
+          "主选巴列卡诺受让0.5球，报价2.30；比分参考1:1、2:2（主队在前）。",
+          "DraftKings的亚洲让球由来源开盘-1.5变为-0.5。按固定变盘规则试行，真实原因尚待证据验证。"
+        ],
+        "details": [
+          {
+            "title": "变盘记录",
+            "text": "DraftKings的亚洲让球由来源开盘-1.5变为-0.5。H为主队，A为客队；比较同公司、同一市场。采集时间不等于变盘发生时间。"
+          },
+          {
+            "title": "比分如何筛选",
+            "text": "封存统计基线首选1:1。本版在所选亚洲盘不输盘的情境中，结合往绩泊松权重、净胜球距盘口中心和大小球线排序，取前两个比分。此筛选不代表其他比分不会发生，也未证明准确率提升。"
+          },
+          {
+            "title": "阵容与往绩",
+            "text": "皇家贝蒂斯：已收录比赛中连续1胜；近10场6胜、2平、2负，进17球、失13球。。巴列卡诺：已收录比赛中连续2负；近10场4胜、2平、4负，进14球、失16球。。"
+          },
+          {
+            "title": "原因核查与限制",
+            "text": "报价变化是已核对事实；变化由伤停、轮换或资金造成，现有证据尚不能确认。正式首发和已收录天气、新闻可在本场资料展开核对；没有证据不据此调整权重。此版测试固定的顺变盘规则，赛后分别验证盘口方向、两个比分及反向对照。"
+          }
+        ],
+        "issuedAt": "2026-11-26T16:39:45.333561+00:00",
+        "model": "fengyi-odds-change-v1",
+        "oddsSignal": {
+          "basis": "opening",
+          "kind": "line",
+          "market": "asian-handicap",
+          "provider": "DraftKings",
+          "via": "ESPN",
+          "side": "A",
+          "lineChange": 1.0,
+          "priceChanges": {
+            "H": -0.644444,
+            "A": 0.759459
+          },
+          "weightChangesPP": null,
+          "before": {
+            "market": "asian-handicap",
+            "provider": "DraftKings",
+            "via": "ESPN",
+            "phase": "opening",
+            "line": -1.5,
+            "prices": {
+              "H": 2.2,
+              "A": 1.5405405405405406
+            },
+            "kind": "bookmaker",
+            "fetchedAt": "2026-11-26T16:00:02.753836+00:00",
+            "quotedAt": null,
+            "inPlay": false,
+            "source": "https://www.espn.com/soccer/odds/_/gameId/401882796"
+          },
+          "after": {
+            "market": "asian-handicap",
+            "provider": "DraftKings",
+            "via": "ESPN",
+            "phase": "latest",
+            "line": -0.5,
+            "prices": {
+              "H": 1.5555555555555556,
+              "A": 2.3
+            },
+            "kind": "bookmaker",
+            "fetchedAt": "2026-11-26T16:38:31.125027+00:00",
+            "quotedAt": null,
+            "inPlay": false,
+            "source": "https://www.espn.com/soccer/odds/_/gameId/401882796"
+          },
+          "previousMatch": null,
+          "timeMeaning": "采集时间；来源未提供报价产生时间，不能据此确定变盘与消息发布的先后。"
+        },
+        "stage": "initial",
+        "quote": {
+          "market": "asian-handicap",
+          "provider": "DraftKings",
+          "via": "ESPN",
+          "phase": "latest",
+          "line": -0.5,
+          "prices": {
+            "H": 1.5555555555555556,
+            "A": 2.3
+          },
+          "kind": "bookmaker",
+          "fetchedAt": "2026-11-26T16:38:31.125027+00:00",
+          "quotedAt": null,
+          "inPlay": false,
+          "source": "https://www.espn.com/soccer/odds/_/gameId/401882796"
+        },
+        "snapshotHash": "65baaaf215cee4782b820c2882b9cae39a884e317f062182954595be9f2a62aa",
+        "researchAt": "2026-11-26T16:39:28.338967+00:00",
+        "lineupsConfirmed": false,
+        "baseline": {
+          "available": true,
+          "samples": {
+            "home": 10,
+            "away": 10
+          },
+          "expectedGoals": [
+            1.56,
+            1.14
+          ],
+          "leadingScores": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "method": "最近10场按0.85逐场递减，同主客场权重乘1.2；本队进球与对手失球均值取平均，限0.2至4.5；独立泊松比分。未作概率校准。"
+        },
+        "baselineExplanation": {
+          "baselineScore": [
+            1,
+            1
+          ],
+          "selectedScore": [
+            1,
+            1
+          ],
+          "differsFromBaseline": false,
+          "source": "stored-report.baseline.leadingScores[0]",
+          "text": "封存统计基线首选 1:1；本版实际主选 1:1。本版比分与统计首选一致。"
+        },
+        "amendments": [],
+        "review": {
+          "status": "pending"
+        }
+      },
+      "message": "开赛前96小时自动生成",
+      "retryAt": null
+    },
+    "final": {
+      "report": null,
+      "message": "开赛前120分钟开始准备并检查，双方正式首发确认后生成",
+      "retryAt": null
+    }
+  }
+}

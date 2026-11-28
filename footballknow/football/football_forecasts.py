@@ -20,6 +20,7 @@ HK = timezone(timedelta(hours=8))
 FINAL_WINDOW = timedelta(minutes=120)
 INITIAL_WINDOW = timedelta(hours=96)
 from . import odds_signals
+from .odds_reference import preferred
 from .odds_forecast import build as build_prediction
 
 
@@ -89,19 +90,22 @@ def confirmed(research, row, at):
     return True
 
 
-def quote_for(row, at):
+def quote_for(row, at, reference=None):
     rows = []
     for q in row.get('quotes', []):
         line, prices = q.get('line'), q.get('prices', {})
-        if (q.get('market') != 'asian-handicap' or q.get('phase') != 'latest'
+        if (not odds_signals.valid_quote(q, at, dt(row['kickoff']))
+                or q.get('market') != 'asian-handicap' or q.get('phase') != 'latest'
                 or q.get('inPlay') or not fresh(q.get('fetchedAt'), at, 15)
                 or not dt(q.get('fetchedAt')) < dt(row['kickoff']) or not q.get('source')
                 or type(line) not in (int, float) or not math.isfinite(line) or abs(line) > 10
                 or abs(line * 4 - round(line * 4)) > 1e-8
                 or any(type(prices.get(s)) not in (int, float) or not math.isfinite(prices[s]) or prices[s] <= 1 for s in ['H', 'A'])):
             continue
+        if reference is not None and (q.get('provider'), q.get('via', '')) != (reference.get('provider'), reference.get('via', '')):
+            continue
         rows.append(q)
-    rows.sort(key=lambda q: (q['phase'] == 'latest', dt(q['fetchedAt'])), reverse=True)
+    rows.sort(key=lambda q: (preferred(q), dt(q['fetchedAt'])), reverse=True)
     return rows[0] if rows else None
 
 
@@ -403,9 +407,9 @@ def generate(row, stage):
             return False
         signal = odds_signals.analyse(row, now(), research)
         primary = signal['primary']
-        quote = primary['after'] if primary and primary['market'] == 'asian-handicap' else quote_for(row, now())
+        quote = primary['after'] if primary and primary['market'] == 'asian-handicap' else quote_for(row, now(), primary['after'] if primary else None)
         if not signal['eligible'] or not quote:
-            defer(row, stage, signal['reason'] if not signal['eligible'] else '等待最新亚洲盘')
+            defer(row, stage, signal['reason'] if not signal['eligible'] else '等待与变盘来源一致的最新亚洲盘')
             return False
         with connect() as db:
             previous = reports_for(row, db).get('initial')
@@ -428,7 +432,8 @@ def generate(row, stage):
             return False
         content.update({'issuedAt': finished.isoformat(), 'model': odds_signals.VERSION, 'oddsSignal': signal['primary'], 'stage': stage,
                         'quote': quote, 'snapshotHash': digest(snapshot), 'researchAt': research.get('pregame', {}).get('capturedAt'),
-                        'lineupsConfirmed': confirmed(research, row, finished), 'baseline': stats})
+                        'lineupsConfirmed': confirmed(research, row, finished), 'baseline': stats,
+                        'oddsReference': signal.get('referencePolicy')})
         with connect() as db:
             db.execute('INSERT OR IGNORE INTO forecasts VALUES (?,?,?,?,?,?)',
                        (identity(row), stage, row['id'], finished.isoformat(), json.dumps(content, ensure_ascii=False), json.dumps(snapshot, ensure_ascii=False)))

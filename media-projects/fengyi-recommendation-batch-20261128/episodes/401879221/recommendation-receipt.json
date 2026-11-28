@@ -1,0 +1,80 @@
+{
+  "id": "ccd54ab007bb9b8c1125fd75f7b969a27525ae5346bb527943f91f64e579c8ac",
+  "event": "401879221",
+  "domain": "football",
+  "group": "epl|2026/27|第13轮",
+  "stage": "initial",
+  "issuedAt": "2026-11-27T20:01:05.450681Z",
+  "kickoff": "2026-12-01T20:00:00Z",
+  "title": "考文垂 对 伊普斯维奇 · 考文垂",
+  "pick": "考文垂",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401879221",
+  "quoteAt": "2026-11-27T19:59:47.775234+00:00",
+  "receipt": {
+    "identity": "f5dd7719201ccad937d72c89636a9b1d9a483917a6018aadfc2530753c4994a7",
+    "eventId": "401879221",
+    "matchId": "2026-12-01|Coventry City|Ipswich Town",
+    "league": "epl",
+    "kickoff": "2026-12-01T20:00:00Z",
+    "day": "2026-12-02",
+    "home": "考文垂",
+    "away": "伊普斯维奇",
+    "season": "2026/27",
+    "round": "第13轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=13&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Coventry City",
+    "awayName": "Ipswich Town",
+    "stage": "initial",
+    "issuedAt": "2026-11-27T20:01:05.450681Z",
+    "score": [
+      2,
+      1
+    ],
+    "scoreCandidates": [
+      [
+        2,
+        1
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "H",
+    "line": -0.5,
+    "asianPrice": 2.1,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-27T19:59:47.775234+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401879221"
+  },
+  "summary": [
+    "主选考文垂让0.5球，报价2.10；比分参考2:1、1:0（主队在前）。",
+    "DraftKings的亚洲让球盘口不变，H项赔率2.10→2.10，去水权重上升0.27个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "status": "queued",
+  "dialogue": [
+    "喂，今晚有什么好料啊？",
+    "今晚买考文垂啊。",
+    "怎么让啊？",
+    "考文垂让伊普斯维奇半球啊。",
+    "买几比几啊？",
+    "二比一，或者一比零啊。",
+    "为什么买它啊？"
+  ],
+  "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+  "visualReference": "original-characters-v3",
+  "voiceReference": "approved-football-dialogue",
+  "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+}

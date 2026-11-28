@@ -1,0 +1,205 @@
+{
+  "method": "Automatic speech recognition, not a human listening judgement",
+  "entries": [
+    {
+      "expected": "今晚买巴列卡诺啊。",
+      "recognized": "今晚买八列卡诺啊",
+      "file": "voice-cache/349997969a8888168508.wav"
+    },
+    {
+      "expected": "皇家贝蒂斯让巴列卡诺半球啊。",
+      "recognized": "皇家被第四讓巴勒卡諾半球啊",
+      "file": "voice-cache/2eb03867c0bcb79c17f2.wav"
+    },
+    {
+      "expected": "主队在前，一比一，或者二比二啊。",
+      "recognized": "主隊在前1比1或者2比2啊",
+      "file": "voice-cache/52222a32cf5791595a19.wav"
+    },
+    {
+      "expected": "贝蒂斯从让一球半，退到半球啊。",
+      "recognized": "北迪斯从让一球半,推到半球啊",
+      "file": "voice-cache/4da12ac8f9858a75e17d.wav"
+    },
+    {
+      "expected": "今晚买沙尔克零四啊。",
+      "recognized": "今晚買12克04啊",
+      "file": "voice-cache/286f722c38cd78fd2fe2.wav"
+    },
+    {
+      "expected": "帕德博恩让沙尔克零四半球啊。",
+      "recognized": "帕德博恩讓沙爾克林斯伴球啊!",
+      "file": "voice-cache/64b47709fd5f6940437d.wav"
+    },
+    {
+      "expected": "主队在前，一比一，或者零比零啊。",
+      "recognized": "主隊在前1比1或者0比0啊",
+      "file": "voice-cache/66dfbb612e7b828efd46.wav"
+    },
+    {
+      "expected": "受让半球，赔率变化信号比较弱啊。",
+      "recognized": "收讓板球,陪律變化信號比較弱",
+      "file": "voice-cache/5d0c539cdfcfb087c324.wav"
+    },
+    {
+      "expected": "今晚买布伦特福德啊。",
+      "recognized": "今晚買不輪特服得啊",
+      "file": "voice-cache/8f447603f4c2f9e9d2a7.wav"
+    },
+    {
+      "expected": "曼联让布伦特福德半球啊。",
+      "recognized": "滿臉讓布輪特服得半球啊",
+      "file": "voice-cache/901d0533a23657cbac16.wav"
+    },
+    {
+      "expected": "主队在前，一比一，或者一比二啊。",
+      "recognized": "主隊在前1比1或者1比2啊",
+      "file": "voice-cache/15329c6aa8f3722481ee.wav"
+    },
+    {
+      "expected": "受让半球，去水后的权重升了啊。",
+      "recognized": "收讓板球,去血厚的權重生啦",
+      "file": "voice-cache/f3313a1ebcc501e2c019.wav"
+    },
+    {
+      "expected": "今晚买毕尔巴鄂竞技啊。",
+      "recognized": "今晚買必爾包了經濟啊",
+      "file": "voice-cache/acfd8f396492454213e9.wav"
+    },
+    {
+      "expected": "毕尔巴鄂竞技让马拉加半球啊。",
+      "recognized": "比爾巴勒競技讓馬拉加半球",
+      "file": "voice-cache/dbe7d5299293192002c6.wav"
+    },
+    {
+      "expected": "主队在前，一比二，或者零比一啊。",
+      "recognized": "主隊在前一比二 或者零比一呀",
+      "file": "voice-cache/e639469f24e7b916a96e.wav"
+    },
+    {
+      "expected": "让半球，去水后的权重升了啊。",
+      "recognized": "讓半球去水候的權重生了",
+      "file": "voice-cache/23326005200edb87fc5d.wav"
+    },
+    {
+      "expected": "今晚买法兰克福啊。",
+      "recognized": "今晚買法覽客服啊",
+      "file": "voice-cache/27223228c9a6eb832de0.wav"
+    },
+    {
+      "expected": "斯图加特让法兰克福半球啊。",
+      "recognized": "試圖加特讓法郎克服半球啊",
+      "file": "voice-cache/70345326d7756972c772.wav"
+    },
+    {
+      "expected": "受让半球，法兰克福赔率降了啊。",
+      "recognized": "受讓半球,法蘭克服賠率降了。",
+      "file": "voice-cache/9243dd019de90c1c5e69.wav"
+    },
+    {
+      "expected": "今晚买热那亚啊。",
+      "recognized": "今晚买热的呀",
+      "file": "voice-cache/e44062122b178428eec3.wav"
+    },
+    {
+      "expected": "国际米兰让热那亚一球半啊。",
+      "recognized": "國際米蘭讓熱納亞依球棒啊!",
+      "file": "voice-cache/c0cd910a04b527221846.wav"
+    },
+    {
+      "expected": "主队在前，二比一，或者一比一啊。",
+      "recognized": "主堆在前2比1或者1比1呀",
+      "file": "voice-cache/8e74fad48d5ce4acabe2.wav"
+    },
+    {
+      "expected": "受让一球半，热那亚赔率降了啊。",
+      "recognized": "收攏一球半,熱娜亞賠率降了啊",
+      "file": "voice-cache/802197214f8551a9f287.wav"
+    },
+    {
+      "expected": "今晚买乌迪内斯啊。",
+      "recognized": "今晚買物敵內斯啊",
+      "file": "voice-cache/05c5fe2014067ee71999.wav"
+    },
+    {
+      "expected": "佛罗伦萨让乌迪内斯半球啊。",
+      "recognized": "柏羅倫薩讓物敵內斯伴球啊",
+      "file": "voice-cache/887a8215f6f66e0890a3.wav"
+    },
+    {
+      "expected": "受让半球，乌迪内斯赔率降了啊。",
+      "recognized": "收讓半球 屋敵內斯賠率降了",
+      "file": "voice-cache/0cb71eaa12e76dcd53c9.wav"
+    },
+    {
+      "expected": "今晚买那不勒斯啊。",
+      "recognized": "金王买那不乐丝啊",
+      "file": "voice-cache/c9b933c84da5d26e26f8.wav"
+    },
+    {
+      "expected": "那不勒斯让萨索洛半球啊。",
+      "recognized": "那不樂私讓殺鎖落板球啊",
+      "file": "voice-cache/8351c88151f81bdb7222.wav"
+    },
+    {
+      "expected": "让半球，那不勒斯赔率略降了啊。",
+      "recognized": "讓半球,那不樂思培律越獎了",
+      "file": "voice-cache/8c43044ba28c416cdf04.wav"
+    },
+    {
+      "expected": "今晚买赫尔城啊。",
+      "recognized": "今晚买赫尔城了",
+      "file": "voice-cache/4da77669045d50065d91.wav"
+    },
+    {
+      "expected": "水晶宫让赫尔城半球啊。",
+      "recognized": "水晶功让赫尔成半球啊",
+      "file": "voice-cache/3d093fa7745a17776db3.wav"
+    },
+    {
+      "expected": "今晚买勒沃库森啊。",
+      "recognized": "今晚買了我酷聲啊",
+      "file": "voice-cache/415f2ce1ec33d6ccd66b.wav"
+    },
+    {
+      "expected": "多特蒙德让勒沃库森半球啊。",
+      "recognized": "多特盟德让乐卧库森板球啊?",
+      "file": "voice-cache/aec0674f5fc9bb5b6b58.wav"
+    },
+    {
+      "expected": "今晚买皇家社会啊。",
+      "recognized": "今晚買皇家社會啊",
+      "file": "voice-cache/d4b4b8c0f105f81e1786.wav"
+    },
+    {
+      "expected": "皇家社会让塞维利亚半球啊。",
+      "recognized": "皇家社會讓塞維利亞扮球啊",
+      "file": "voice-cache/547a776f7b15fa75ac3a.wav"
+    },
+    {
+      "expected": "主队在前，二比一，或者一比零啊。",
+      "recognized": "主隊在前2比1或者1比0啊",
+      "file": "voice-cache/89bed82ac09af914866a.wav"
+    },
+    {
+      "expected": "让半球，皇家社会赔率降了啊。",
+      "recognized": "讓半球,皇家社會陪律想了啊",
+      "file": "voice-cache/bab4cf58686322bcbd0c.wav"
+    },
+    {
+      "expected": "今晚买考文垂啊。",
+      "recognized": "今晚买烤纹锤呀",
+      "file": "voice-cache/5b95371d0bd6d786e10f.wav"
+    },
+    {
+      "expected": "考文垂让伊普斯维奇半球啊。",
+      "recognized": "烤温垂,让衣服思维击半球啊",
+      "file": "voice-cache/a1058c90ce3052d8c487.wav"
+    },
+    {
+      "expected": "让半球，赔率变化信号比较弱啊。",
+      "recognized": "讓半球陪律變化性好比較弱啊",
+      "file": "voice-cache/1468b4e08e434e3a8463.wav"
+    }
+  ]
+}

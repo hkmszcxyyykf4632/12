@@ -1,0 +1,117 @@
+{
+  "ok": true,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "duration": 17.708333,
+    "samples": [
+      0.984,
+      2.951,
+      4.919,
+      6.887,
+      8.854,
+      10.822,
+      12.789,
+      14.757,
+      16.725
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 0,
+    "truncated": false,
+    "faceCheck": {
+      "ran": true,
+      "candidates": 0,
+      "faces": 0
+    }
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      0.984,
+      4.919,
+      8.854,
+      12.789,
+      16.725
+    ],
+    "checked": 0,
+    "passed": 0
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "step": 0.125,
+    "samples": 143
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  },
+  "saved": {
+    "id": "de7e8551-0e6a-4b2a-a6af-e0c80b010f44",
+    "revision": null,
+    "report": "C:\\Users\\acer\\Documents\\Codex\\2026-11-14\\new-chat\\outputs\\football-github\\media-projects\\fengyi-recommendation-batch-20261128\\episodes\\401874977\\studio\\.hyperframes\\artifacts\\checks\\de7e8551-0e6a-4b2a-a6af-e0c80b010f44.json",
+    "attribution": "unversioned"
+  },
+  "_meta": {
+    "version": "0.9.85",
+    "latestVersion": "0.9.104",
+    "updateAvailable": true,
+    "checkedAt": "2026-11-28T09:21:51.635Z",
+    "skillsOutdated": 0,
+    "skillsMissing": 0,
+    "updateNotice": "For the user: HyperFrames CLI 0.9.104 is available (this run is 0.9.85). To update, run: powershell.exe -NoProfile -Command \"Set-Location ~ -ErrorAction Stop; npx.cmd hyperframes@latest update\""
+  }
+}

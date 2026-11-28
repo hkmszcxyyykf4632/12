@@ -1,0 +1,65 @@
+◆  Capturing review frames (beats, seams, phone) from studio
+   Review: 14 beat(s) and 7 seam(s) within 0–17.708333s
+   Revision: none (unversioned)
+   State: C:\Users\acer\Documents\Codex\2026-11-14\new-chat\outputs\football-github\media-projects\fengyi-recommendation-batch-20261128\episodes\401874977\studio\.hyperframes\video-state.json
+
+◇  49 snapshots saved to D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-01-at-0.3s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-02-at-1.229s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-03-at-2.758s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-04-at-3.271s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-05-at-4.383s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-06-at-5.717s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-07-at-6.75s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-08-at-8.383s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-09-at-8.938s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-10-at-10.092s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-11-at-11.375s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-12-at-13.258s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-13-at-14.425s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\beat-14-at-15.917s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-01-1-at-2.258s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-01-2-at-2.358s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-01-3-at-2.458s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-01-4-at-2.558s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-01-5-at-2.658s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-02-1-at-3.883s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-02-2-at-3.983s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-02-3-at-4.083s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-02-4-at-4.183s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-02-5-at-4.283s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-03-1-at-5.217s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-03-2-at-5.317s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-03-3-at-5.417s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-03-4-at-5.517s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-03-5-at-5.617s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-04-1-at-7.883s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-04-2-at-7.983s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-04-3-at-8.083s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-04-4-at-8.183s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-04-5-at-8.283s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-05-1-at-9.592s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-05-2-at-9.692s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-05-3-at-9.792s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-05-4-at-9.892s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-05-5-at-9.992s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-06-1-at-12.758s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-06-2-at-12.858s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-06-3-at-12.958s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-06-4-at-13.058s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-06-5-at-13.158s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-07-1-at-13.925s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-07-2-at-14.025s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-07-3-at-14.125s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-07-4-at-14.225s.png
+   D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\seam-07-5-at-14.325s.png
+   Beat sheet (settled frame per scene): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-beats.jpg
+     0.3s turn-1 · 1.229s turn-1 mid · 2.758s turn-2 · 3.271s turn-2 mid · 4.383s turn-3 · 5.717s turn-4 · 6.75s turn-4 mid · 8.383s turn-5 · 8.938s turn-5 mid · 10.092s turn-6 · 11.375s turn-6 mid · 13.258s turn-7 · 14.425s turn-8 · 15.917s turn-8 mid
+   Seam 1 at 2.458s (turn-1 -> turn-2): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-seam-01.jpg
+   Seam 2 at 4.083s (turn-2 -> turn-3): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-seam-02.jpg
+   Seam 3 at 5.417s (turn-3 -> turn-4): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-seam-03.jpg
+   Seam 4 at 8.083s (turn-4 -> turn-5): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-seam-04.jpg
+   Seam 5 at 9.792s (turn-5 -> turn-6): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-seam-05.jpg
+   Seam 6 at 12.958s (turn-6 -> turn-7): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-seam-06.jpg
+   Seam 7 at 14.125s (turn-7 -> turn-8): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-seam-07.jpg
+   Phone sheet (beats at 360 px wide): D:\Codex-local-video-tools\fengyi-20261128\batch-review\401874977\review-phone.jpg

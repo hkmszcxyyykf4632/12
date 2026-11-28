@@ -1,0 +1,248 @@
+{
+  "model": "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+  "revision": "5d83992436eae1d760afd27aff78a71d676296fc",
+  "paidCalls": 0,
+  "entries": [
+    {
+      "text": "今晚买巴列卡诺啊。",
+      "file": "voice-cache/349997969a8888168508.wav",
+      "seconds": 1.84,
+      "generationSeconds": 10.11
+    },
+    {
+      "text": "皇家贝蒂斯让巴列卡诺半球啊。",
+      "file": "voice-cache/2eb03867c0bcb79c17f2.wav",
+      "seconds": 2.48,
+      "generationSeconds": 11.79
+    },
+    {
+      "text": "主队在前，一比一，或者二比二啊。",
+      "file": "voice-cache/52222a32cf5791595a19.wav",
+      "seconds": 2.72,
+      "generationSeconds": 12.97
+    },
+    {
+      "text": "贝蒂斯从让一球半，退到半球啊。",
+      "file": "voice-cache/4da12ac8f9858a75e17d.wav",
+      "seconds": 2.72,
+      "generationSeconds": 12.77
+    },
+    {
+      "text": "今晚买沙尔克零四啊。",
+      "file": "voice-cache/286f722c38cd78fd2fe2.wav",
+      "seconds": 1.92,
+      "generationSeconds": 9.55
+    },
+    {
+      "text": "帕德博恩让沙尔克零四半球啊。",
+      "file": "voice-cache/64b47709fd5f6940437d.wav",
+      "seconds": 2.64,
+      "generationSeconds": 13.29
+    },
+    {
+      "text": "主队在前，一比一，或者零比零啊。",
+      "file": "voice-cache/66dfbb612e7b828efd46.wav",
+      "seconds": 2.72,
+      "generationSeconds": 12.78
+    },
+    {
+      "text": "受让半球，赔率变化信号比较弱啊。",
+      "file": "voice-cache/5d0c539cdfcfb087c324.wav",
+      "seconds": 3.2,
+      "generationSeconds": 15.34
+    },
+    {
+      "text": "今晚买布伦特福德啊。",
+      "file": "voice-cache/8f447603f4c2f9e9d2a7.wav",
+      "seconds": 1.76,
+      "generationSeconds": 8.98
+    },
+    {
+      "text": "曼联让布伦特福德半球啊。",
+      "file": "voice-cache/901d0533a23657cbac16.wav",
+      "seconds": 2.32,
+      "generationSeconds": 11.75
+    },
+    {
+      "text": "主队在前，一比一，或者一比二啊。",
+      "file": "voice-cache/15329c6aa8f3722481ee.wav",
+      "seconds": 3.04,
+      "generationSeconds": 14.35
+    },
+    {
+      "text": "受让半球，去水后的权重升了啊。",
+      "file": "voice-cache/f3313a1ebcc501e2c019.wav",
+      "seconds": 3.2,
+      "generationSeconds": 14.87
+    },
+    {
+      "text": "今晚买毕尔巴鄂竞技啊。",
+      "file": "voice-cache/acfd8f396492454213e9.wav",
+      "seconds": 2.08,
+      "generationSeconds": 9.78
+    },
+    {
+      "text": "毕尔巴鄂竞技让马拉加半球啊。",
+      "file": "voice-cache/dbe7d5299293192002c6.wav",
+      "seconds": 2.72,
+      "generationSeconds": 12.06
+    },
+    {
+      "text": "主队在前，一比二，或者零比一啊。",
+      "file": "voice-cache/e639469f24e7b916a96e.wav",
+      "seconds": 2.88,
+      "generationSeconds": 13.07
+    },
+    {
+      "text": "让半球，去水后的权重升了啊。",
+      "file": "voice-cache/23326005200edb87fc5d.wav",
+      "seconds": 2.56,
+      "generationSeconds": 11.55
+    },
+    {
+      "text": "今晚买法兰克福啊。",
+      "file": "voice-cache/27223228c9a6eb832de0.wav",
+      "seconds": 1.84,
+      "generationSeconds": 8.72
+    },
+    {
+      "text": "斯图加特让法兰克福半球啊。",
+      "file": "voice-cache/70345326d7756972c772.wav",
+      "seconds": 2.48,
+      "generationSeconds": 11.97
+    },
+    {
+      "text": "受让半球，法兰克福赔率降了啊。",
+      "file": "voice-cache/9243dd019de90c1c5e69.wav",
+      "seconds": 2.88,
+      "generationSeconds": 13.51
+    },
+    {
+      "text": "今晚买热那亚啊。",
+      "file": "voice-cache/e44062122b178428eec3.wav",
+      "seconds": 1.52,
+      "generationSeconds": 8.12
+    },
+    {
+      "text": "国际米兰让热那亚一球半啊。",
+      "file": "voice-cache/c0cd910a04b527221846.wav",
+      "seconds": 2.56,
+      "generationSeconds": 11.79
+    },
+    {
+      "text": "主队在前，二比一，或者一比一啊。",
+      "file": "voice-cache/8e74fad48d5ce4acabe2.wav",
+      "seconds": 3.04,
+      "generationSeconds": 13.82
+    },
+    {
+      "text": "受让一球半，热那亚赔率降了啊。",
+      "file": "voice-cache/802197214f8551a9f287.wav",
+      "seconds": 3.2,
+      "generationSeconds": 14.64
+    },
+    {
+      "text": "今晚买乌迪内斯啊。",
+      "file": "voice-cache/05c5fe2014067ee71999.wav",
+      "seconds": 1.68,
+      "generationSeconds": 9.61
+    },
+    {
+      "text": "佛罗伦萨让乌迪内斯半球啊。",
+      "file": "voice-cache/887a8215f6f66e0890a3.wav",
+      "seconds": 2.48,
+      "generationSeconds": 11.36
+    },
+    {
+      "text": "受让半球，乌迪内斯赔率降了啊。",
+      "file": "voice-cache/0cb71eaa12e76dcd53c9.wav",
+      "seconds": 2.8,
+      "generationSeconds": 14.16
+    },
+    {
+      "text": "今晚买那不勒斯啊。",
+      "file": "voice-cache/c9b933c84da5d26e26f8.wav",
+      "seconds": 1.6,
+      "generationSeconds": 8.58
+    },
+    {
+      "text": "那不勒斯让萨索洛半球啊。",
+      "file": "voice-cache/8351c88151f81bdb7222.wav",
+      "seconds": 2.2400416666666665,
+      "generationSeconds": 13.26
+    },
+    {
+      "text": "让半球，那不勒斯赔率略降了啊。",
+      "file": "voice-cache/8c43044ba28c416cdf04.wav",
+      "seconds": 2.88,
+      "generationSeconds": 16.59
+    },
+    {
+      "text": "今晚买赫尔城啊。",
+      "file": "voice-cache/4da77669045d50065d91.wav",
+      "seconds": 1.6,
+      "generationSeconds": 10.2
+    },
+    {
+      "text": "水晶宫让赫尔城半球啊。",
+      "file": "voice-cache/3d093fa7745a17776db3.wav",
+      "seconds": 2.16,
+      "generationSeconds": 13.1
+    },
+    {
+      "text": "今晚买勒沃库森啊。",
+      "file": "voice-cache/415f2ce1ec33d6ccd66b.wav",
+      "seconds": 1.68,
+      "generationSeconds": 12.87
+    },
+    {
+      "text": "多特蒙德让勒沃库森半球啊。",
+      "file": "voice-cache/aec0674f5fc9bb5b6b58.wav",
+      "seconds": 2.48,
+      "generationSeconds": 19.88
+    },
+    {
+      "text": "今晚买皇家社会啊。",
+      "file": "voice-cache/d4b4b8c0f105f81e1786.wav",
+      "seconds": 2.16,
+      "generationSeconds": 17.5
+    },
+    {
+      "text": "皇家社会让塞维利亚半球啊。",
+      "file": "voice-cache/547a776f7b15fa75ac3a.wav",
+      "seconds": 2.2400416666666665,
+      "generationSeconds": 16.9
+    },
+    {
+      "text": "主队在前，二比一，或者一比零啊。",
+      "file": "voice-cache/89bed82ac09af914866a.wav",
+      "seconds": 3.2,
+      "generationSeconds": 25.99
+    },
+    {
+      "text": "让半球，皇家社会赔率降了啊。",
+      "file": "voice-cache/bab4cf58686322bcbd0c.wav",
+      "seconds": 2.72,
+      "generationSeconds": 20.98
+    },
+    {
+      "text": "今晚买考文垂啊。",
+      "file": "voice-cache/5b95371d0bd6d786e10f.wav",
+      "seconds": 1.6,
+      "generationSeconds": 13.0
+    },
+    {
+      "text": "考文垂让伊普斯维奇半球啊。",
+      "file": "voice-cache/a1058c90ce3052d8c487.wav",
+      "seconds": 2.56,
+      "generationSeconds": 18.97
+    },
+    {
+      "text": "让半球，赔率变化信号比较弱啊。",
+      "file": "voice-cache/1468b4e08e434e3a8463.wav",
+      "seconds": 3.04,
+      "generationSeconds": 22.16
+    }
+  ],
+  "complete": true
+}

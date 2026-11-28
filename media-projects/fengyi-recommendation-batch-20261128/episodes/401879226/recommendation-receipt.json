@@ -1,0 +1,80 @@
+{
+  "id": "68cc1e8f65317de65070ff6f03e917df58180538fefdcb5e0a960a8672ee5502",
+  "event": "401879226",
+  "domain": "football",
+  "group": "epl|2026/27|第12轮",
+  "stage": "initial",
+  "issuedAt": "2026-11-26T16:40:47.596766Z",
+  "kickoff": "2026-11-28T15:00:00Z",
+  "title": "曼联 对 布伦特福德 · 布伦特福德",
+  "pick": "布伦特福德",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401879226",
+  "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+  "receipt": {
+    "identity": "bd442594d36a171ffd3ba27f3009592e110665f9fd065bd5019e330b4f7700bc",
+    "eventId": "401879226",
+    "matchId": "2026-11-28|Man Utd|Brentford",
+    "league": "epl",
+    "kickoff": "2026-11-28T15:00:00Z",
+    "day": "2026-11-28",
+    "home": "曼联",
+    "away": "布伦特福德",
+    "season": "2026/27",
+    "round": "第12轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Manchester United",
+    "awayName": "Brentford",
+    "stage": "initial",
+    "issuedAt": "2026-11-26T16:40:47.596766Z",
+    "score": [
+      1,
+      1
+    ],
+    "scoreCandidates": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "A",
+    "line": -0.5,
+    "asianPrice": 1.6896551724137931,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401879226"
+  },
+  "summary": [
+    "主选布伦特福德受让0.5球，报价1.69；比分参考1:1、1:2（主队在前）。",
+    "DraftKings的亚洲让球盘口不变，A项赔率1.69→1.69，去水权重上升1.21个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "status": "queued",
+  "dialogue": [
+    "喂，今晚有什么好料啊？",
+    "今晚买布伦特福德啊。",
+    "怎么让啊？",
+    "曼联让布伦特福德半球啊。",
+    "买几比几啊？",
+    "一比一，或者一比二啊。",
+    "为什么买它啊？"
+  ],
+  "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+  "visualReference": "original-characters-v3",
+  "voiceReference": "approved-football-dialogue",
+  "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+}

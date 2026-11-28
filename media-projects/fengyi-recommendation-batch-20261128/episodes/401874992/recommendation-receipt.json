@@ -1,0 +1,80 @@
+{
+  "id": "afe7c234911542cff34cf189904976cf712dc4c5988099b4789f41de65f4e190",
+  "event": "401874992",
+  "domain": "football",
+  "group": "seriea|2026/27|第13轮",
+  "stage": "initial",
+  "issuedAt": "2026-11-26T16:43:54.533291Z",
+  "kickoff": "2026-11-29T14:00:00Z",
+  "title": "萨索洛 对 那不勒斯 · 那不勒斯",
+  "pick": "那不勒斯",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401874992",
+  "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+  "receipt": {
+    "identity": "21058d08432eb756c820abc6f2921fd415f94e38e5a7f0ca9cacc35dbffcd293",
+    "eventId": "401874992",
+    "matchId": "espn:401874992",
+    "league": "seriea",
+    "kickoff": "2026-11-29T14:00:00Z",
+    "day": "2026-11-29",
+    "home": "萨索洛",
+    "away": "那不勒斯",
+    "season": "2026/27",
+    "round": "第13轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=13&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Sassuolo",
+    "awayName": "Napoli",
+    "stage": "initial",
+    "issuedAt": "2026-11-26T16:43:54.533291Z",
+    "score": [
+      1,
+      2
+    ],
+    "scoreCandidates": [
+      [
+        1,
+        2
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "A",
+    "line": 0.5,
+    "asianPrice": 1.606060606060606,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401874992"
+  },
+  "summary": [
+    "主选那不勒斯让0.5球，报价1.61；比分参考1:2、0:1（主队在前）。",
+    "DraftKings的亚洲让球盘口不变，A项赔率1.62→1.61，去水权重上升1.46个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "status": "queued",
+  "dialogue": [
+    "喂，今晚有什么好料啊？",
+    "今晚买那不勒斯啊。",
+    "怎么让啊？",
+    "那不勒斯让萨索洛半球啊。",
+    "买几比几啊？",
+    "一比二，或者零比一啊。",
+    "为什么买它啊？"
+  ],
+  "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+  "visualReference": "original-characters-v3",
+  "voiceReference": "approved-football-dialogue",
+  "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+}

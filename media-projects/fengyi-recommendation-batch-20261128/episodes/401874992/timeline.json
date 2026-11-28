@@ -1,0 +1,110 @@
+{
+  "fps": 24,
+  "duration": 17.041666666666668,
+  "turns": [
+    {
+      "line": 1,
+      "role": "male",
+      "text": "喂，今晚有什么好料啊？",
+      "start": 0,
+      "duration": 2.458333,
+      "audioSource": "original",
+      "originalFootageWindow": [
+        0,
+        2.4
+      ],
+      "videoPlaybackSpeed": 0.9763
+    },
+    {
+      "line": 2,
+      "role": "female",
+      "text": "今晚买那不勒斯啊。",
+      "start": 2.458333,
+      "duration": 1.708333,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        2.4,
+        4.4
+      ],
+      "videoPlaybackSpeed": 1.1707
+    },
+    {
+      "line": 3,
+      "role": "male",
+      "text": "怎么让啊？",
+      "start": 4.166667,
+      "duration": 1.333333,
+      "audioSource": "original",
+      "originalFootageWindow": [
+        4.4,
+        5.62
+      ],
+      "videoPlaybackSpeed": 0.915
+    },
+    {
+      "line": 4,
+      "role": "female",
+      "text": "那不勒斯让萨索洛半球啊。",
+      "start": 5.5,
+      "duration": 2.375,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        5.65,
+        8.45
+      ],
+      "videoPlaybackSpeed": 1.1789
+    },
+    {
+      "line": 5,
+      "role": "male",
+      "text": "买几比几啊？",
+      "start": 7.875,
+      "duration": 1.708333,
+      "audioSource": "original",
+      "originalFootageWindow": [
+        8.45,
+        10.05
+      ],
+      "videoPlaybackSpeed": 0.9366
+    },
+    {
+      "line": 6,
+      "role": "female",
+      "text": "主队在前，一比二，或者零比一啊。",
+      "start": 9.583333,
+      "duration": 3.0,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        5.65,
+        8.45
+      ],
+      "videoPlaybackSpeed": 0.9333
+    },
+    {
+      "line": 7,
+      "role": "male",
+      "text": "为什么买它啊？",
+      "start": 12.583333,
+      "duration": 1.166667,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        4.4,
+        5.62
+      ],
+      "videoPlaybackSpeed": 1.0457
+    },
+    {
+      "line": 8,
+      "role": "female",
+      "text": "让半球，那不勒斯赔率略降了啊。",
+      "start": 13.75,
+      "duration": 3.291667,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        5.65,
+        8.45
+      ],
+      "videoPlaybackSpeed": 0.8506
+    }
+  ]
+}

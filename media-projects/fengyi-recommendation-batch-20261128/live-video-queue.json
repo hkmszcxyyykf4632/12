@@ -1,0 +1,1046 @@
+{
+  "updatedAt": "2026-11-28T09:52:51.735265+00:00",
+  "jobs": [
+    {
+      "id": "80f87946a5fa1b76682f18317d96493ee2d8d6732db5e562fef56a49e38b26ce",
+      "event": "401882796",
+      "domain": "football",
+      "group": "laliga|2026/27|第14轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:39:45.333561Z",
+      "kickoff": "2026-11-28T13:00:00Z",
+      "title": "皇家贝蒂斯 对 巴列卡诺 · 巴列卡诺",
+      "pick": "巴列卡诺",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401882796",
+      "quoteAt": "2026-11-26T16:38:31.125027+00:00",
+      "receipt": {
+        "identity": "8daa29a5bb2238cb937c8733ac18515f5f409213a97ad5753ea5ba74b199c4a6",
+        "eventId": "401882796",
+        "matchId": "2026-11-28|Betis|Vallecano",
+        "league": "laliga",
+        "kickoff": "2026-11-28T13:00:00Z",
+        "day": "2026-11-28",
+        "home": "皇家贝蒂斯",
+        "away": "巴列卡诺",
+        "season": "2026/27",
+        "round": "第14轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=14&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Real Betis",
+        "awayName": "Vallecano",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:39:45.333561Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 2.3,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:38:31.125027+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401882796"
+      },
+      "summary": [
+        "主选巴列卡诺受让0.5球，报价2.30；比分参考1:1、2:2（主队在前）。",
+        "DraftKings的亚洲让球由来源开盘-1.5变为-0.5。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买巴列卡诺啊。",
+        "怎么让啊？",
+        "皇家贝蒂斯让巴列卡诺半球啊。",
+        "买几比几啊？",
+        "一比一，或者二比二啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "857a777830c50ed44d9bed402543ef22e4351aeac9a68fcad77d1f406123921c",
+      "event": "401884719",
+      "domain": "football",
+      "group": "bundesliga|2026/27|第11轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:40:18.288877Z",
+      "kickoff": "2026-11-28T14:30:00Z",
+      "title": "帕德博恩 对 沙尔克04 · 沙尔克04",
+      "pick": "沙尔克04",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401884719",
+      "quoteAt": "2026-11-26T16:38:31.125027+00:00",
+      "receipt": {
+        "identity": "fa1deebbd65c5c3f9c6226a35138353416059fc827326d88ce4f4efd4f2d8ceb",
+        "eventId": "401884719",
+        "matchId": "espn:401884719",
+        "league": "bundesliga",
+        "kickoff": "2026-11-28T14:30:00Z",
+        "day": "2026-11-28",
+        "home": "帕德博恩",
+        "away": "沙尔克04",
+        "season": "2026/27",
+        "round": "第11轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4331&r=11&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Paderborn",
+        "awayName": "Schalke 04",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:40:18.288877Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.5405405405405406,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:38:31.125027+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401884719"
+      },
+      "summary": [
+        "主选沙尔克04受让0.5球，报价1.54；比分参考1:1、0:0（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.53→1.54，去水权重上升0.85个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买沙尔克04啊。",
+        "怎么让啊？",
+        "帕德博恩让沙尔克04半球啊。",
+        "买几比几啊？",
+        "一比一，或者零比零啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "68cc1e8f65317de65070ff6f03e917df58180538fefdcb5e0a960a8672ee5502",
+      "event": "401879226",
+      "domain": "football",
+      "group": "epl|2026/27|第12轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:40:47.596766Z",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "title": "曼联 对 布伦特福德 · 布伦特福德",
+      "pick": "布伦特福德",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401879226",
+      "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+      "receipt": {
+        "identity": "bd442594d36a171ffd3ba27f3009592e110665f9fd065bd5019e330b4f7700bc",
+        "eventId": "401879226",
+        "matchId": "2026-11-28|Man Utd|Brentford",
+        "league": "epl",
+        "kickoff": "2026-11-28T15:00:00Z",
+        "day": "2026-11-28",
+        "home": "曼联",
+        "away": "布伦特福德",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Manchester United",
+        "awayName": "Brentford",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:40:47.596766Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.6896551724137931,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401879226"
+      },
+      "summary": [
+        "主选布伦特福德受让0.5球，报价1.69；比分参考1:1、1:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.69→1.69，去水权重上升1.21个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买布伦特福德啊。",
+        "怎么让啊？",
+        "曼联让布伦特福德半球啊。",
+        "买几比几啊？",
+        "一比一，或者一比二啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "543a229f6c2d5021f8579d79fadd0a394de61d8caf180439712b57d56cd69a5f",
+      "event": "401882790",
+      "domain": "football",
+      "group": "laliga|2026/27|第14轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:41:12.427874Z",
+      "kickoff": "2026-11-28T15:15:00Z",
+      "title": "马拉加 对 毕尔巴鄂竞技 · 毕尔巴鄂竞技",
+      "pick": "毕尔巴鄂竞技",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401882790",
+      "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+      "receipt": {
+        "identity": "0946aa9325643c057a2ef3a569bf41d966005b821b0e2076929949751c556269",
+        "eventId": "401882790",
+        "matchId": "2026-11-28|Malaga|Ath Bilbao",
+        "league": "laliga",
+        "kickoff": "2026-11-28T15:15:00Z",
+        "day": "2026-11-28",
+        "home": "马拉加",
+        "away": "毕尔巴鄂竞技",
+        "season": "2026/27",
+        "round": "第14轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=14&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Malaga",
+        "awayName": "Ath Bilbao",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:41:12.427874Z",
+        "score": [
+          1,
+          2
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": 0.5,
+        "asianPrice": 1.6666666666666665,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401882790"
+      },
+      "summary": [
+        "主选毕尔巴鄂竞技让0.5球，报价1.67；比分参考1:2、0:1（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.67→1.67，去水权重上升1.21个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买毕尔巴鄂竞技啊。",
+        "怎么让啊？",
+        "毕尔巴鄂竞技让马拉加半球啊。",
+        "买几比几啊？",
+        "一比二，或者零比一啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "1c8f02664ea05686869cc8e0b5b7d02c7cca8c9beadbbc7334440cfd8ce0c9db",
+      "event": "401884726",
+      "domain": "football",
+      "group": "bundesliga|2026/27|第11轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:42:33.481144Z",
+      "kickoff": "2026-11-28T17:30:00Z",
+      "title": "斯图加特 对 法兰克福 · 法兰克福",
+      "pick": "法兰克福",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401884726",
+      "quoteAt": "2026-11-26T16:41:48.152634+00:00",
+      "receipt": {
+        "identity": "919bce79ae331237a4093fea7729f5348f847a3f265bcefab7576739abf81c55",
+        "eventId": "401884726",
+        "matchId": "espn:401884726",
+        "league": "bundesliga",
+        "kickoff": "2026-11-28T17:30:00Z",
+        "day": "2026-11-29",
+        "home": "斯图加特",
+        "away": "法兰克福",
+        "season": "2026/27",
+        "round": "第11轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4331&r=11&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Stuttgart",
+        "awayName": "Ein Frankfurt",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:42:33.481144Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 2.05,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:41:48.152634+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401884726"
+      },
+      "summary": [
+        "主选法兰克福受让0.5球，报价2.05；比分参考1:1、1:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率2.10→2.05，去水权重上升2.12个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买法兰克福啊。",
+        "怎么让啊？",
+        "斯图加特让法兰克福半球啊。",
+        "买几比几啊？",
+        "一比一，或者一比二啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "7bc700ff1dbe71e112218d2a4e99b40fd89c793621017122257c982f71971987",
+      "event": "401874977",
+      "domain": "football",
+      "group": "seriea|2026/27|第13轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:43:03.715226Z",
+      "kickoff": "2026-11-28T19:45:00Z",
+      "title": "国际米兰 对 热那亚 · 热那亚",
+      "pick": "热那亚",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401874977",
+      "quoteAt": "2026-11-26T16:41:18.123226+00:00",
+      "receipt": {
+        "identity": "7d4f4d172ed240a73341a41000aec5d714156d26a2c36120c84307f9443067fc",
+        "eventId": "401874977",
+        "matchId": "espn:401874977",
+        "league": "seriea",
+        "kickoff": "2026-11-28T19:45:00Z",
+        "day": "2026-11-29",
+        "home": "国际米兰",
+        "away": "热那亚",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=13&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Inter",
+        "awayName": "Genoa",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:43:03.715226Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -1.5,
+        "asianPrice": 1.8695652173913042,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:41:18.123226+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401874977"
+      },
+      "summary": [
+        "主选热那亚受让1.5球，报价1.87；比分参考2:1、1:1（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.95→1.87，去水权重上升3.12个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买热那亚啊。",
+        "怎么让啊？",
+        "国际米兰让热那亚一球半啊。",
+        "买几比几啊？",
+        "二比一，或者一比一啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "24cb846e9a0a1f6de7bf69bf79a599277f823c7d1a40ff1861f63b1e6f3d4524",
+      "event": "401875031",
+      "domain": "football",
+      "group": "seriea|2026/27|第13轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:43:00.947937Z",
+      "kickoff": "2026-11-29T11:30:00Z",
+      "title": "乌迪内斯 对 佛罗伦萨 · 乌迪内斯",
+      "pick": "乌迪内斯",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401875031",
+      "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+      "receipt": {
+        "identity": "9b4a2f41300ada91acebc29940c3ab32396f9a3b9def899b95db02816dbc93ff",
+        "eventId": "401875031",
+        "matchId": "espn:401875031",
+        "league": "seriea",
+        "kickoff": "2026-11-29T11:30:00Z",
+        "day": "2026-11-29",
+        "home": "乌迪内斯",
+        "away": "佛罗伦萨",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=13&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Udinese",
+        "awayName": "Fiorentina",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:43:00.947937Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": 0.5,
+        "asianPrice": 1.625,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401875031"
+      },
+      "summary": [
+        "主选乌迪内斯受让0.5球，报价1.62；比分参考1:1、2:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，H项赔率1.67→1.62，去水权重上升3.01个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买乌迪内斯啊。",
+        "怎么让啊？",
+        "佛罗伦萨让乌迪内斯半球啊。",
+        "买几比几啊？",
+        "一比一，或者二比二啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "4d7e205323c4856d89cebe0d390e1fefe3e335a8f45257910e03fa0cb93c6a94",
+      "event": "401879229",
+      "domain": "football",
+      "group": "epl|2026/27|第12轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:43:14.225568Z",
+      "kickoff": "2026-11-29T12:00:00Z",
+      "title": "埃弗顿 对 利物浦 · 利物浦",
+      "pick": "利物浦",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401879229",
+      "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+      "receipt": {
+        "identity": "f491e851b3cb92b53e99eed139d0d4f9f19a74b3172ac2f691a77b2e6d88f864",
+        "eventId": "401879229",
+        "matchId": "2026-11-29|Everton|Liverpool",
+        "league": "epl",
+        "kickoff": "2026-11-29T12:00:00Z",
+        "day": "2026-11-29",
+        "home": "埃弗顿",
+        "away": "利物浦",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Everton",
+        "awayName": "Liverpool",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:43:14.225568Z",
+        "score": [
+          1,
+          2
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": 0.5,
+        "asianPrice": 1.7407407407407407,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401879229"
+      },
+      "summary": [
+        "主选利物浦让0.5球，报价1.74；比分参考1:2、0:1（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.91→1.74，去水权重上升6.15个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买利物浦啊。",
+        "怎么让啊？",
+        "利物浦让埃弗顿半球啊。",
+        "买几比几啊？",
+        "一比二，或者零比一啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "afe7c234911542cff34cf189904976cf712dc4c5988099b4789f41de65f4e190",
+      "event": "401874992",
+      "domain": "football",
+      "group": "seriea|2026/27|第13轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:43:54.533291Z",
+      "kickoff": "2026-11-29T14:00:00Z",
+      "title": "萨索洛 对 那不勒斯 · 那不勒斯",
+      "pick": "那不勒斯",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401874992",
+      "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+      "receipt": {
+        "identity": "21058d08432eb756c820abc6f2921fd415f94e38e5a7f0ca9cacc35dbffcd293",
+        "eventId": "401874992",
+        "matchId": "espn:401874992",
+        "league": "seriea",
+        "kickoff": "2026-11-29T14:00:00Z",
+        "day": "2026-11-29",
+        "home": "萨索洛",
+        "away": "那不勒斯",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=13&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Sassuolo",
+        "awayName": "Napoli",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:43:54.533291Z",
+        "score": [
+          1,
+          2
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": 0.5,
+        "asianPrice": 1.606060606060606,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401874992"
+      },
+      "summary": [
+        "主选那不勒斯让0.5球，报价1.61；比分参考1:2、0:1（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.62→1.61，去水权重上升1.46个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买那不勒斯啊。",
+        "怎么让啊？",
+        "那不勒斯让萨索洛半球啊。",
+        "买几比几啊？",
+        "一比二，或者零比一啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "8e66d13347a419269a1f3a5e8d08946e5c9f223abc583a523eac128dd31f0fd7",
+      "event": "401879230",
+      "domain": "football",
+      "group": "epl|2026/27|第12轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:44:13.729406Z",
+      "kickoff": "2026-11-29T14:05:00Z",
+      "title": "水晶宫 对 赫尔城 · 赫尔城",
+      "pick": "赫尔城",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401879230",
+      "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+      "receipt": {
+        "identity": "6e3fd288ea3c05d1c7fd28b46372544631c17eeca932ea3c1253b0314548e90f",
+        "eventId": "401879230",
+        "matchId": "2026-11-29|Crystal Palace|Hull City",
+        "league": "epl",
+        "kickoff": "2026-11-29T14:05:00Z",
+        "day": "2026-11-29",
+        "home": "水晶宫",
+        "away": "赫尔城",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Crystal Palace",
+        "awayName": "Hull City",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:44:13.729406Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.9090909090909092,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401879230"
+      },
+      "summary": [
+        "主选赫尔城受让0.5球，报价1.91；比分参考1:1、1:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.91→1.91，去水权重上升1.22个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买赫尔城啊。",
+        "怎么让啊？",
+        "水晶宫让赫尔城半球啊。",
+        "买几比几啊？",
+        "一比一，或者一比二啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "2dd30e43a1981593a2ce4f3ed24ac21a7fdd8459251a6355e24b9e00f4e1409d",
+      "event": "401884727",
+      "domain": "football",
+      "group": "bundesliga|2026/27|第11轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:45:53.762023Z",
+      "kickoff": "2026-11-29T18:30:00Z",
+      "title": "多特蒙德 对 勒沃库森 · 勒沃库森",
+      "pick": "勒沃库森",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401884727",
+      "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+      "receipt": {
+        "identity": "db3bb93014c514d9a48d46edd13aa58318ab8d3c0b1f369ee25101c10f6d1cde",
+        "eventId": "401884727",
+        "matchId": "espn:401884727",
+        "league": "bundesliga",
+        "kickoff": "2026-11-29T18:30:00Z",
+        "day": "2026-11-30",
+        "home": "多特蒙德",
+        "away": "勒沃库森",
+        "season": "2026/27",
+        "round": "第11轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4331&r=11&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Dortmund",
+        "awayName": "Leverkusen",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:45:53.762023Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.6896551724137931,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401884727"
+      },
+      "summary": [
+        "主选勒沃库森受让0.5球，报价1.69；比分参考1:1、2:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.67→1.69，去水权重上升0.26个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买勒沃库森啊。",
+        "怎么让啊？",
+        "多特蒙德让勒沃库森半球啊。",
+        "买几比几啊？",
+        "一比一，或者二比二啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "723d6cdcd2f3dce09658755c617e5b772a8be079a7f19f2fa901231b4cf71e3c",
+      "event": "401882788",
+      "domain": "football",
+      "group": "laliga|2026/27|第14轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:46:16.526025Z",
+      "kickoff": "2026-11-29T20:00:00Z",
+      "title": "皇家社会 对 塞维利亚 · 皇家社会",
+      "pick": "皇家社会",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401882788",
+      "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+      "receipt": {
+        "identity": "4cbb301a4bb9dd3083e01d612a5c2623e2d254cc997a3b8603eff8d1f11312c0",
+        "eventId": "401882788",
+        "matchId": "2026-11-29|Sociedad|Sevilla",
+        "league": "laliga",
+        "kickoff": "2026-11-29T20:00:00Z",
+        "day": "2026-11-30",
+        "home": "皇家社会",
+        "away": "塞维利亚",
+        "season": "2026/27",
+        "round": "第14轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=14&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Sociedad",
+        "awayName": "Sevilla",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:46:16.526025Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": -0.5,
+        "asianPrice": 2.0,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401882788"
+      },
+      "summary": [
+        "主选皇家社会让0.5球，报价2.00；比分参考2:1、1:0（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，H项赔率2.05→2.00，去水权重上升1.58个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买皇家社会啊。",
+        "怎么让啊？",
+        "皇家社会让塞维利亚半球啊。",
+        "买几比几啊？",
+        "二比一，或者一比零啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    },
+    {
+      "id": "ccd54ab007bb9b8c1125fd75f7b969a27525ae5346bb527943f91f64e579c8ac",
+      "event": "401879221",
+      "domain": "football",
+      "group": "epl|2026/27|第13轮",
+      "stage": "initial",
+      "issuedAt": "2026-11-27T20:01:05.450681Z",
+      "kickoff": "2026-12-01T20:00:00Z",
+      "title": "考文垂 对 伊普斯维奇 · 考文垂",
+      "pick": "考文垂",
+      "source": "https://www.espn.com/soccer/match/_/gameId/401879221",
+      "quoteAt": "2026-11-27T19:59:47.775234+00:00",
+      "receipt": {
+        "identity": "f5dd7719201ccad937d72c89636a9b1d9a483917a6018aadfc2530753c4994a7",
+        "eventId": "401879221",
+        "matchId": "2026-12-01|Coventry City|Ipswich Town",
+        "league": "epl",
+        "kickoff": "2026-12-01T20:00:00Z",
+        "day": "2026-12-02",
+        "home": "考文垂",
+        "away": "伊普斯维奇",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=13&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Coventry City",
+        "awayName": "Ipswich Town",
+        "stage": "initial",
+        "issuedAt": "2026-11-27T20:01:05.450681Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": -0.5,
+        "asianPrice": 2.1,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-27T19:59:47.775234+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401879221"
+      },
+      "summary": [
+        "主选考文垂让0.5球，报价2.10；比分参考2:1、1:0（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，H项赔率2.10→2.10，去水权重上升0.27个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "status": "queued",
+      "dialogue": [
+        "喂，今晚有什么好料啊？",
+        "今晚买考文垂啊。",
+        "怎么让啊？",
+        "考文垂让伊普斯维奇半球啊。",
+        "买几比几啊？",
+        "二比一，或者一比零啊。",
+        "为什么买它啊？"
+      ],
+      "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+      "visualReference": "original-characters-v3",
+      "voiceReference": "approved-football-dialogue",
+      "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+    }
+  ],
+  "method": "文字推荐自动发布后进入制作队列；视频生成及核对完成才显示。队列不代表视频已完成。"
+}

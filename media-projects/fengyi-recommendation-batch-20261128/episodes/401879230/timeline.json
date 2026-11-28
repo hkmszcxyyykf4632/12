@@ -1,0 +1,110 @@
+{
+  "fps": 24,
+  "duration": 17.416666666666664,
+  "turns": [
+    {
+      "line": 1,
+      "role": "male",
+      "text": "喂，今晚有什么好料啊？",
+      "start": 0,
+      "duration": 2.458333,
+      "audioSource": "original",
+      "originalFootageWindow": [
+        0,
+        2.4
+      ],
+      "videoPlaybackSpeed": 0.9763
+    },
+    {
+      "line": 2,
+      "role": "female",
+      "text": "今晚买赫尔城啊。",
+      "start": 2.458333,
+      "duration": 1.708333,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        2.4,
+        4.4
+      ],
+      "videoPlaybackSpeed": 1.1707
+    },
+    {
+      "line": 3,
+      "role": "male",
+      "text": "怎么让啊？",
+      "start": 4.166667,
+      "duration": 1.333333,
+      "audioSource": "original",
+      "originalFootageWindow": [
+        4.4,
+        5.62
+      ],
+      "videoPlaybackSpeed": 0.915
+    },
+    {
+      "line": 4,
+      "role": "female",
+      "text": "水晶宫让赫尔城半球啊。",
+      "start": 5.5,
+      "duration": 2.291667,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        5.65,
+        8.45
+      ],
+      "videoPlaybackSpeed": 1.2218
+    },
+    {
+      "line": 5,
+      "role": "male",
+      "text": "买几比几啊？",
+      "start": 7.791667,
+      "duration": 1.708333,
+      "audioSource": "original",
+      "originalFootageWindow": [
+        8.45,
+        10.05
+      ],
+      "videoPlaybackSpeed": 0.9366
+    },
+    {
+      "line": 6,
+      "role": "female",
+      "text": "主队在前，一比一，或者一比二啊。",
+      "start": 9.5,
+      "duration": 3.166667,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        5.65,
+        8.45
+      ],
+      "videoPlaybackSpeed": 0.8842
+    },
+    {
+      "line": 7,
+      "role": "male",
+      "text": "为什么买它啊？",
+      "start": 12.666667,
+      "duration": 1.166667,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        4.4,
+        5.62
+      ],
+      "videoPlaybackSpeed": 1.0457
+    },
+    {
+      "line": 8,
+      "role": "female",
+      "text": "受让半球，去水后的权重升了啊。",
+      "start": 13.833333,
+      "duration": 3.583333,
+      "audioSource": "local",
+      "originalFootageWindow": [
+        5.65,
+        8.45
+      ],
+      "videoPlaybackSpeed": 0.7814
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "ok": true,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "duration": 17.166667,
+    "samples": [
+      0.954,
+      2.861,
+      4.769,
+      6.676,
+      8.583,
+      10.491,
+      12.398,
+      14.306,
+      16.213
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 0,
+    "truncated": false,
+    "faceCheck": {
+      "ran": true,
+      "candidates": 0,
+      "faces": 0
+    }
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      0.954,
+      4.769,
+      8.583,
+      12.398,
+      16.213
+    ],
+    "checked": 0,
+    "passed": 0
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "step": 0.12400000000000055,
+    "samples": 138
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  },
+  "saved": {
+    "id": "07c019c2-892f-4a39-a948-a51f4dd9971f",
+    "revision": null,
+    "report": "C:\\Users\\acer\\Documents\\Codex\\2026-11-14\\new-chat\\outputs\\football-github\\media-projects\\fengyi-recommendation-batch-20261128\\episodes\\401882796\\studio\\.hyperframes\\artifacts\\checks\\07c019c2-892f-4a39-a948-a51f4dd9971f.json",
+    "attribution": "unversioned"
+  },
+  "_meta": {
+    "version": "0.9.85",
+    "latestVersion": "0.9.104",
+    "updateAvailable": true,
+    "checkedAt": "2026-11-28T09:21:51.635Z",
+    "skillsOutdated": 0,
+    "skillsMissing": 0
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "originalVideo": "footballknow/public/media/videos/fengyi-recommendation-bologna-20261122-original-v3.mp4",
+  "originalSha256": "69247c0d171cdd24548002d00c9380eed9179689a72dfad7beb2528e24f29ca2",
+  "voiceSource": "User-approved synthetic character dialogue, locally reference-conditioned with Qwen3-TTS.",
+  "paidCalls": 0,
+  "published": false,
+  "preciseLipSync": false,
+  "purpose": "Video adaptation of an existing frozen recommendation; preserve original issuance time.",
+  "clips": [
+    {
+      "path": "studio/assets/dialogue-01.wav",
+      "sha256": "fe184b89ccb2e8e28790a28b74c15d38b607da61240b6a3ded8f3e692249015a"
+    },
+    {
+      "path": "studio/assets/dialogue-02.wav",
+      "sha256": "cff56473c1c517cf41e79e9493e3258566ce3560b3cd9176fee7daf6bd413e7f"
+    },
+    {
+      "path": "studio/assets/dialogue-03.wav",
+      "sha256": "b3b23715a3f94863b216fcd7a99e0c9d7a799ce1a973b19261cfc06d91eae8f9"
+    },
+    {
+      "path": "studio/assets/dialogue-04.wav",
+      "sha256": "be6a432e7d28dadba01dec79a2b663f0943de53f8a922c8f52cabd8cf4a93c81"
+    },
+    {
+      "path": "studio/assets/dialogue-05.wav",
+      "sha256": "31c8c83c1589355089959105c0defba044e71ba3d456111b4efd491cd0c6baa2"
+    },
+    {
+      "path": "studio/assets/dialogue-06.wav",
+      "sha256": "62cc8f1b3eb5d89b60d948bc6359e597b6509ce20d480975c1f9ceeae839071f"
+    },
+    {
+      "path": "studio/assets/dialogue-07.wav",
+      "sha256": "b9e869a4c88133118a2f18b5fb1536ee563c0d7535609d9866c416bdde61edba"
+    },
+    {
+      "path": "studio/assets/dialogue-08.wav",
+      "sha256": "15c67e83d5f5b6f71948d8f6c97d9097dc7bf5c4ca2981a4998402414bb917b9"
+    },
+    {
+      "path": "studio/assets/turn-01.mp4",
+      "sha256": "bed81098f5e38ee8d3d3ebc89128d79df6066609c74fc806917335a4c36e5e3e"
+    },
+    {
+      "path": "studio/assets/turn-02.mp4",
+      "sha256": "770749646c112655878cb6714de67afdde0075a93e1477612178bea3406e6f9b"
+    },
+    {
+      "path": "studio/assets/turn-03.mp4",
+      "sha256": "0b14554b69c031bebf387eaba262532ff3fd64678b9c1e09c270a4c5aebea895"
+    },
+    {
+      "path": "studio/assets/turn-04.mp4",
+      "sha256": "5a3fe4baf682a5343764bc1bcfcb908f3205b70e193592752da97b7a804681b9"
+    },
+    {
+      "path": "studio/assets/turn-05.mp4",
+      "sha256": "b97c2813e9cdceb5db1d5513d62e5cf9814d821310f88146af51b3bc177625c9"
+    },
+    {
+      "path": "studio/assets/turn-06.mp4",
+      "sha256": "bc334879ce3811bc001a59dd055b588d4e2881e77e9a9556fc908c4b0d6fe3ba"
+    },
+    {
+      "path": "studio/assets/turn-07.mp4",
+      "sha256": "129c57ae586c5d08b7a4e5540fd61780f41815b4e93faa593f72c9a38a823863"
+    },
+    {
+      "path": "studio/assets/turn-08.mp4",
+      "sha256": "f66d89dbbca47cf2ebea6c284f78891cdecf88676d0c4ecadf09bc219a71dcc1"
+    }
+  ]
+}

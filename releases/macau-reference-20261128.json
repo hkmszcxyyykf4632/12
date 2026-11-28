@@ -1,0 +1,31 @@
+{
+  "site": "https://inwesting.shop",
+  "preferredOddsProvider": "澳门彩票有限公司",
+  "liveCollectionStatus": "pending-official-access-verification",
+  "files": [
+    {
+      "path": "football/odds_reference.py",
+      "bytes": 1041,
+      "sha256": "c6337fee34b0d617e62d4cb7172fe52b517af3ad2771d1cdb366abd0b402cd17",
+      "previousSha256": null
+    },
+    {
+      "path": "football/odds_signals.py",
+      "bytes": 17146,
+      "sha256": "405ae6d241113d4faa784dc63efd5affc2674d6b88e5becc0bb97947e6bd11fa",
+      "previousSha256": "2887b864f0d17d4c5bb26ea24e9fc868391ee0cfbd6f5bb840f2a93213e05560"
+    },
+    {
+      "path": "football/odds_forecast.py",
+      "bytes": 5889,
+      "sha256": "d7475c5b3899f071c8656171252cb54914b6ece8598c19751a23bc1fcf2ecc0b",
+      "previousSha256": "1f40e42faa69c20ca63fabeee60817fb48167cfffe8a191f3df9610556d3d89d"
+    },
+    {
+      "path": "football/football_forecasts.py",
+      "bytes": 27447,
+      "sha256": "03394e426cd5ff64260860b0b5e5e19de85dae8059007b9ce3b3797bab1dc5ea",
+      "previousSha256": "3ff8b12b1144151d0404848b2e7b7bd1d36f4a9e5b1af0534c8593a324d204c1"
+    }
+  ]
+}

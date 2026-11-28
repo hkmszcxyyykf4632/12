@@ -1,0 +1,1539 @@
+{
+  "updatedAt": "2026-11-28T09:53:06.032955+00:00",
+  "method": "足球每个联赛及欧冠每轮最多三场，赛马每个赛马日一场。只筛选尚未开赛且已保存预测的比赛。足球仅从可核对变盘预测中筛选，比较变盘幅度、往绩样本、首发和盘口支持，半球以内优先；赛马比较资料覆盖、首选报价的市场支持、晨操证据和报价时效。排序不是经校准的胜率，不等同保证命中。发布后保留原版本，不因输赢替换；不足合格场次不凑数。",
+  "records": [
+    {
+      "domain": "football",
+      "group": "epl|2026/27|第13轮",
+      "event": "401879221",
+      "identity": "f5dd7719201ccad937d72c89636a9b1d9a483917a6018aadfc2530753c4994a7",
+      "stage": "initial",
+      "issuedAt": "2026-11-27T20:01:05.450681Z",
+      "kickoff": "2026-12-01T20:00:00Z",
+      "priority": 27.7828,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分含模型调整，需结合原文依据"
+      ],
+      "summary": [
+        "主选考文垂让0.5球，报价2.10；比分参考2:1、1:0（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，H项赔率2.10→2.10，去水权重上升0.27个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "f5dd7719201ccad937d72c89636a9b1d9a483917a6018aadfc2530753c4994a7",
+        "eventId": "401879221",
+        "matchId": "2026-12-01|Coventry City|Ipswich Town",
+        "league": "epl",
+        "kickoff": "2026-12-01T20:00:00Z",
+        "day": "2026-12-02",
+        "home": "考文垂",
+        "away": "伊普斯维奇",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=13&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Coventry City",
+        "awayName": "Ipswich Town",
+        "stage": "initial",
+        "issuedAt": "2026-11-27T20:01:05.450681Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": -0.5,
+        "asianPrice": 2.1,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-27T19:59:47.775234+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401879221"
+      },
+      "publishedAt": "2026-11-27T20:01:09.412380+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "seriea|2026/27|第13轮",
+      "event": "401874992",
+      "identity": "21058d08432eb756c820abc6f2921fd415f94e38e5a7f0ca9cacc35dbffcd293",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:43:54.533291Z",
+      "kickoff": "2026-11-29T14:00:00Z",
+      "priority": 39.6631,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "主选那不勒斯让0.5球，报价1.61；比分参考1:2、0:1（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.62→1.61，去水权重上升1.46个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "21058d08432eb756c820abc6f2921fd415f94e38e5a7f0ca9cacc35dbffcd293",
+        "eventId": "401874992",
+        "matchId": "espn:401874992",
+        "league": "seriea",
+        "kickoff": "2026-11-29T14:00:00Z",
+        "day": "2026-11-29",
+        "home": "萨索洛",
+        "away": "那不勒斯",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=13&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Sassuolo",
+        "awayName": "Napoli",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:43:54.533291Z",
+        "score": [
+          1,
+          2
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": 0.5,
+        "asianPrice": 1.606060606060606,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401874992"
+      },
+      "publishedAt": "2026-11-26T16:53:42.899606+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "seriea|2026/27|第13轮",
+      "event": "401874977",
+      "identity": "7d4f4d172ed240a73341a41000aec5d714156d26a2c36120c84307f9443067fc",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:43:03.715226Z",
+      "kickoff": "2026-11-28T19:45:00Z",
+      "priority": 36.1679,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分含模型调整，需结合原文依据"
+      ],
+      "summary": [
+        "主选热那亚受让1.5球，报价1.87；比分参考2:1、1:1（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.95→1.87，去水权重上升3.12个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "7d4f4d172ed240a73341a41000aec5d714156d26a2c36120c84307f9443067fc",
+        "eventId": "401874977",
+        "matchId": "espn:401874977",
+        "league": "seriea",
+        "kickoff": "2026-11-28T19:45:00Z",
+        "day": "2026-11-29",
+        "home": "国际米兰",
+        "away": "热那亚",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=13&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Inter",
+        "awayName": "Genoa",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:43:03.715226Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -1.5,
+        "asianPrice": 1.8695652173913042,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:41:18.123226+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401874977"
+      },
+      "publishedAt": "2026-11-26T16:53:42.899606+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "seriea|2026/27|第13轮",
+      "event": "401875031",
+      "identity": "9b4a2f41300ada91acebc29940c3ab32396f9a3b9def899b95db02816dbc93ff",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:43:00.947937Z",
+      "kickoff": "2026-11-29T11:30:00Z",
+      "priority": 32.051,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分含模型调整，需结合原文依据"
+      ],
+      "summary": [
+        "主选乌迪内斯受让0.5球，报价1.62；比分参考1:1、2:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，H项赔率1.67→1.62，去水权重上升3.01个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "9b4a2f41300ada91acebc29940c3ab32396f9a3b9def899b95db02816dbc93ff",
+        "eventId": "401875031",
+        "matchId": "espn:401875031",
+        "league": "seriea",
+        "kickoff": "2026-11-29T11:30:00Z",
+        "day": "2026-11-29",
+        "home": "乌迪内斯",
+        "away": "佛罗伦萨",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=13&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Udinese",
+        "awayName": "Fiorentina",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:43:00.947937Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": 0.5,
+        "asianPrice": 1.625,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401875031"
+      },
+      "publishedAt": "2026-11-26T16:53:42.899606+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "laliga|2026/27|第14轮",
+      "event": "401882796",
+      "identity": "8daa29a5bb2238cb937c8733ac18515f5f409213a97ad5753ea5ba74b199c4a6",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:39:45.333561Z",
+      "kickoff": "2026-11-28T13:00:00Z",
+      "priority": 46.4865,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "主选巴列卡诺受让0.5球，报价2.30；比分参考1:1、2:2（主队在前）。",
+        "DraftKings的亚洲让球由来源开盘-1.5变为-0.5。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "8daa29a5bb2238cb937c8733ac18515f5f409213a97ad5753ea5ba74b199c4a6",
+        "eventId": "401882796",
+        "matchId": "2026-11-28|Betis|Vallecano",
+        "league": "laliga",
+        "kickoff": "2026-11-28T13:00:00Z",
+        "day": "2026-11-28",
+        "home": "皇家贝蒂斯",
+        "away": "巴列卡诺",
+        "season": "2026/27",
+        "round": "第14轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=14&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Real Betis",
+        "awayName": "Vallecano",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:39:45.333561Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 2.3,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:38:31.125027+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401882796"
+      },
+      "publishedAt": "2026-11-26T16:53:42.899606+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "laliga|2026/27|第14轮",
+      "event": "401882790",
+      "identity": "0946aa9325643c057a2ef3a569bf41d966005b821b0e2076929949751c556269",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:41:12.427874Z",
+      "kickoff": "2026-11-28T15:15:00Z",
+      "priority": 33.5807,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分含模型调整，需结合原文依据"
+      ],
+      "summary": [
+        "主选毕尔巴鄂竞技让0.5球，报价1.67；比分参考1:2、0:1（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.67→1.67，去水权重上升1.21个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "0946aa9325643c057a2ef3a569bf41d966005b821b0e2076929949751c556269",
+        "eventId": "401882790",
+        "matchId": "2026-11-28|Malaga|Ath Bilbao",
+        "league": "laliga",
+        "kickoff": "2026-11-28T15:15:00Z",
+        "day": "2026-11-28",
+        "home": "马拉加",
+        "away": "毕尔巴鄂竞技",
+        "season": "2026/27",
+        "round": "第14轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=14&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Malaga",
+        "awayName": "Ath Bilbao",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:41:12.427874Z",
+        "score": [
+          1,
+          2
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": 0.5,
+        "asianPrice": 1.6666666666666665,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401882790"
+      },
+      "publishedAt": "2026-11-26T16:53:42.899606+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "laliga|2026/27|第14轮",
+      "event": "401882788",
+      "identity": "4cbb301a4bb9dd3083e01d612a5c2623e2d254cc997a3b8603eff8d1f11312c0",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:46:16.526025Z",
+      "kickoff": "2026-11-29T20:00:00Z",
+      "priority": 30.8555,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分含模型调整，需结合原文依据"
+      ],
+      "summary": [
+        "主选皇家社会让0.5球，报价2.00；比分参考2:1、1:0（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，H项赔率2.05→2.00，去水权重上升1.58个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "4cbb301a4bb9dd3083e01d612a5c2623e2d254cc997a3b8603eff8d1f11312c0",
+        "eventId": "401882788",
+        "matchId": "2026-11-29|Sociedad|Sevilla",
+        "league": "laliga",
+        "kickoff": "2026-11-29T20:00:00Z",
+        "day": "2026-11-30",
+        "home": "皇家社会",
+        "away": "塞维利亚",
+        "season": "2026/27",
+        "round": "第14轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=14&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Sociedad",
+        "awayName": "Sevilla",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:46:16.526025Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": -0.5,
+        "asianPrice": 2.0,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401882788"
+      },
+      "publishedAt": "2026-11-26T16:53:42.899606+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "bundesliga|2026/27|第11轮",
+      "event": "401884726",
+      "identity": "919bce79ae331237a4093fea7729f5348f847a3f265bcefab7576739abf81c55",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:42:33.481144Z",
+      "kickoff": "2026-11-28T17:30:00Z",
+      "priority": 47.3911,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "主选法兰克福受让0.5球，报价2.05；比分参考1:1、1:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率2.10→2.05，去水权重上升2.12个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "919bce79ae331237a4093fea7729f5348f847a3f265bcefab7576739abf81c55",
+        "eventId": "401884726",
+        "matchId": "espn:401884726",
+        "league": "bundesliga",
+        "kickoff": "2026-11-28T17:30:00Z",
+        "day": "2026-11-29",
+        "home": "斯图加特",
+        "away": "法兰克福",
+        "season": "2026/27",
+        "round": "第11轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4331&r=11&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Stuttgart",
+        "awayName": "Ein Frankfurt",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:42:33.481144Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 2.05,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:41:48.152634+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401884726"
+      },
+      "publishedAt": "2026-11-26T16:46:18.922712+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "bundesliga|2026/27|第11轮",
+      "event": "401884727",
+      "identity": "db3bb93014c514d9a48d46edd13aa58318ab8d3c0b1f369ee25101c10f6d1cde",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:45:53.762023Z",
+      "kickoff": "2026-11-29T18:30:00Z",
+      "priority": 43.3534,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "主选勒沃库森受让0.5球，报价1.69；比分参考1:1、2:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.67→1.69，去水权重上升0.26个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "db3bb93014c514d9a48d46edd13aa58318ab8d3c0b1f369ee25101c10f6d1cde",
+        "eventId": "401884727",
+        "matchId": "espn:401884727",
+        "league": "bundesliga",
+        "kickoff": "2026-11-29T18:30:00Z",
+        "day": "2026-11-30",
+        "home": "多特蒙德",
+        "away": "勒沃库森",
+        "season": "2026/27",
+        "round": "第11轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4331&r=11&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Dortmund",
+        "awayName": "Leverkusen",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:45:53.762023Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.6896551724137931,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401884727"
+      },
+      "publishedAt": "2026-11-26T16:46:18.922712+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "bundesliga|2026/27|第11轮",
+      "event": "401884719",
+      "identity": "fa1deebbd65c5c3f9c6226a35138353416059fc827326d88ce4f4efd4f2d8ceb",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:40:18.288877Z",
+      "kickoff": "2026-11-28T14:30:00Z",
+      "priority": 40.2621,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "主选沙尔克04受让0.5球，报价1.54；比分参考1:1、0:0（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.53→1.54，去水权重上升0.85个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "fa1deebbd65c5c3f9c6226a35138353416059fc827326d88ce4f4efd4f2d8ceb",
+        "eventId": "401884719",
+        "matchId": "espn:401884719",
+        "league": "bundesliga",
+        "kickoff": "2026-11-28T14:30:00Z",
+        "day": "2026-11-28",
+        "home": "帕德博恩",
+        "away": "沙尔克04",
+        "season": "2026/27",
+        "round": "第11轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4331&r=11&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Paderborn",
+        "awayName": "Schalke 04",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:40:18.288877Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.5405405405405406,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:38:31.125027+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401884719"
+      },
+      "publishedAt": "2026-11-26T16:46:18.922712+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "epl|2026/27|第12轮",
+      "event": "401879230",
+      "identity": "6e3fd288ea3c05d1c7fd28b46372544631c17eeca932ea3c1253b0314548e90f",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:44:13.729406Z",
+      "kickoff": "2026-11-29T14:05:00Z",
+      "priority": 47.9316,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "主选赫尔城受让0.5球，报价1.91；比分参考1:1、1:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.91→1.91，去水权重上升1.22个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "6e3fd288ea3c05d1c7fd28b46372544631c17eeca932ea3c1253b0314548e90f",
+        "eventId": "401879230",
+        "matchId": "2026-11-29|Crystal Palace|Hull City",
+        "league": "epl",
+        "kickoff": "2026-11-29T14:05:00Z",
+        "day": "2026-11-29",
+        "home": "水晶宫",
+        "away": "赫尔城",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Crystal Palace",
+        "awayName": "Hull City",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:44:13.729406Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.9090909090909092,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:43:05.270328+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401879230"
+      },
+      "publishedAt": "2026-11-26T16:46:18.922712+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "epl|2026/27|第12轮",
+      "event": "401879229",
+      "identity": "f491e851b3cb92b53e99eed139d0d4f9f19a74b3172ac2f691a77b2e6d88f864",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:43:14.225568Z",
+      "kickoff": "2026-11-29T12:00:00Z",
+      "priority": 45.4129,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "主选利物浦让0.5球，报价1.74；比分参考1:2、0:1（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.91→1.74，去水权重上升6.15个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "f491e851b3cb92b53e99eed139d0d4f9f19a74b3172ac2f691a77b2e6d88f864",
+        "eventId": "401879229",
+        "matchId": "2026-11-29|Everton|Liverpool",
+        "league": "epl",
+        "kickoff": "2026-11-29T12:00:00Z",
+        "day": "2026-11-29",
+        "home": "埃弗顿",
+        "away": "利物浦",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Everton",
+        "awayName": "Liverpool",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:43:14.225568Z",
+        "score": [
+          1,
+          2
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": 0.5,
+        "asianPrice": 1.7407407407407407,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:37:06.919980+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401879229"
+      },
+      "publishedAt": "2026-11-26T16:46:18.922712+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "epl|2026/27|第12轮",
+      "event": "401879226",
+      "identity": "bd442594d36a171ffd3ba27f3009592e110665f9fd065bd5019e330b4f7700bc",
+      "stage": "initial",
+      "issuedAt": "2026-11-26T16:40:47.596766Z",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "priority": 44.9153,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已核对同来源赔率变化，半球以内优先研究",
+        "首发尚未确认，保留阵容变化风险",
+        "比分含模型调整，需结合原文依据"
+      ],
+      "summary": [
+        "主选布伦特福德受让0.5球，报价1.69；比分参考1:1、1:2（主队在前）。",
+        "DraftKings的亚洲让球盘口不变，A项赔率1.69→1.69，去水权重上升1.21个百分点。按固定变盘规则试行，真实原因尚待证据验证。"
+      ],
+      "receipt": {
+        "identity": "bd442594d36a171ffd3ba27f3009592e110665f9fd065bd5019e330b4f7700bc",
+        "eventId": "401879226",
+        "matchId": "2026-11-28|Man Utd|Brentford",
+        "league": "epl",
+        "kickoff": "2026-11-28T15:00:00Z",
+        "day": "2026-11-28",
+        "home": "曼联",
+        "away": "布伦特福德",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=12&s=2026-2027",
+        "roundComplete": false,
+        "homeName": "Manchester United",
+        "awayName": "Brentford",
+        "stage": "initial",
+        "issuedAt": "2026-11-26T16:40:47.596766Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.6896551724137931,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-26T16:39:17.963726+00:00",
+        "status": "pending",
+        "reason": "",
+        "actual": null,
+        "exactHit": null,
+        "resultHit": null,
+        "asianResult": "pending",
+        "source": "https://www.espn.com/soccer/match/_/gameId/401879226"
+      },
+      "publishedAt": "2026-11-26T16:46:18.922712+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "racing",
+      "group": "2026-11-25",
+      "event": "2026-11-25-HV-7",
+      "identity": "2026-11-25-HV-7",
+      "stage": "pre",
+      "issuedAt": "2026-11-24T13:43:43.227400Z",
+      "kickoff": "2026-11-25T21:45:00+08:00",
+      "priority": 83.4293,
+      "reasons": [
+        "本场12/12匹具备马匹资料",
+        "首选已保存独赢报价4.7倍（当时快照）",
+        "首选晨操资料可核对",
+        "报价为发布时核对值"
+      ],
+      "summary": [
+        "11月25日跑马地第7场，首选8号顺善宝，关注1号非凡时刻及9号萤影飞驰。首选独赢、位置；三匹关注马的连赢及位置连赢按两两组合观察。顺善宝上仗在跑马地1200米四班一档跟前，最后赢两马位；这次同程同班仍抽一档，黄智弘继续策骑，是本次选择的主要依据。",
+        "这是一份赛日前初步推荐。顺善宝评分由44升至52，排位表公布负磅128磅，上仗记录为117磅，不能忽略增磅；上仗为B栏，本次C+3栏，路线条件也不同。临场若退赛、跑道转软或步速形势改变，应另作补充，保留这一版供赛后核对。"
+      ],
+      "receipt": {
+        "meetingComplete": true,
+        "raceId": "2026-11-25-HV-7",
+        "day": "2026-11-25",
+        "course": "HV",
+        "courseName": "跑马地",
+        "raceNo": 7,
+        "issuedAt": "2026-11-24T13:43:43.227400Z",
+        "status": "settled",
+        "reason": "",
+        "pick": "HK_2024_K239",
+        "runners": [
+          {
+            "id": "HK_2024_K239",
+            "number": "8",
+            "name": "順善寶",
+            "withdrawn": false,
+            "place": 2,
+            "position": "2"
+          },
+          {
+            "id": "HK_2024_K275",
+            "number": "1",
+            "name": "非凡時刻",
+            "withdrawn": false,
+            "place": 3,
+            "position": "3"
+          },
+          {
+            "id": "HK_2024_K228",
+            "number": "9",
+            "name": "螢影飛馳",
+            "withdrawn": false,
+            "place": 9,
+            "position": "9"
+          }
+        ],
+        "pools": [
+          {
+            "type": "WIN",
+            "tickets": [
+              {
+                "combination": "8",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              },
+              {
+                "combination": "1",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              },
+              {
+                "combination": "9",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              }
+            ]
+          },
+          {
+            "type": "PLA",
+            "tickets": [
+              {
+                "combination": "8",
+                "status": "hit",
+                "dividend": 12.0,
+                "multiple": 1.2
+              },
+              {
+                "combination": "1",
+                "status": "hit",
+                "dividend": 20.5,
+                "multiple": 2.05
+              },
+              {
+                "combination": "9",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              }
+            ]
+          },
+          {
+            "type": "QIN",
+            "tickets": [
+              {
+                "combination": "1,8",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              },
+              {
+                "combination": "8,9",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              },
+              {
+                "combination": "1,9",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              }
+            ]
+          },
+          {
+            "type": "QPL",
+            "tickets": [
+              {
+                "combination": "1,8",
+                "status": "hit",
+                "dividend": 27.0,
+                "multiple": 2.7
+              },
+              {
+                "combination": "8,9",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              },
+              {
+                "combination": "1,9",
+                "status": "miss",
+                "dividend": 0.0,
+                "multiple": 0.0
+              }
+            ]
+          }
+        ],
+        "source": "https://racing.hkjc.com/zh-hk/local/information/localresults?racedate=2026%2F11%2F25&Racecourse=HV&RaceNo=7"
+      },
+      "publishedAt": "2026-11-24T13:43:43.254651+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "epl|2026/27|第11轮",
+      "event": "401878755",
+      "identity": "a73e6597faf48e7cb1407655f2ed02903571f42256b2f754fcabfcfdc9982fc3",
+      "stage": "initial",
+      "issuedAt": "2026-11-22T10:31:17.158208Z",
+      "kickoff": "2026-11-22T16:30:00Z",
+      "priority": 26.9737,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已保存亚洲盘方向、盘口及赔率",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "利物浦主选2:1胜曼联（英超第12轮，90分钟含补时），对应亚洲盘主让0.5球、主队1.645，主胜即赢盘。",
+        "依据：统计基线主客预期进球2.25比1.53，首选比分2:1；利物浦近10场6胜1平3负、进21失16，曼联1胜4平5负、进13失23。盘口维持主让0.5，主队水位由1.741降至1.645、客队升至2.10，定价指向主队；若首发显示利物浦核心轮换或临场盘口退至平手/主队受让，则改判。"
+      ],
+      "receipt": {
+        "identity": "a73e6597faf48e7cb1407655f2ed02903571f42256b2f754fcabfcfdc9982fc3",
+        "eventId": "401878755",
+        "matchId": "2026-11-22|Liverpool|Man Utd",
+        "league": "epl",
+        "kickoff": "2026-11-22T16:30:00Z",
+        "day": "2026-11-23",
+        "home": "利物浦",
+        "away": "曼联",
+        "season": "2026/27",
+        "round": "第11轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4328&r=11&s=2026-2027",
+        "roundComplete": true,
+        "homeName": "Liverpool",
+        "awayName": "Manchester United",
+        "stage": "initial",
+        "issuedAt": "2026-11-22T10:31:17.158208Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": -0.5,
+        "asianPrice": 1.6451612903225805,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-22T10:29:55.134795+00:00",
+        "status": "settled",
+        "reason": "",
+        "actual": [
+          4,
+          0
+        ],
+        "exactHit": false,
+        "resultHit": true,
+        "asianResult": "赢盘",
+        "source": "https://fantasy.premierleague.com/api/fixtures/"
+      },
+      "publishedAt": "2026-11-22T14:37:55.191536+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "laliga|2026/27|第13轮",
+      "event": "401882801",
+      "identity": "12db0872f48a6b738e3c2f78b530181da34a5b1d77ba39bfa62a563f4eeabcb4",
+      "stage": "initial",
+      "issuedAt": "2026-11-22T11:30:50.826048Z",
+      "kickoff": "2026-11-22T17:30:00Z",
+      "priority": 29.5331,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已保存亚洲盘方向、盘口及赔率",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "奥萨苏纳1:1马拉加（90分钟平局），亚洲盘以客队受让0.5球为主选，即马拉加+0.5赢盘方向。",
+        "依据：统计基线首选比分为1:1，双方近期进球效率接近；实际盘口为奥萨苏纳主让0.5球，平局即客队全赢盘。若临场确认奥萨苏纳主力前锋齐整且盘口升向主让0.75球以上，需重新评估方向。"
+      ],
+      "receipt": {
+        "identity": "12db0872f48a6b738e3c2f78b530181da34a5b1d77ba39bfa62a563f4eeabcb4",
+        "eventId": "401882801",
+        "matchId": "2026-11-22|Osasuna|Malaga",
+        "league": "laliga",
+        "kickoff": "2026-11-22T17:30:00Z",
+        "day": "2026-11-23",
+        "home": "奥萨苏纳",
+        "away": "马拉加",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=13&s=2026-2027",
+        "roundComplete": true,
+        "homeName": "Osasuna",
+        "awayName": "Malaga",
+        "stage": "initial",
+        "issuedAt": "2026-11-22T11:30:50.826048Z",
+        "score": [
+          1,
+          1
+        ],
+        "scoreCandidates": [],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -0.5,
+        "asianPrice": 1.9523809523809523,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-22T11:29:29.301609+00:00",
+        "status": "settled",
+        "reason": "",
+        "actual": [
+          1,
+          0
+        ],
+        "exactHit": false,
+        "resultHit": false,
+        "asianResult": "输盘",
+        "source": "https://www.laliga.com/laliga-easports/resultados/2026-27/jornada-13"
+      },
+      "publishedAt": "2026-11-22T11:48:59.367475+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "laliga|2026/27|第13轮",
+      "event": "401882804",
+      "identity": "ec5d78b153edfad9745c3ae3e8de87f563d3c2aa49c8dbcea9592a796638acc6",
+      "stage": "initial",
+      "issuedAt": "2026-11-22T08:02:56.377671Z",
+      "kickoff": "2026-11-22T13:00:00Z",
+      "priority": 39.4412,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已保存亚洲盘方向、盘口及赔率",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "巴塞罗那2:1比利亚雷亚尔，主队胜；亚盘为DraftKings主队让2.5球，主队方向不赢盘，暂选客队比利亚雷亚尔+2.5方向。",
+        "比利亚雷亚尔近10场5胜1平4负、进18失15，进球产出与失球控制明显强于积分表现；巴萨虽近10场8胜且主场火力充足，但正式首发未确认、后防有伤情报道，且主让2.5要求净胜3球，赢盘门槛偏高。若临场巴萨首发齐整且盘口降至主让1.5以下，才考虑调整方向。"
+      ],
+      "receipt": {
+        "identity": "ec5d78b153edfad9745c3ae3e8de87f563d3c2aa49c8dbcea9592a796638acc6",
+        "eventId": "401882804",
+        "matchId": "2026-11-22|Barcelona|Villarreal",
+        "league": "laliga",
+        "kickoff": "2026-11-22T13:00:00Z",
+        "day": "2026-11-22",
+        "home": "巴塞罗那",
+        "away": "比利亚雷亚尔",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=13&s=2026-2027",
+        "roundComplete": true,
+        "homeName": "Barcelona",
+        "awayName": "Villarreal",
+        "stage": "initial",
+        "issuedAt": "2026-11-22T08:02:56.377671Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": -2.5,
+        "asianPrice": 1.7692307692307692,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-22T08:01:49.909800+00:00",
+        "status": "settled",
+        "reason": "",
+        "actual": [
+          3,
+          2
+        ],
+        "exactHit": false,
+        "resultHit": true,
+        "asianResult": "赢盘",
+        "source": "https://www.laliga.com/laliga-easports/resultados/2026-27/jornada-13"
+      },
+      "publishedAt": "2026-11-22T11:15:14.066576+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "laliga|2026/27|第13轮",
+      "event": "401882800",
+      "identity": "5806f1bb9b96b31cc9fd63dc55fc74f694331e7561ce996548191b3cffd9b49a",
+      "stage": "initial",
+      "issuedAt": "2026-11-22T09:15:27.251503Z",
+      "kickoff": "2026-11-22T15:15:00Z",
+      "priority": 29.4051,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已保存亚洲盘方向、盘口及赔率",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "初版主选皇家社会客胜，90分钟比分倾向1:2；亚洲盘为桑坦德竞技主让0.5（DraftKings最新报价主1.77、客1.95），取客队皇家社会+0.5方向，客队不败即赢盘、桑坦德净胜一球则输盘。",
+        "依据：近10场桑坦德4胜1平5负、进14失25，皇家社会6胜2平2负、进24失13，后者攻防与积分（第5、22分对第11、14分）占优；独立泊松基线首选即为1:2。双方正式首发均未确认，且无伤停来源，若临场桑坦德确认首发明显增强或盘口转向主队受让，则需重估。"
+      ],
+      "receipt": {
+        "identity": "5806f1bb9b96b31cc9fd63dc55fc74f694331e7561ce996548191b3cffd9b49a",
+        "eventId": "401882800",
+        "matchId": "2026-11-22|Santander|Sociedad",
+        "league": "laliga",
+        "kickoff": "2026-11-22T15:15:00Z",
+        "day": "2026-11-22",
+        "home": "桑坦德竞技",
+        "away": "皇家社会",
+        "season": "2026/27",
+        "round": "第13轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=13&s=2026-2027",
+        "roundComplete": true,
+        "homeName": "Santander",
+        "awayName": "Sociedad",
+        "stage": "initial",
+        "issuedAt": "2026-11-22T09:15:27.251503Z",
+        "score": [
+          1,
+          2
+        ],
+        "scoreCandidates": [],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": 0.5,
+        "asianPrice": 1.9523809523809523,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-22T09:14:12.953415+00:00",
+        "status": "settled",
+        "reason": "",
+        "actual": [
+          3,
+          2
+        ],
+        "exactHit": false,
+        "resultHit": false,
+        "asianResult": "输盘",
+        "source": "https://www.laliga.com/laliga-easports/resultados/2026-27/jornada-13"
+      },
+      "publishedAt": "2026-11-22T11:15:14.066576+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "seriea|2026/27|第12轮",
+      "event": "401875047",
+      "identity": "ecf1e89dc53af4ce979fc25b95ab3761fe21a3807aae70db63ae35ae4106919b",
+      "stage": "initial",
+      "issuedAt": "2026-11-22T08:01:49.264615Z",
+      "kickoff": "2026-11-22T14:00:00Z",
+      "priority": 30.0769,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已保存亚洲盘方向、盘口及赔率",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "本场主选博洛尼亚2:1乌迪内斯（90分钟主胜），亚洲盘取主队让半球（-0.5）的博洛尼亚方向：主队净胜1球即赢盘。赢球与赢盘一致。",
+        "依据为博洛尼亚近10场5胜2平3负、近5场4胜1负，乌迪内斯近10场0胜2平8负、近5场0胜1平4负且失球偏多；统计基线预期进球2.07比1.08、首选比分2:1。改判条件：若临场确认博洛尼亚关键进攻球员缺阵或盘口退回平半以下，重新评估；本版无正式首发、伤停及quotedAt，只有采集时点。"
+      ],
+      "receipt": {
+        "identity": "ecf1e89dc53af4ce979fc25b95ab3761fe21a3807aae70db63ae35ae4106919b",
+        "eventId": "401875047",
+        "matchId": "espn:401875047",
+        "league": "seriea",
+        "kickoff": "2026-11-22T14:00:00Z",
+        "day": "2026-11-22",
+        "home": "博洛尼亚",
+        "away": "乌迪内斯",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=12&s=2026-2027",
+        "roundComplete": true,
+        "homeName": "Bologna",
+        "awayName": "Udinese",
+        "stage": "initial",
+        "issuedAt": "2026-11-22T08:01:49.264615Z",
+        "score": [
+          2,
+          1
+        ],
+        "scoreCandidates": [],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": -0.5,
+        "asianPrice": 1.7142857142857144,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-22T07:59:42.733745+00:00",
+        "status": "settled",
+        "reason": "",
+        "actual": [
+          1,
+          1
+        ],
+        "exactHit": false,
+        "resultHit": false,
+        "asianResult": "输盘",
+        "source": "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard?dates=2026&limit=1000"
+      },
+      "publishedAt": "2026-11-22T09:42:28.627868+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "seriea|2026/27|第12轮",
+      "event": "401874960",
+      "identity": "4057859ce4f21c4d954327f9ff15a80cbf05257f750c916c2e37a02e0bf31840",
+      "stage": "initial",
+      "issuedAt": "2026-11-22T08:05:54.052272Z",
+      "kickoff": "2026-11-22T14:00:00Z",
+      "priority": 29.395,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已保存亚洲盘方向、盘口及赔率",
+        "首发尚未确认，保留阵容变化风险",
+        "比分与统计基线一致"
+      ],
+      "summary": [
+        "萨索洛1:2热那亚，主队告负，亚盘取热那亚+0.5（客队受让半球）方向。",
+        "统计基线首选比分即1:2，热那亚近10场5胜1平4负、失球仅11个，与萨索洛5连败、近10场失27球反差明显；实际盘口为热那亚受让半球，客队净负不足半球即可取分。若临场首发显示萨索洛锋线主力集体回归且热那亚+0.5价格明显收紧，则需重新评估。"
+      ],
+      "receipt": {
+        "identity": "4057859ce4f21c4d954327f9ff15a80cbf05257f750c916c2e37a02e0bf31840",
+        "eventId": "401874960",
+        "matchId": "espn:401874960",
+        "league": "seriea",
+        "kickoff": "2026-11-22T14:00:00Z",
+        "day": "2026-11-22",
+        "home": "萨索洛",
+        "away": "热那亚",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=12&s=2026-2027",
+        "roundComplete": true,
+        "homeName": "Sassuolo",
+        "awayName": "Genoa",
+        "stage": "initial",
+        "issuedAt": "2026-11-22T08:05:54.052272Z",
+        "score": [
+          1,
+          2
+        ],
+        "scoreCandidates": [],
+        "scorePrices": {},
+        "asianSide": "A",
+        "line": 0.5,
+        "asianPrice": 2.5,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-22T08:04:57.137472+00:00",
+        "status": "settled",
+        "reason": "",
+        "actual": [
+          0,
+          2
+        ],
+        "exactHit": false,
+        "resultHit": true,
+        "asianResult": "赢盘",
+        "source": "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard?dates=2026&limit=1000"
+      },
+      "publishedAt": "2026-11-22T09:42:28.627868+00:00",
+      "methodVersion": "evidence-priority-v1"
+    },
+    {
+      "domain": "football",
+      "group": "seriea|2026/27|第12轮",
+      "event": "401875008",
+      "identity": "cb06fca5cc6497f0d2e09049b8b7ec9b22f7f2b2db24fe6eb0e73df1f5ab51fd",
+      "stage": "initial",
+      "issuedAt": "2026-11-22T05:35:15.152043Z",
+      "kickoff": "2026-11-22T11:30:00Z",
+      "priority": 7.4974,
+      "reasons": [
+        "双方至少10场赛前往绩可核对",
+        "已保存亚洲盘方向、盘口及赔率",
+        "首发尚未确认，保留阵容变化风险",
+        "比分含模型调整，需结合原文依据"
+      ],
+      "summary": [
+        "初版：尤文图斯2:0威尼斯（90分钟主胜），亚洲让球盘主队方向——主让1.5（-1.5），主队需净胜2球或以上赢盘，净胜1球则输盘。",
+        "依据：尤文近5场3胜1平1负、联赛第7（18分），威尼斯近10场2胜0平8负、联赛第19（6分），近10场失19球；统计基线期望进球1.54比1.04、首选比分1:1。改判条件：若临场首发显示尤文大幅轮换或让球线降至主让1以下，需重新评估赢盘方向。"
+      ],
+      "receipt": {
+        "identity": "cb06fca5cc6497f0d2e09049b8b7ec9b22f7f2b2db24fe6eb0e73df1f5ab51fd",
+        "eventId": "401875008",
+        "matchId": "espn:401875008",
+        "league": "seriea",
+        "kickoff": "2026-11-22T11:30:00Z",
+        "day": "2026-11-22",
+        "home": "尤文图斯",
+        "away": "威尼斯",
+        "season": "2026/27",
+        "round": "第12轮",
+        "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4332&r=12&s=2026-2027",
+        "roundComplete": true,
+        "homeName": "Juventus",
+        "awayName": "Venezia",
+        "stage": "initial",
+        "issuedAt": "2026-11-22T05:35:15.152043Z",
+        "score": [
+          2,
+          0
+        ],
+        "scoreCandidates": [],
+        "scorePrices": {},
+        "asianSide": "H",
+        "line": -1.5,
+        "asianPrice": 2.05,
+        "scorePrice": null,
+        "scoreQuoteAt": "",
+        "scoreProvider": "",
+        "scoreSource": "",
+        "provider": "DraftKings",
+        "quoteAt": "2026-11-22T05:34:28.814648+00:00",
+        "status": "settled",
+        "reason": "",
+        "actual": [
+          4,
+          0
+        ],
+        "exactHit": false,
+        "resultHit": true,
+        "asianResult": "赢盘",
+        "source": "https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard?dates=2026&limit=1000"
+      },
+      "publishedAt": "2026-11-22T09:42:28.627868+00:00",
+      "methodVersion": "evidence-priority-v1"
+    }
+  ]
+}

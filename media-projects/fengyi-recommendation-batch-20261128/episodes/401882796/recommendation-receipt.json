@@ -1,0 +1,80 @@
+{
+  "id": "80f87946a5fa1b76682f18317d96493ee2d8d6732db5e562fef56a49e38b26ce",
+  "event": "401882796",
+  "domain": "football",
+  "group": "laliga|2026/27|第14轮",
+  "stage": "initial",
+  "issuedAt": "2026-11-26T16:39:45.333561Z",
+  "kickoff": "2026-11-28T13:00:00Z",
+  "title": "皇家贝蒂斯 对 巴列卡诺 · 巴列卡诺",
+  "pick": "巴列卡诺",
+  "source": "https://www.espn.com/soccer/match/_/gameId/401882796",
+  "quoteAt": "2026-11-26T16:38:31.125027+00:00",
+  "receipt": {
+    "identity": "8daa29a5bb2238cb937c8733ac18515f5f409213a97ad5753ea5ba74b199c4a6",
+    "eventId": "401882796",
+    "matchId": "2026-11-28|Betis|Vallecano",
+    "league": "laliga",
+    "kickoff": "2026-11-28T13:00:00Z",
+    "day": "2026-11-28",
+    "home": "皇家贝蒂斯",
+    "away": "巴列卡诺",
+    "season": "2026/27",
+    "round": "第14轮",
+    "roundSource": "https://www.thesportsdb.com/api/v1/json/123/eventsround.php?id=4335&r=14&s=2026-2027",
+    "roundComplete": false,
+    "homeName": "Real Betis",
+    "awayName": "Vallecano",
+    "stage": "initial",
+    "issuedAt": "2026-11-26T16:39:45.333561Z",
+    "score": [
+      1,
+      1
+    ],
+    "scoreCandidates": [
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "scorePrices": {},
+    "asianSide": "A",
+    "line": -0.5,
+    "asianPrice": 2.3,
+    "scorePrice": null,
+    "scoreQuoteAt": "",
+    "scoreProvider": "",
+    "scoreSource": "",
+    "provider": "DraftKings",
+    "quoteAt": "2026-11-26T16:38:31.125027+00:00",
+    "status": "pending",
+    "reason": "",
+    "actual": null,
+    "exactHit": null,
+    "resultHit": null,
+    "asianResult": "pending",
+    "source": "https://www.espn.com/soccer/match/_/gameId/401882796"
+  },
+  "summary": [
+    "主选巴列卡诺受让0.5球，报价2.30；比分参考1:1、2:2（主队在前）。",
+    "DraftKings的亚洲让球由来源开盘-1.5变为-0.5。按固定变盘规则试行，真实原因尚待证据验证。"
+  ],
+  "status": "queued",
+  "dialogue": [
+    "喂，今晚有什么好料啊？",
+    "今晚买巴列卡诺啊。",
+    "怎么让啊？",
+    "皇家贝蒂斯让巴列卡诺半球啊。",
+    "买几比几啊？",
+    "一比一，或者二比二啊。",
+    "为什么买它啊？"
+  ],
+  "reasonInstruction": "补第八句：只用封存预测中的可核对变盘或往绩事实，简短自然，最后加啊；不把未知变盘原因说成事实。",
+  "visualReference": "original-characters-v3",
+  "voiceReference": "approved-football-dialogue",
+  "instructions": "沿用已认可两只公仔、背景和声音参考。实际生成后核对队名、盘口、两个比分、配音、画面；开赛后不可发布成赛前推荐。"
+}
