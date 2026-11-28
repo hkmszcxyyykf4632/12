@@ -1,0 +1,61 @@
+{
+  "checkedOn": "2026-11-28",
+  "status": "blocked",
+  "newVideoCreated": false,
+  "newVideoPublished": false,
+  "userConfirmedReference": {
+    "catalogue": "分析视频",
+    "title": "峰弈推荐｜博洛尼亚 vs 乌迪内斯｜双人对话·历史样板",
+    "page": "https://inwesting.shop/#/videos/1edbe78bf8154245ae46033233cdf629",
+    "streamUrl": "https://inwesting.shop/media/videos/fengyi-recommendation-bologna-20261122-web-v4.mp4",
+    "durationSeconds": 12.333344,
+    "sourceGenerationId": "58d7839d7ff14d69ba1fdf9a1ab23a37",
+    "sourceGenerationService": "HeyGen image-to-video",
+    "sourceSha256": "69247c0d171cdd24548002d00c9380eed9179689a72dfad7beb2528e24f29ca2",
+    "approvedDialogueSha256": "c5504576f70d71e2f243eb1ac86730f0a23a9c6d17fd1871b4dfe1370b81d891"
+  },
+  "accountReadOnlyCheck": {
+    "plan": "Free",
+    "monthlyVideoAllowance": 3,
+    "monthlyVideosRemaining": 0,
+    "monthlyResetDateAsReturned": "2026-11-30",
+    "generationAttemptedThisTurn": false,
+    "paidPurchaseAuthorized": false,
+    "paidPurchaseMade": false
+  },
+  "referenceReuse": {
+    "visualIdentity": "Keep the approved brown and white plush characters, warm room, fur, star eyes, pendant and silver wings.",
+    "speech": "Retain the approved Mandarin voices and natural conversational phrasing. Every angel response ends in 啊.",
+    "questionsReusableWhenTextMatches": true,
+    "newAnswersNeedNewSpeech": true,
+    "referenceIsNotReusableTtsVoiceId": true,
+    "neverPresentOldPredictionAsNew": true
+  },
+  "localMachine": {
+    "cpu": "Intel Core i7-13700H",
+    "ramBytes": 34070192128,
+    "displayAdapter": "Intel UHD Graphics",
+    "nvidiaGpuDetected": false
+  },
+  "localFallbackAssessment": {
+    "editing": "Original video and losslessly extracted audio are available locally.",
+    "speechCandidate": "Qwen3-TTS reference-audio voice cloning is a possible local evaluation route, not tested on this machine.",
+    "lipSyncCandidate": "MuseTalk documentation reports a Windows minimum tested NVIDIA RTX 3050 Ti Laptop 4GB configuration; this machine lacks an NVIDIA GPU. Cartoon face and dual-speaker compatibility remain untested.",
+    "qualityStatus": "No evidence yet that a local fallback matches the approved natural voices or motion. Do not replace the approved public sample with an unreviewed fallback.",
+    "freeProductionReady": false,
+    "newPackagesInstalled": false,
+    "largeModelsDownloaded": false
+  },
+  "sources": [
+    "https://inwesting.shop/api/videos",
+    "https://github.com/QwenLM/Qwen3-TTS",
+    "https://github.com/TMElyralab/MuseTalk"
+  ],
+  "nextSteps": [
+    "Use the user-confirmed Bologna clip as the fixed visual and speech reference.",
+    "Check video-service allowance before any new provider generation; do not buy or retry a quota-blocked job blindly.",
+    "If evaluating local production, prove a short new reply and lip sync first before claiming a free recurring video pipeline.",
+    "Recheck current frozen recommendations and kickoff before creating an episode; publish only before kickoff.",
+    "Save completed code, media projects, finished assets and verification receipts to hkmszcxyyykf4632/12 and verify push."
+  ]
+}
