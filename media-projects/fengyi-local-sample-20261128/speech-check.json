@@ -1,0 +1,52 @@
+{
+  "file": "fengyi-local-sample-web.mp4",
+  "method": "Automatic final-export ASR; not a human listening assessment",
+  "language": "zh",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 2.28,
+      "text": "喂,今晚有什麼好料啊?"
+    },
+    {
+      "start": 2.58,
+      "end": 3.94,
+      "text": "今晚買利物鋪啊?"
+    },
+    {
+      "start": 4.48,
+      "end": 5.52,
+      "text": "怎麼讓啊?"
+    },
+    {
+      "start": 5.64,
+      "end": 7.7,
+      "text": "利物鋪讓艾夫敦伴球啊?"
+    },
+    {
+      "start": 8.34,
+      "end": 9.54,
+      "text": "買幾筆幾啊?"
+    },
+    {
+      "start": 9.74,
+      "end": 11.9,
+      "text": "二筆一,或者一筆零啊?"
+    },
+    {
+      "start": 12.14,
+      "end": 12.86,
+      "text": "為什麼買他?"
+    },
+    {
+      "start": 13.46,
+      "end": 16.06,
+      "text": "讓伴球,利物鋪陪律降了啊?"
+    }
+  ],
+  "rms": 0.1114521473646164,
+  "peak": 0.6524837613105774,
+  "durationSeconds": 16.9583125,
+  "containsNonSilentAudio": true,
+  "clippedSamples": 0
+}

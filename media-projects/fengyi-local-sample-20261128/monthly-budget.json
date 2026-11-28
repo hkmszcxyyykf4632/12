@@ -1,0 +1,51 @@
+{
+  "checked_on": "2026-11-28",
+  "planning_month": "2026-12 onward",
+  "scope": "3 matches per round for EACH of EPL, La Liga, Serie A, Bundesliga and UCL; 1 per HK race day",
+  "volume_note": "An active-month scenario, not a confirmed fixture calendar. 4-5 rounds per domestic league, 0-2 UCL rounds, 8-10 race days. Never manufacture extra picks when fewer eligible matches exist.",
+  "recommendation_budget": "60-80 completed videos in an active month",
+  "format": "4 question-answer pairs, about 20 seconds; two separately generated 10-second shots, locally edited together",
+  "allowance_note": "30% is a planning reserve for completed but unsatisfactory takes, not a measured failure rate. Failed HeyGen Creative Studio jobs are documented as refunded.",
+  "studio_plan": {
+    "Creator_usd_per_month": 29,
+    "credits": 600,
+    "rate_768p_credits_per_second": 0.24,
+    "maximum_documented_shot_seconds": 15,
+    "source": "https://help.heygen.com/en/articles/17680953-how-to-create-b-roll-with-heygen-creative-studio",
+    "conditions": "Studio-specific rates; must verify the cost beside Generate. Subscription does not pay API bills or prove a connector quota changes."
+  },
+  "api": {
+    "mode": "Reference to Video 768p, two <=15-second shots",
+    "rate_usd_per_second_until_2026_11_30": 0.05,
+    "rate_usd_per_second_from_2026_12_01": 0.06,
+    "image_and_audio_reference_input_seconds": 0,
+    "video_reference_billed_seconds": 12.333344,
+    "source": "https://help.heygen.com/en/articles/17272995-introducing-heygen-video-generate-cinematic-clips-from-a-prompt",
+    "conditions": "Actual reference selection and voice/motion quality must be tested. No assumption about an undocumented >15-second reference-to-video rate."
+  },
+  "scenarios": [
+    {
+      "finished_videos": 60,
+      "planned_seconds_each": 20,
+      "redraft_reserve_percent": 30,
+      "studio_768p_credits": 374.4,
+      "api_dec_image_and_audio_reference_usd": 93.6,
+      "api_dec_full_12_333_second_video_reference_twice_usd": 209.04
+    },
+    {
+      "finished_videos": 80,
+      "planned_seconds_each": 20,
+      "redraft_reserve_percent": 30,
+      "studio_768p_credits": 499.2,
+      "api_dec_image_and_audio_reference_usd": 124.8,
+      "api_dec_full_12_333_second_video_reference_twice_usd": 278.72
+    }
+  ],
+  "purchaseMade": false,
+  "sources": [
+    "https://www.heygen.com/pricing",
+    "https://help.heygen.com/en/articles/17680953-how-to-create-b-roll-with-heygen-creative-studio",
+    "https://help.heygen.com/en/articles/10060327-heygen-api-pricing-credits-explained",
+    "https://help.heygen.com/en/articles/17272995-introducing-heygen-video-generate-cinematic-clips-from-a-prompt"
+  ]
+}

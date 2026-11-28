@@ -1,0 +1,29 @@
+{
+  "completedOn": "2026-11-28",
+  "type": "Local private sample and monthly video purchasing estimate",
+  "video": "fengyi-local-sample-web.mp4",
+  "durationSeconds": 16.958333,
+  "dialogueTurns": 8,
+  "sourceVisualIdentityPreserved": true,
+  "localVoiceGenerationCompleted": true,
+  "preciseLipSync": false,
+  "subjectiveNaturalnessApproved": false,
+  "paidGenerationCalls": 0,
+  "purchasesMade": 0,
+  "websitePublished": false,
+  "checks": {
+    "compositionErrors": 0,
+    "compositionWarnings": 0,
+    "finalExportContainsAudio": true,
+    "clippedAudioSamples": 0,
+    "fastStartMp4": true,
+    "visualFramesReviewed": [
+      2,
+      6,
+      10,
+      14
+    ]
+  },
+  "repository": "https://github.com/hkmszcxyyykf4632/12",
+  "scope": "Only this sample project and its budget report. Existing public website media unchanged."
+}

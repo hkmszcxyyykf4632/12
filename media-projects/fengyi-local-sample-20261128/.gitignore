@@ -1,0 +1,8 @@
+studio/.hyperframes/
+studio/renders/
+.speech-models/
+__pycache__/
+*.log
+studio/.thumbnails/
+studio/.transcode-cache/
+studio/.waveform-cache/

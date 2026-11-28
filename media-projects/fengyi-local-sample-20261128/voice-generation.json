@@ -1,0 +1,47 @@
+{
+  "model": "Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+  "revision": "5d83992436eae1d760afd27aff78a71d676296fc",
+  "device": "cpu",
+  "torchVersion": "2.15.0+cpu",
+  "paidGenerationCalls": 0,
+  "sourceIsSyntheticCharacterSpeech": true,
+  "lines": [
+    {
+      "line": 2,
+      "text": "今晚买利物浦啊。",
+      "durationSeconds": 1.6,
+      "generationSeconds": 9.3,
+      "file": "audio/line-02.wav"
+    },
+    {
+      "line": 4,
+      "text": "利物浦让埃弗顿半球啊。",
+      "durationSeconds": 2.4,
+      "generationSeconds": 10.93,
+      "file": "audio/line-04.wav"
+    },
+    {
+      "line": 6,
+      "text": "二比一，或者一比零啊。",
+      "durationSeconds": 2.32,
+      "generationSeconds": 11.1,
+      "file": "audio/line-06.wav"
+    },
+    {
+      "line": 7,
+      "text": "为什么买它啊？",
+      "durationSeconds": 1.04,
+      "generationSeconds": 5.95,
+      "file": "audio/line-07.wav"
+    },
+    {
+      "line": 8,
+      "text": "让半球，利物浦赔率降了啊。",
+      "durationSeconds": 4.000041666666666,
+      "generationSeconds": 17.61,
+      "file": "audio/line-08.wav"
+    }
+  ],
+  "totalSeconds": 233.67,
+  "completed": true
+}

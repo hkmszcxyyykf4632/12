@@ -1,0 +1,52 @@
+{
+  "purpose": "本地声音与画面测试，非新增或公开推荐",
+  "sourceRecommendation": "../fengyi-football-20261129-liverpool/recommendation-receipt.json",
+  "lines": [
+    {
+      "role": "male",
+      "text": "喂，今晚有什么好料啊？",
+      "source": "original",
+      "start": 0,
+      "end": 2.4
+    },
+    {
+      "role": "female",
+      "text": "今晚买利物浦啊。",
+      "source": "local"
+    },
+    {
+      "role": "male",
+      "text": "怎么让啊？",
+      "source": "original",
+      "start": 4.4,
+      "end": 5.62
+    },
+    {
+      "role": "female",
+      "text": "利物浦让埃弗顿半球啊。",
+      "source": "local"
+    },
+    {
+      "role": "male",
+      "text": "买几比几啊？",
+      "source": "original",
+      "start": 8.45,
+      "end": 10.05
+    },
+    {
+      "role": "female",
+      "text": "二比一，或者一比零啊。",
+      "source": "local"
+    },
+    {
+      "role": "male",
+      "text": "为什么买它啊？",
+      "source": "local"
+    },
+    {
+      "role": "female",
+      "text": "让半球，利物浦赔率降了啊。",
+      "source": "local"
+    }
+  ]
+}

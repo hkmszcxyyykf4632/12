@@ -1,0 +1,21 @@
+{
+  "file": "fengyi-local-sample-web.mp4",
+  "sha256": "fa73a433214dab469cdde39337fd8016272bc94c309ef57f35f5fda1946ec2f2",
+  "bytes": 6217160,
+  "duration": 16.958333,
+  "videoCodec": "h264",
+  "audioCodec": "aac",
+  "width": 1344,
+  "height": 768,
+  "fps": "24/1",
+  "fastStart": true,
+  "atomOrder": [
+    "ftyp",
+    "moov",
+    "free",
+    "mdat"
+  ],
+  "paidGenerationCalls": 0,
+  "publishedToWebsite": false,
+  "preciseLipSync": false
+}
